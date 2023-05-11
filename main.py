@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, random
 
 coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
@@ -54,7 +54,7 @@ class Dog(Hero):
         self.animal = "dog"
         self.isDead = False
         self.load_dead = False
-        self.speed_x = 3
+        self.speed_x = 7
         self.speed_y = 0
         fps = 100
         super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
@@ -65,7 +65,7 @@ class Dog(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 1
+            self.hp -= 2
         else:
             if not self.load_dead:
                 # print("load")
@@ -85,26 +85,6 @@ class Frog(Hero):
         self.characterAnimation = [(0, 11)]
         self.animal = "frog"
         self.isDead = False
-        self.speed_x = 2
-        self.speed_y = 0
-        fps = 100
-        super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
-
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (self.characterAnimation[0][1]):
-                self.index = 0
-            else:
-                self.index += 1
-            self.hp -= 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
-
-class Bird(Hero):
-    def __init__(self, hp, pos, damage):
-        self.characterAnimation = [(0, 7)]
-        self.animal = "bird"
-        self.isDead = False
         self.speed_x = 5
         self.speed_y = 0
         fps = 100
@@ -116,9 +96,113 @@ class Bird(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 1
+            self.hp -= 2
         self.show = self.surface[self.index]
         self.rect = self.show.get_rect(midbottom=self.pos)
+
+class Bird(Hero):
+    def __init__(self, hp, pos, damage):
+        self.characterAnimation = [(0, 7)]
+        self.animal = "bird"
+        self.isDead = False
+        self.speed_x = 8
+        self.speed_y = 0
+        fps = 100
+        super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (self.characterAnimation[0][1]):
+                self.index = 0
+            else:
+                self.index += 1
+            self.hp -= 2
+        self.show = self.surface[self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
+
+class Mushroom(Hero):
+    def __init__(self, hp, pos, damage):
+        self.characterAnimation = [(0, 7), (8, 16)]
+        self.animal = "mushroom"
+        self.isDead = False
+        self.load_dead = False
+        fps = 200
+        super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (self.characterAnimation[0][1]):
+                self.index = 0
+            else:
+                self.index += 1
+            self.hp -= 3
+        else:
+            if not self.load_dead:
+                self.surface = [
+                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+                self.load_dead = True
+            if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+                pass
+            else:
+                self.index += 1
+        self.show = self.surface[self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
+
+class Rino(Hero):
+    def __init__(self, hp, pos, damage):
+        self.characterAnimation = [(0, 5)]
+        self.animal = "rino"
+        self.isDead = False
+        self.speed = 8
+        fps = 10
+        super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
+
+    def animation(self):
+        if self.rect.midleft[0] <= 1280:
+            if self.index == (self.characterAnimation[0][1]):
+                self.index = 0
+            else:
+                self.index += 1
+        else:
+            self.isDead = True
+        self.show = self.surface[self.index]
+        self.rect = self.show.get_rect(midbottom=self.rect.midbottom)
+        self.rect.centerx += self.speed
+
+class Cat(Hero):
+    def __init__(self, hp, pos, damage):
+        self.characterAnimation = [(0, 7), (8, 14)]
+        self.animal = "cat"
+        self.isDead = False
+        self.load_dead = False
+        fps = 200
+        super().__init__(hp, pos, damage, (self.animal, self.characterAnimation[0][1]), fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (self.characterAnimation[0][1]):
+                self.index = 0
+            else:
+                self.index += 1
+            self.hp -= 1
+        else:
+            if not self.load_dead:
+                self.surface = [
+                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+                self.load_dead = True
+            if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+                pass
+            else:
+                self.index += 1
+        self.show = self.surface[self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
+
+    def skill(self):
+        for rule in heroes:
+            rule.hp = rule.hp+0.05 if rule.hp <= 100 else rule.hp
+
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -131,14 +215,27 @@ heroesBullet = []
 heroesBulletFPS = []
 FPSCounter = 0
 
+all_heroes = ["dog", "frog", "bird", "mushroom", "rino", "cat"]
+
 def create_hero(animal, x, y):
     if animal == 'dog':
-        heroes.append(Dog(1000, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        heroes.append(Dog(50, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        coordinate[x][y] = 1
     elif animal == 'frog':
         heroes.append(Frog(50, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        coordinate[x][y] = 1
     elif animal == 'bird':
         heroes.append(Bird(80, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
-    coordinate[x][y] = 1
+        coordinate[x][y] = 1
+    elif animal == 'mushroom':
+        heroes.append(Mushroom(50, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        coordinate[x][y] = 1
+    elif animal == 'rino':
+        heroes.append(Rino(50, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+    elif animal == 'cat':
+        heroes.append(Cat(10, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        coordinate[x][y] = 1
+
     global FPSCounter
     heroesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes[-1].fps)
@@ -165,6 +262,10 @@ while True:
         if rule.hp <= 0 and (not rule.isDead):
             rule.index = 0
             rule.isDead = True
+        if rule.animal == "cat":
+            rule.skill()
+        else:
+            print(rule.hp)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -179,10 +280,10 @@ while True:
             if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
                 x, y = pos2coord(event.pos)
                 if not coordinate[x][y]:
-                    create_hero('dog', x, y)
+                    animal = random.choice(all_heroes)
+                    create_hero(animal, x, y)
 
     bullet_update()
-    # print(len(heroesBullet))
     for bullet in heroesBullet:
         screen.blit(bullet.show, bullet.rect)
 
