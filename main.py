@@ -1,4 +1,4 @@
-import pygame, sys, random, os
+import pygame, sys, random, os, copy
 mode2index = {"Run":0, "Attack":1, "Hit":2, "Dead":3}
 coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
@@ -46,8 +46,8 @@ class Bullet:
 
 class Enemy_bullet:
     def __init__(self, rect, path, damage, bullet_speed):
-        self.rect = rect
-        self.name = name
+        self.rect = copy.deepcopy(rect)
+        self.rect.y += 30
         self.surface = pygame.image.load(path).convert_alpha()
         self.damage = damage
         self.bullet_speed = bullet_speed
@@ -219,6 +219,7 @@ class Enemy(Character):
         self.is_dead_load = False
         self.mode_change_enable = True
         self.indexes_show_after_dead = 10
+        self.has_attacked = False
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         for i, mode in enumerate(all_mode):
@@ -233,7 +234,7 @@ class Enemy(Character):
         self.rect = self.show.get_rect(midbottom=self.pos)
 
     # for the animation of the character
-    def animation(self, mode, attack_moving_speed = -5):
+    def animation(self, mode, attack_moving_speed = -5, has_bullet = False):
             # if the mode change (different from the last time)
             if mode != self.show_mode:
                 # if the character is dead then it's always sticks on the mode "Dead"
@@ -276,6 +277,8 @@ class Enemy(Character):
                         if self.index == (len(self.surfaces[self.show_mode]) - 1):
                             self.index = 0
                             self.mode_change_enable = True
+                            if has_bullet:
+                                self.has_attacked = False
                         else:
                             self.mode_change_enable = False
                             self.index += 1
@@ -334,11 +337,11 @@ class Seashell(Enemy):
         fps = 90
         speed = -1
         attack_fps = 1000
-
+        self.bullet_speed = -8
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        super().animation(mode)
+        super().animation(mode, has_bullet=True)
 
 class Whale(Enemy):
     def __init__(self, pos):
@@ -444,15 +447,16 @@ def bullet_update():
 def enemy_bullet_update():
     global FPSCounter
     for rule in enemies:
-        if rule.name in ("Seashell") and rule.show_mode == "Attack" and rule.index == 0:
-            heroesBullet.append(
-                    Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
+        if rule.name in ("Seashell") and rule.show_mode == "Attack" and not rule.has_attacked:
+            enemies_bullet.append(
+                    Enemy_bullet(rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
+            rule.has_attacked = True
 
-    if heroesBullet:
-        for bullet in heroesBullet:
-            bullet.rect.centerx += bullet.speed_x
-            if bullet.rect.left >= 1280:
-                heroesBullet.remove(bullet)
+    if enemies_bullet:
+        for bullet in enemies_bullet:
+            bullet.rect.x += bullet.bullet_speed
+            if bullet.rect.right <= 0:
+                enemies_bullet.remove(bullet)
 
 def main():
     while True:
@@ -495,8 +499,11 @@ def main():
                         create_hero(animal, x, y)
 
         bullet_update()
+        enemy_bullet_update()
         for bullet in heroesBullet:
             screen.blit(bullet.show, bullet.rect)
+        for bullet in enemies_bullet:
+            screen.blit(bullet.surface, bullet.rect)
 
         for rule in heroes:
             screen.blit(rule.show, rule.rect)
