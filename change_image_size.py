@@ -18,7 +18,7 @@ for enemy in all_enemies:
             img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
             height, width, channels = img.shape
             print(img.shape)
-            if(height/width >= 115/140):
+            if(height/width <= 115/140):
                 new_height = 115
                 new_width = int(width * (115/height))
             else:

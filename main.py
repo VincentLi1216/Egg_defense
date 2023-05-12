@@ -200,11 +200,12 @@ class Cat(Hero):
 
 
 class Enemy(Character):
-    def __init__(self, name, hp, pos, damage, fps):
+    def __init__(self, name, hp, pos, damage, speed, fps):
         super().__init__(hp, pos, damage, fps)
         self.name = name
         self.characterSide = "enemy"
         self.show_mode = "Run"
+        self.speed = speed;
         self.is_dead = False
         self.is_dead_load = False
         self.surfaces = {}
@@ -216,13 +217,7 @@ class Enemy(Character):
                 for filename in filenames:
                     if filename.endswith(".png"):
                         file_count += 1
-            # self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
-            for j in range(file_count):
-                temp_surf = pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha()
-                orig_height = temp_surf.get_height()
-                orig_width = temp_surf.get_width()
-                print(orig_width, orig_height)
-                self.surfaces[mode][j] = temp_surf
+            self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
         self.show = self.surfaces[self.show_mode][self.index]
         self.rect = self.show.get_rect(midbottom=self.pos)
 
@@ -233,7 +228,9 @@ class Crabby(Enemy):
         hp = 300
         damage = 30
         fps = 90
-        super().__init__(name, hp, pos, damage, fps)
+        speed = -5
+
+        super().__init__(name, hp, pos, damage, speed, fps)
 
     def animation(self):
         if self.hp > 0:
@@ -252,8 +249,42 @@ class Crabby(Enemy):
         #         pass
         #     else:
         #         self.index += 1
+
         self.show = self.surfaces[self.show_mode][self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        # self.rect = self.show.get_rect(midbottom=self.pos)
+        self.rect.x += self.speed
+
+class Fierce_Tooth(Enemy):
+    def __init__(self, pos):
+        name = "Fierce Tooth"
+        hp = 300
+        damage = 30
+        fps = 90
+        speed = -5
+
+        super().__init__(name, hp, pos, damage, speed, fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (len(self.surfaces[self.show_mode])-1):
+                self.index = 0
+            else:
+                self.index += 1
+        # else:
+        #     if not self.load_dead:
+        #         # print("load")
+        #         self.surface = [
+        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
+        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+        #         self.load_dead = True
+        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+        #         pass
+        #     else:
+        #         self.index += 1
+
+        self.show = self.surfaces[self.show_mode][self.index]
+        # self.rect = self.show.get_rect(midbottom=self.pos)
+        self.rect.x += self.speed
 
 
 pygame.init()
@@ -300,13 +331,16 @@ def create_enemy(name, x, y):
     match(name):
         case "Crabby":
             enemies.append(Crabby((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+        case "Fierce Tooth":
+            enemies.append(Fierce_Tooth((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
 
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
     FPSCounter += 1
 
-create_enemy("Crabby", 2, 2)
+# create_enemy("Crabby", 3, 8)
+create_enemy("Fierce Tooth", 4, 8)
 def bullet_update():
     global FPSCounter
     for rule in heroes:
