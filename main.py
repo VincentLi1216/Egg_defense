@@ -286,7 +286,103 @@ class Fierce_Tooth(Enemy):
         # self.rect = self.show.get_rect(midbottom=self.pos)
         self.rect.x += self.speed
 
+class Pink_Star(Enemy):
+    def __init__(self, pos):
+        name = "Pink Star"
+        hp = 300
+        damage = 30
+        fps = 90
+        speed = -5
 
+        super().__init__(name, hp, pos, damage, speed, fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (len(self.surfaces[self.show_mode])-1):
+                self.index = 0
+            else:
+                self.index += 1
+        # else:
+        #     if not self.load_dead:
+        #         # print("load")
+        #         self.surface = [
+        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
+        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+        #         self.load_dead = True
+        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+        #         pass
+        #     else:
+        #         self.index += 1
+
+        self.show = self.surfaces[self.show_mode][self.index]
+        # self.rect = self.show.get_rect(midbottom=self.pos)
+        self.rect.x += self.speed
+
+class Seashell(Enemy):
+    def __init__(self, pos):
+        name = "Seashell"
+        hp = 300
+        damage = 30
+        fps = 90
+        speed = -15
+        self.destination = 1150
+
+        super().__init__(name, hp, pos, damage, speed, fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (len(self.surfaces[self.show_mode])-1):
+                self.index = 0
+            else:
+                self.index += 1
+        # else:
+        #     if not self.load_dead:
+        #         # print("load")
+        #         self.surface = [
+        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
+        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+        #         self.load_dead = True
+        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+        #         pass
+        #     else:
+        #         self.index += 1
+
+        self.show = self.surfaces[self.show_mode][self.index]
+        # self.rect = self.show.get_rect(midbottom=self.pos)
+        if self.rect.x >= self.destination:
+            self.rect.x += self.speed
+
+class Whale(Enemy):
+    def __init__(self, pos):
+        name = "Whale"
+        hp = 300
+        damage = 30
+        fps = 90
+        speed = -5
+
+        super().__init__(name, hp, pos, damage, speed, fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (len(self.surfaces[self.show_mode])-1):
+                self.index = 0
+            else:
+                self.index += 1
+        # else:
+        #     if not self.load_dead:
+        #         # print("load")
+        #         self.surface = [
+        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
+        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+        #         self.load_dead = True
+        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+        #         pass
+        #     else:
+        #         self.index += 1
+
+        self.show = self.surfaces[self.show_mode][self.index]
+        # self.rect = self.show.get_rect(midbottom=self.pos)
+        self.rect.x += self.speed
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
@@ -334,14 +430,24 @@ def create_enemy(name, row):
             enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
         case "Fierce Tooth":
             enemies.append(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Pink Star":
+            enemies.append(Pink_Star((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Seashell":
+            enemies.append(Seashell((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Whale":
+            enemies.append(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
+
 
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
     FPSCounter += 1
 
-create_enemy("Crabby", 3)
-create_enemy("Fierce Tooth", 2)
+create_enemy("Crabby", 0)
+create_enemy("Fierce Tooth", 1)
+create_enemy("Pink Star", 2)
+create_enemy("Seashell", 3)
+create_enemy("Whale", 4)
 def bullet_update():
     global FPSCounter
     for rule in heroes:
@@ -367,7 +473,8 @@ def main():
             if rule.animal == "cat":
                 rule.skill()
             else:
-                print(rule.hp)
+                pass
+                # print(rule.hp)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
