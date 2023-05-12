@@ -64,7 +64,6 @@ class Dog(Hero):
             self.hp -= 2
         else:
             if not self.load_dead:
-                # print("load")
                 self.surface = [
                     pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
@@ -201,7 +200,6 @@ class Cat(Hero):
 
 
 class Enemy(Character):
-
     def __init__(self, name, hp, pos, damage, fps):
         super().__init__(hp, pos, damage, fps)
         self.name = name
@@ -218,10 +216,15 @@ class Enemy(Character):
                 for filename in filenames:
                     if filename.endswith(".png"):
                         file_count += 1
-            self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
+            # self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
+            for j in range(file_count):
+                temp_surf = pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha()
+                orig_height = temp_surf.get_height()
+                orig_width = temp_surf.get_width()
+                print(orig_width, orig_height)
+                self.surfaces[mode][j] = temp_surf
         self.show = self.surfaces[self.show_mode][self.index]
         self.rect = self.show.get_rect(midbottom=self.pos)
-        print(self.rect)
 
 
 class Crabby(Enemy):
@@ -255,6 +258,7 @@ class Crabby(Enemy):
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("EGG DEFENSE")
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
 
