@@ -1,5 +1,5 @@
-import pygame, sys, random
-
+import pygame, sys, random, os
+mode2index = {"Run":0, "Attack":1, "Hit":2, "Dead":3}
 coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
@@ -12,28 +12,24 @@ def pos2coord(pos):
     return x, y
 
 class Character:
-    def __init__(self, hp, pos, damage, surface, fps):
+    def __init__(self, hp, pos, damage, fps):
         self.hp = hp
         self.pos = pos
         self.damage = damage
-        self.surface = [pygame.image.load(f"image/{surface[0]}/{surface[1]}/{surface[1]}{i}.png").convert_alpha() for i in range(surface[2]+1)]
-        self.rect = self.surface[0].get_rect(midbottom=self.pos)
-        self.show = self.surface[0]
         self.index = 0
         self.fps = fps
 
 class Hero(Character):
     def __init__(self, hp, pos, damage, surface, fps):
         self.characterSide = "hero"
-        super().__init__(hp, pos, damage, (self.characterSide, surface[0], surface[1]), fps)
+        super().__init__(hp, pos, damage, fps)
+        self.surface = [pygame.image.load(f"image/{self.characterSide}/{surface[0]}/{surface[0]}{i}.png").convert_alpha() for i in range(surface[1] + 1)]
+        self.rect = self.surface[0].get_rect(midbottom=self.pos)
+        self.show = self.surface[0]
         x, y = pos2coord(self.pos)
         self.coord = (x, y)
         self.round = 0
 
-class Enemy(Character):
-    def __init__(self, hp, pos, damage, file, speed):
-        super().__init__(hp, pos, damage, file)
-        self.speed = speed
 
 class Bullet:
     def __init__(self, rect, surface, side, damage, speed_x, speed_y=0):
@@ -204,6 +200,35 @@ class Cat(Hero):
             rule.hp = rule.hp+0.05 if rule.hp <= 100 else rule.hp
 
 
+class Enemy(Character):
+
+    def __init__(self, name, hp, pos, damage, fps):
+        super().__init__(hp, pos, damage, fps)
+        self.name = name
+        self.characterSide = "enemy"
+        self.show_mode = "Run"
+        # 專案路徑
+        self.surfaces = [[], [], [], []]
+        all_mode = ["Run", "Attack", "Hit", "Dead"]
+        for i, mode in enumerate(all_mode):
+            project_dir = f"image/{self.characterSide}/{name}/{mode}"
+            file_count = 0
+            for folder, subfolders, filenames in os.walk(project_dir):
+                for filename in filenames:
+                    if filename.endswith(".png"):
+                        file_count += 1
+            self.surfaces[i] = [pygame.image.load(f'{project_dir}/{str(j+1)}.png').convert_alpha() for j in range(file_count)]
+
+
+class Crabby(Enemy):
+    def __init__(self, pos):
+        name = Crabby
+        hp = 300
+        damage = 30
+        fps = 90
+        super().__init__(name, hp, pos, damage, fps)
+
+
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
@@ -213,8 +238,10 @@ heroes = []
 heroesFPS = []
 heroesBullet = []
 heroesBulletFPS = []
+enemies = []
+enemiesFPS = []
 FPSCounter = 0
-
+all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
 all_heroes = ["dog", "frog", "bird", "mushroom", "rino", "cat"]
 
 def create_hero(animal, x, y):
