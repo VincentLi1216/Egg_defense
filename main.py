@@ -268,6 +268,17 @@ def create_hero(animal, x, y):
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes[-1].fps)
     FPSCounter += 1
 
+def create_enemy(name, x, y):
+    match(name):
+        case "Crabby":
+            enemies.append(Crabby((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+
+
+    global FPSCounter
+    enemiesFPS.append(pygame.USEREVENT + FPSCounter)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
+    FPSCounter += 1
+create_enemy("Crabby", 3, 4)
 def bullet_update():
     global FPSCounter
     for rule in heroes:
@@ -283,45 +294,54 @@ def bullet_update():
             if bullet.rect.left >= 1280:
                 heroesBullet.remove(bullet)
 
-while True:
-    screen.blit(bg_surface, (0, 0))
-    for rule in heroes:
-        if rule.hp <= 0 and (not rule.isDead):
-            rule.index = 0
-            rule.isDead = True
-        if rule.animal == "cat":
-            rule.skill()
-        else:
-            print(rule.hp)
+def main():
+    while True:
+        screen.blit(bg_surface, (0, 0))
+        for rule in heroes:
+            if rule.hp <= 0 and (not rule.isDead):
+                rule.index = 0
+                rule.isDead = True
+            if rule.animal == "cat":
+                rule.skill()
+            else:
+                print(rule.hp)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        for index, ruleFPS in enumerate(heroesFPS):
-            if event.type == ruleFPS:
-                heroes[index].animation()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-            # print(x, y)
-            if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
-                x, y = pos2coord(event.pos)
-                if not coordinate[x][y]:
-                    animal = random.choice(all_heroes)
-                    create_hero(animal, x, y)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            for index, ruleFPS in enumerate(heroesFPS):
+                if event.type == ruleFPS:
+                    heroes[index].animation()
 
-    bullet_update()
-    for bullet in heroesBullet:
-        screen.blit(bullet.show, bullet.rect)
+            # for index, ruleFPS in enumerate(enemiesFPS):
+            #     if event.type == ruleFPS:
+            #         enemies[index].animation()
 
-    for rule in heroes:
-        screen.blit(rule.show, rule.rect)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                # print(x, y)
+                if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
+                    x, y = pos2coord(event.pos)
+                    if not coordinate[x][y]:
+                        animal = random.choice(all_heroes)
+                        create_hero(animal, x, y)
 
-    for index, rule in enumerate(heroes):
-        if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0]-1)):
-            heroes.remove(rule)
-            coordinate[rule.coord[0]][rule.coord[1]] = 0
-            heroesFPS.remove(heroesFPS[index])
+        bullet_update()
+        for bullet in heroesBullet:
+            screen.blit(bullet.show, bullet.rect)
 
-    pygame.display.update()
-    clock.tick(90)
+        for rule in heroes:
+            screen.blit(rule.show, rule.rect)
+
+        for index, rule in enumerate(heroes):
+            if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0]-1)):
+                heroes.remove(rule)
+                coordinate[rule.coord[0]][rule.coord[1]] = 0
+                heroesFPS.remove(heroesFPS[index])
+
+        pygame.display.update()
+        clock.tick(90)
+
+if __name__ == "__main__":
+    main()
