@@ -1,29 +1,31 @@
-import pygame, sys
+class A:
+    def __init__(self):
+        print('Initializing: class A')
 
-pygame.init()
+    def sub_method(self, b):
+        print('Printing from class A:', b)
 
-# 設定視窗
-width, height = 640, 480
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption("Sean's game")
-bg = pygame.Surface(screen.get_size())
-bg = bg.convert()
-bg.fill((255, 255, 255))
 
-clock = pygame.time.Clock()  # 建立時間元件
-surf = pygame.image.load(f'image/enemy/crabby/02-Run/Run 01.png').convert_alpha()
+class B(A):
+    def __init__(self):
+        print('Initializing: class B')
+        super().__init__()
 
-rect = surf.get_rect(center=(100, 100))
+    def sub_method(self, b):
+        print('Printing from class B:', b)
+        super().sub_method(b + 1)
 
-# 關閉程式的程式碼
-running = True
-while running:
-    clock.tick(90)  # 每秒執行30次
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    screen.blit(bg, (0, 0))  # 重繪視窗
-    screen.blit(surf, rect)
-    pygame.display.update()  # 更新視窗
 
-pygame.quit()
+class C(B):
+    def __init__(self):
+        print('Initializing: class C')
+        super().__init__()
+
+    def sub_method(self, b):
+        print('Printing from class C:', b)
+        super().sub_method(b + 1)
+
+
+if __name__ == '__main__':
+    c = C()
+    c.sub_method(1)

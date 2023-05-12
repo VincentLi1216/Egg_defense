@@ -44,6 +44,14 @@ class Bullet:
         self.side = side
         self.damage = damage
 
+class Enemy_bullet:
+    def __init__(self, rect, path, damage, bullet_speed):
+        self.rect = rect
+        self.name = name
+        self.surface = pygame.image.load(path).convert_alpha()
+        self.damage = damage
+        self.bullet_speed = bullet_speed
+
 class Dog(Hero):
     def __init__(self, hp, pos, damage):
         self.characterAnimation = [(0, 11), (12, 18)]
@@ -200,14 +208,17 @@ class Cat(Hero):
 
 
 class Enemy(Character):
-    def __init__(self, name, hp, pos, damage, speed, fps):
+    def __init__(self, name, hp, pos, damage, speed, fps, attack_fps):
         super().__init__(hp, pos, damage, fps)
         self.name = name
         self.characterSide = "enemy"
         self.show_mode = "Run"
         self.speed = speed;
+        self.attack_fps = attack_fps
         self.is_dead = False
         self.is_dead_load = False
+        self.mode_change_enable = True
+        self.indexes_show_after_dead = 10
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         for i, mode in enumerate(all_mode):
@@ -221,168 +232,128 @@ class Enemy(Character):
         self.show = self.surfaces[self.show_mode][self.index]
         self.rect = self.show.get_rect(midbottom=self.pos)
 
+    # for the animation of the character
+    def animation(self, mode, attack_moving_speed = -5):
+            # if the mode change (different from the last time)
+            if mode != self.show_mode:
+                # if the character is dead then it's always sticks on the mode "Dead"
+                if self.hp > 0:
+                    # if the mode_change_enable is True which means that the other mode was loop over
+                    if self.mode_change_enable:
+                        self.index = 0
+                        self.show_mode = mode
+                else:
+                    self.show_mode = "Dead"
+
+            if self.hp <= 0:
+                # load for the first time
+                if not self.is_dead_load:
+                    self.index = 0
+                    self.show_mode = "Dead"
+                    self.is_dead_load = True
+                # if the dead animation is over
+                if self.index >= len(self.surfaces["Dead"]) - 1:
+                    self.index += 1
+                    # wait for indexes_show_after_dead amount of time
+                    if self.index >= (len(self.surfaces["Dead"]) - 1 + self.indexes_show_after_dead):
+                        self.is_dead = True
+                        # print(f"{self.characterSide} {self.name} is dead")
+                else:
+                    self.index += 1
+            else:
+                # show different animation depends on the self.show_mode
+                match self.show_mode:
+                    case "Run":
+                        self.rect.x += self.speed
+                        if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                            self.index = 0
+                        else:
+                            self.index += 1
+
+                    case "Attack":
+                        self.rect.x += attack_moving_speed
+                        # if the attack animation is over then enable self.mode_change_enable = True
+                        if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                            self.index = 0
+                            self.mode_change_enable = True
+                        else:
+                            self.mode_change_enable = False
+                            self.index += 1
+            # change surface for the character each and every time, if the self.index is greater than the length of "Dead", set it to the length of "Dead"
+            self.show = self.surfaces[self.show_mode][
+                self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
+
 
 class Crabby(Enemy):
     def __init__(self, pos):
         name = "Crabby"
-        hp = 300
-        damage = 30
+        hp = 200
+        damage = 50
         fps = 90
         speed = -5
+        attack_fps = 1000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
-        super().__init__(name, hp, pos, damage, speed, fps)
+    def animation(self, mode):
+        super().animation(mode)
 
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (len(self.surfaces[self.show_mode])-1):
-                self.index = 0
-            else:
-                self.index += 1
-        # else:
-        #     if not self.load_dead:
-        #         # print("load")
-        #         self.surface = [
-        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
-        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
-        #         self.load_dead = True
-        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
-        #         pass
-        #     else:
-        #         self.index += 1
-
-        self.show = self.surfaces[self.show_mode][self.index]
-        # self.rect = self.show.get_rect(midbottom=self.pos)
-        self.rect.x += self.speed
 
 class Fierce_Tooth(Enemy):
     def __init__(self, pos):
         name = "Fierce Tooth"
-        hp = 300
+        hp = 200
         damage = 30
         fps = 90
-        speed = -5
+        speed = -7
+        attack_fps = 1000
 
-        super().__init__(name, hp, pos, damage, speed, fps)
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (len(self.surfaces[self.show_mode])-1):
-                self.index = 0
-            else:
-                self.index += 1
-        # else:
-        #     if not self.load_dead:
-        #         # print("load")
-        #         self.surface = [
-        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
-        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
-        #         self.load_dead = True
-        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
-        #         pass
-        #     else:
-        #         self.index += 1
-
-        self.show = self.surfaces[self.show_mode][self.index]
-        # self.rect = self.show.get_rect(midbottom=self.pos)
-        self.rect.x += self.speed
+    def animation(self, mode):
+        super().animation(mode)
 
 class Pink_Star(Enemy):
     def __init__(self, pos):
         name = "Pink Star"
-        hp = 300
+        hp = 100
         damage = 30
         fps = 90
         speed = -5
+        attack_fps = 1000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
-        super().__init__(name, hp, pos, damage, speed, fps)
-
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (len(self.surfaces[self.show_mode])-1):
-                self.index = 0
-            else:
-                self.index += 1
-        # else:
-        #     if not self.load_dead:
-        #         # print("load")
-        #         self.surface = [
-        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
-        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
-        #         self.load_dead = True
-        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
-        #         pass
-        #     else:
-        #         self.index += 1
-
-        self.show = self.surfaces[self.show_mode][self.index]
-        # self.rect = self.show.get_rect(midbottom=self.pos)
-        self.rect.x += self.speed
+    def animation(self, mode):
+        attack_moving_speed = -30
+        super().animation(mode,attack_moving_speed)
 
 class Seashell(Enemy):
     def __init__(self, pos):
         name = "Seashell"
-        hp = 300
+        hp = 200
         damage = 30
         fps = 90
-        speed = -15
-        self.destination = 1150
+        speed = -1
+        attack_fps = 1000
 
-        super().__init__(name, hp, pos, damage, speed, fps)
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (len(self.surfaces[self.show_mode])-1):
-                self.index = 0
-            else:
-                self.index += 1
-        # else:
-        #     if not self.load_dead:
-        #         # print("load")
-        #         self.surface = [
-        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
-        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
-        #         self.load_dead = True
-        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
-        #         pass
-        #     else:
-        #         self.index += 1
-
-        self.show = self.surfaces[self.show_mode][self.index]
-        # self.rect = self.show.get_rect(midbottom=self.pos)
-        if self.rect.x >= self.destination:
-            self.rect.x += self.speed
+    def animation(self, mode):
+        super().animation(mode)
 
 class Whale(Enemy):
     def __init__(self, pos):
         name = "Whale"
-        hp = 300
+        hp = 200
         damage = 30
         fps = 90
-        speed = -5
+        speed = -2
+        attack_fps = 2000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
-        super().__init__(name, hp, pos, damage, speed, fps)
+    def animation(self, mode):
+        attack_moving_speed = -7
+        super().animation(mode, attack_moving_speed)
 
-    def animation(self):
-        if self.hp > 0:
-            if self.index == (len(self.surfaces[self.show_mode])-1):
-                self.index = 0
-            else:
-                self.index += 1
-        # else:
-        #     if not self.load_dead:
-        #         # print("load")
-        #         self.surface = [
-        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
-        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
-        #         self.load_dead = True
-        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
-        #         pass
-        #     else:
-        #         self.index += 1
-
-        self.show = self.surfaces[self.show_mode][self.index]
-        # self.rect = self.show.get_rect(midbottom=self.pos)
-        self.rect.x += self.speed
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
@@ -395,6 +366,9 @@ heroesBullet = []
 heroesBulletFPS = []
 enemies = []
 enemiesFPS = []
+enemies_attackFPS = []
+enemies_bullet = []
+enemies_bulletFPS = []
 FPSCounter = 0
 all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
 all_heroes = ["dog", "frog", "bird", "mushroom", "rino", "cat"]
@@ -424,7 +398,7 @@ def create_hero(animal, x, y):
     FPSCounter += 1
 
 def create_enemy(name, row):
-    default_x = 1350
+    default_x = 1370
     match(name):
         case "Crabby":
             enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
@@ -442,12 +416,16 @@ def create_enemy(name, row):
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
     FPSCounter += 1
+    enemies_attackFPS.append(pygame.USEREVENT + FPSCounter)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].attack_fps)
+    FPSCounter += 1
 
-create_enemy("Crabby", 0)
+create_enemy("Pink Star", 0)
 create_enemy("Fierce Tooth", 1)
-create_enemy("Pink Star", 2)
-create_enemy("Seashell", 3)
-create_enemy("Whale", 4)
+create_enemy("Crabby", 2)
+create_enemy("Whale", 3)
+create_enemy("Seashell", 4)
+
 def bullet_update():
     global FPSCounter
     for rule in heroes:
@@ -456,6 +434,19 @@ def bullet_update():
             if rule.index == (len(rule.surface)//2):
                 heroesBullet.append(
                 Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
+
+    if heroesBullet:
+        for bullet in heroesBullet:
+            bullet.rect.centerx += bullet.speed_x
+            if bullet.rect.left >= 1280:
+                heroesBullet.remove(bullet)
+
+def enemy_bullet_update():
+    global FPSCounter
+    for rule in enemies:
+        if rule.name in ("Seashell") and rule.show_mode == "Attack" and rule.index == 0:
+            heroesBullet.append(
+                    Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
 
     if heroesBullet:
         for bullet in heroesBullet:
@@ -486,7 +477,13 @@ def main():
 
             for index, ruleFPS in enumerate(enemiesFPS):
                 if event.type == ruleFPS:
-                    enemies[index].animation()
+                    enemies[index].hp -= 1
+                    enemies[index].animation("Run")
+
+            for index, ruleFPS in enumerate(enemies_attackFPS):
+                if event.type == ruleFPS:
+                    enemies[index].hp -= 1
+                    enemies[index].animation("Attack")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
@@ -512,6 +509,12 @@ def main():
                 heroes.remove(rule)
                 coordinate[rule.coord[0]][rule.coord[1]] = 0
                 heroesFPS.remove(heroesFPS[index])
+
+        for index, rule in enumerate(enemies):
+            if rule.is_dead:
+                enemies.remove(rule)
+                enemiesFPS.remove(enemiesFPS[index])
+                enemies_attackFPS.remove(enemies_attackFPS[index])
 
         pygame.display.update()
         clock.tick(90)
