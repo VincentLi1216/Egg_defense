@@ -360,8 +360,11 @@ class Whale(Enemy):
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
+pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
+cursor_surface = pygame.image.load("image/cursor/cursor_grab.png").convert_alpha()
+cursor_rect = cursor_surface.get_rect()
 
 heroes = []
 heroesFPS = []
@@ -523,6 +526,8 @@ def main():
                 enemiesFPS.remove(enemiesFPS[index])
                 enemies_attackFPS.remove(enemies_attackFPS[index])
 
+        cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+        screen.blit(cursor_surface, cursor_rect)  # draw the cursor
         pygame.display.update()
         clock.tick(90)
 
