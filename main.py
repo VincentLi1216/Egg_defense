@@ -207,26 +207,50 @@ class Enemy(Character):
         self.name = name
         self.characterSide = "enemy"
         self.show_mode = "Run"
-        # 專案路徑
-        self.surfaces = [[], [], [], []]
+        self.is_dead = False
+        self.is_dead_load = False
+        self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         for i, mode in enumerate(all_mode):
-            project_dir = f"image/{self.characterSide}/{name}/{mode}"
+            project_dir = f"image/{self.characterSide}/{self.name}/{mode}"
             file_count = 0
-            for folder, subfolders, filenames in os.walk(project_dir):
+            for folder, _, filenames in os.walk(project_dir):
                 for filename in filenames:
                     if filename.endswith(".png"):
                         file_count += 1
-            self.surfaces[i] = [pygame.image.load(f'{project_dir}/{str(j+1)}.png').convert_alpha() for j in range(file_count)]
+            self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
+        self.show = self.surfaces[self.show_mode][self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
+        print(self.rect)
 
 
 class Crabby(Enemy):
     def __init__(self, pos):
-        name = Crabby
+        name = "Crabby"
         hp = 300
         damage = 30
         fps = 90
         super().__init__(name, hp, pos, damage, fps)
+
+    def animation(self):
+        if self.hp > 0:
+            if self.index == (len(self.surfaces[self.show_mode])-1):
+                self.index = 0
+            else:
+                self.index += 1
+        # else:
+        #     if not self.load_dead:
+        #         # print("load")
+        #         self.surface = [
+        #             pygame.image.load(f"image/{self.characterSide}/{self.name}/{self.show_mode}/{i}.png").convert_alpha()
+        #             for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1])]
+        #         self.load_dead = True
+        #     if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0] - 1):
+        #         pass
+        #     else:
+        #         self.index += 1
+        self.show = self.surfaces[self.show_mode][self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
 
 
 pygame.init()
@@ -273,12 +297,12 @@ def create_enemy(name, x, y):
         case "Crabby":
             enemies.append(Crabby((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
 
-
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
     FPSCounter += 1
-create_enemy("Crabby", 3, 4)
+
+create_enemy("Crabby", 2, 2)
 def bullet_update():
     global FPSCounter
     for rule in heroes:
@@ -314,9 +338,9 @@ def main():
                 if event.type == ruleFPS:
                     heroes[index].animation()
 
-            # for index, ruleFPS in enumerate(enemiesFPS):
-            #     if event.type == ruleFPS:
-            #         enemies[index].animation()
+            for index, ruleFPS in enumerate(enemiesFPS):
+                if event.type == ruleFPS:
+                    enemies[index].animation()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
@@ -333,6 +357,9 @@ def main():
 
         for rule in heroes:
             screen.blit(rule.show, rule.rect)
+        for rule in enemies:
+            screen.blit(rule.show, rule.rect)
+
 
         for index, rule in enumerate(heroes):
             if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0]-1)):
