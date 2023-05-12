@@ -356,7 +356,6 @@ bg_surface = pygame.image.load('image/backgroud.png').convert()
 heroes = []
 heroesFPS = []
 heroesBullet = []
-heroesBulletFPS = []
 FPSCounter = 0
 
 all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
