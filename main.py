@@ -327,20 +327,21 @@ def create_hero(animal, x, y):
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes[-1].fps)
     FPSCounter += 1
 
-def create_enemy(name, x, y):
+def create_enemy(name, row):
+    default_x = 1350
     match(name):
         case "Crabby":
-            enemies.append(Crabby((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+            enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
         case "Fierce Tooth":
-            enemies.append(Fierce_Tooth((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+            enemies.append(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
 
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
     FPSCounter += 1
 
-# create_enemy("Crabby", 3, 8)
-create_enemy("Fierce Tooth", 4, 8)
+create_enemy("Crabby", 3)
+create_enemy("Fierce Tooth", 2)
 def bullet_update():
     global FPSCounter
     for rule in heroes:
