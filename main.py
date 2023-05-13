@@ -17,7 +17,7 @@ class Character:
         self.pos = pos
         self.damage = damage
         self.index = 0
-        self.fps = fps
+        self.fps = fpsgit
 
 class Hero(Character):
     def __init__(self, hp, pos, damage, surface, fps):
@@ -299,6 +299,8 @@ class Crabby(Enemy):
 
     def animation(self, mode):
         super().animation(mode)
+        # brighten = 128
+        # self.surfaces["Run"][0].fill((brighten, brighten, brighten), special_flags=pygame.BLEND_RGB_ADD)
 
 
 class Fierce_Tooth(Enemy):
@@ -363,7 +365,7 @@ pygame.display.set_caption("EGG DEFENSE")
 pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
-cursor_surface = pygame.image.load("image/cursor/cursor_grab.png").convert_alpha()
+cursor_surface = pygame.image.load("image/cursor/hand.png").convert_alpha()
 cursor_rect = cursor_surface.get_rect()
 
 heroes = []
@@ -503,15 +505,17 @@ def main():
 
         bullet_update()
         enemy_bullet_update()
-        for bullet in heroesBullet:
-            screen.blit(bullet.show, bullet.rect)
-        for bullet in enemies_bullet:
-            screen.blit(bullet.surface, bullet.rect)
+
 
         for rule in heroes:
             screen.blit(rule.show, rule.rect)
         for rule in enemies:
             screen.blit(rule.show, rule.rect)
+
+        for bullet in heroesBullet:
+            screen.blit(bullet.show, bullet.rect)
+        for bullet in enemies_bullet:
+            screen.blit(bullet.surface, bullet.rect)
 
 
         for index, rule in enumerate(heroes):
