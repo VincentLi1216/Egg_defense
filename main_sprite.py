@@ -27,7 +27,7 @@ class Hero(Character):
         self.surface = [pygame.image.load(f"image/{self.characterSide}/{surface[0]}/{surface[0]}{i}.png").convert_alpha()
                         for i in range(surface[1] + 1)]
         self.rect = self.surface[0].get_rect(midbottom=self.pos)
-        self.show = self.surface[0]
+        self.image = self.surface[0]
         x, y = pos2coord(self.pos)
         self.coord = (x, y)
         self.round = 0
@@ -47,8 +47,8 @@ class Bullet(pygame.sprite.Sprite):
             self.surface = [pygame.image.load(f"image/{side}/{self.name}/{surface[0]}_{self.name}.png").convert_alpha()]
         else:
             self.surface = [pygame.image.load(f"image/{side}/{self.name}/{surface[0]}_{self.name}{index}.png").convert_alpha()]
-        self.show = self.surface[0]
-        self.rect = self.show.get_rect(center=rect.center)
+        self.image = self.surface[0]
+        self.rect = self.image.get_rect(center=rect.center)
         self.speed_x = speed_x
         self.speed_y = speed_y
         self.side = side
@@ -83,8 +83,8 @@ class Dog(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
 class Frog(Hero):
     def __init__(self, hp, pos, damage):
@@ -103,8 +103,8 @@ class Frog(Hero):
             else:
                 self.index += 1
             self.hp -= 2
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
 class Bird(Hero):
     def __init__(self, hp, pos, damage):
@@ -123,8 +123,8 @@ class Bird(Hero):
             else:
                 self.index += 1
             self.hp -= 2
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
 class Mushroom(Hero):
     def __init__(self, hp, pos, damage):
@@ -153,8 +153,8 @@ class Mushroom(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
 class Rino(Hero):
     def __init__(self, hp, pos, damage):
@@ -173,8 +173,8 @@ class Rino(Hero):
                 self.index += 1
         else:
             self.isDead = True
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.rect.midbottom)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
         self.rect.centerx += self.speed
 
     def skill(self):
@@ -207,8 +207,8 @@ class Cat(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self):
         for rule in heroes:
@@ -241,8 +241,8 @@ class Fox(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self):
         pass
@@ -276,8 +276,8 @@ class Turtle(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self):
         pass
@@ -311,8 +311,8 @@ class Bee(Hero):
                 pass
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self, rule, direction):
         rule.round = rule.index
@@ -350,23 +350,31 @@ class Turkey(Hero):
                 self.isDead = True
             else:
                 self.index += 1
-        self.show = self.surface[self.index]
-        self.rect = self.show.get_rect(midbottom=self.rect.midbottom)
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
 
     def skill(self):
         pass
 
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-clock = pygame.time.Clock()
-bg_surface = pygame.image.load('image/backgroud.png').convert()
-
-heroes = pygame.sprite.Group()
-heroesFPS = []
-heroesBullet = pygame.sprite.Group()
-FPSCounter = 0
-
-all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
+class Guidance_block:
+    def __init__(self):
+        self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
+        self.image.fill((255, 255, 255, 128))
+        self.rect = self.image.get_rect()
+    def update(self):
+        x, y = pygame.mouse.get_pos()
+        print(x, y)
+        if (x >= 136.9868) and (x <= 136.9868 + 892.2375) and (y >= 97.6584) and (y <= 97.6584 + 623.6815):
+            x, y = pos2coord((x, y))
+            if not coordinate[x][y]:
+                self.image.fill((255, 255, 255, 40))
+                self.rect.x = y * 148.5726 + 139
+                self.rect.y = x * 124.7363 + 100
+            else:
+                self.image.fill((255, 255, 255, 0))
+        else:
+            self.image.fill((255, 255, 255, 0))
+        screen.blit(self.image, self.rect)
 
 def create_hero(animal, x, y):
     if animal == 'dog':
@@ -383,8 +391,10 @@ def create_hero(animal, x, y):
         coordinate[x][y] = 1
     elif animal == 'rino':
         heroes.add(Rino(50, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
+        coordinate[x][y] = 0
     elif animal == 'turkey':
         heroes.add(Turkey(50, (211.2731 + 148.5726 * y, 0), 12))
+        coordinate[x][y] = 0
     elif animal == 'cat':
         heroes.add(Cat(10, (211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3), 12))
         coordinate[x][y] = 1
@@ -400,7 +410,7 @@ def create_hero(animal, x, y):
 
     global FPSCounter
     heroesFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes[-1].fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes.sprites()[-1].fps)
     FPSCounter += 1
 
 def bullet_update():
@@ -409,8 +419,7 @@ def bullet_update():
         if rule.animal in ("dog", "bird", "frog") and (rule.round != rule.index):
             rule.round = rule.index
             if rule.index == (len(rule.surface)//2):
-                heroesBullet.add(
-                Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
+                heroesBullet.add(Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
 
         elif rule.animal == "bee" and (rule.round != rule.index) and True:   # True: some enemy near the bee
             rule.skill(rule, 0)
@@ -422,9 +431,22 @@ def bullet_update():
             if bullet.rect.left >= 1280:
                 bullet.kill()
 
+pygame.init()
+screen = pygame.display.set_mode((1280, 720))
+clock = pygame.time.Clock()
+bg_surface = pygame.image.load('image/backgroud.png').convert()
+
+heroes = pygame.sprite.Group()
+heroesFPS = []
+heroesBullet = pygame.sprite.Group()
+FPSCounter = 0
+
+all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
+guidance_block = Guidance_block()
+
 while True:
     screen.blit(bg_surface, (0, 0))
-    for rule in heroes:
+    for rule in heroes.sprites():
         if rule.hp <= 0 and (not rule.isDead):
             rule.index = 0
             rule.isDead = True
@@ -437,20 +459,21 @@ while True:
             sys.exit()
         for index, ruleFPS in enumerate(heroesFPS):
             if event.type == ruleFPS:
-                heroes[index].animation()
+                heroes.sprites()[index].animation()
         if event.type == pygame.MOUSEBUTTONDOWN:
             x, y = event.pos
-            if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
+            if (x >= 139) and (x <= 139+892.2375) and (y >= 100) and (y <= 100+623.6815):
                 x, y = pos2coord(event.pos)
                 if not coordinate[x][y]:
                     animal = random.choice(all_heroes)
                     create_hero(animal, x, y)
 
+    guidance_block.update()
     bullet_update()
     heroes.draw(screen)
     heroesBullet.draw(screen)
 
-    for index, rule in enumerate(heroes):
+    for index, rule in enumerate(heroes.sprites()):
         if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0])):
             rule.kill()
             coordinate[rule.coord[0]][rule.coord[1]] = 0
