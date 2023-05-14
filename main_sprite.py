@@ -370,11 +370,7 @@ class Guidance_block:
                 self.image.fill((255, 255, 255, 40))
                 self.rect.x = y * 148.5726 + 139
                 self.rect.y = x * 124.7363 + 100
-            else:
-                self.image.fill((255, 255, 255, 0))
-        else:
-            self.image.fill((255, 255, 255, 0))
-        screen.blit(self.image, self.rect)
+                screen.blit(self.image, self.rect)
 
 def create_hero(animal, x, y):
     if animal == 'dog':
