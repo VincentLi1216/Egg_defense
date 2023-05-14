@@ -363,7 +363,6 @@ class Guidance_block:
         self.rect = self.image.get_rect()
     def update(self):
         x, y = pygame.mouse.get_pos()
-        print(x, y)
         if (x >= 136.9868) and (x <= 136.9868 + 892.2375) and (y >= 97.6584) and (y <= 97.6584 + 623.6815):
             x, y = pos2coord((x, y))
             if not coordinate[x][y]:
@@ -411,7 +410,7 @@ def create_hero(animal, x, y):
 
 def bullet_update():
     global FPSCounter
-    for rule in heroes:
+    for rule in heroes.sprites():
         if rule.animal in ("dog", "bird", "frog") and (rule.round != rule.index):
             rule.round = rule.index
             if rule.index == (len(rule.surface)//2):
@@ -420,7 +419,7 @@ def bullet_update():
         elif rule.animal == "bee" and (rule.round != rule.index) and True:   # True: some enemy near the bee
             rule.skill(rule, 0)
 
-    if heroesBullet:
+    if heroesBullet.sprites():
         for bullet in heroesBullet:
             bullet.rect.centerx += bullet.speed_x
             bullet.rect.centery += bullet.speed_y
