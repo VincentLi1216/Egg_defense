@@ -1,5 +1,5 @@
 # OS or Editor folders
 .idea
-
+/.idea/
 .DS_Store
 .DS_Store?
