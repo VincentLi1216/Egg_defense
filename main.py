@@ -17,7 +17,7 @@ class Character:
         self.pos = pos
         self.damage = damage
         self.index = 0
-        self.fps = fpsgit
+        self.fps = fps
 
 class Hero(Character):
     def __init__(self, hp, pos, damage, surface, fps):
