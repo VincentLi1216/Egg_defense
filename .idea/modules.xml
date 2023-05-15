@@ -3,10 +3,14 @@
   <component name="ProjectModuleManager">
     <modules>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/project.iml" filepath="$PROJECT_DIR$/.idea/project.iml" />
 =======
       <module fileurl="file://$PROJECT_DIR$/.idea/Egg_defense.iml" filepath="$PROJECT_DIR$/.idea/Egg_defense.iml" />
 >>>>>>> reeve_sprite
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/project.iml" filepath="$PROJECT_DIR$/.idea/project.iml" />
+>>>>>>> 0350a66 (switch branches)
     </modules>
   </component>
 </project>
