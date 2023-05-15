@@ -381,6 +381,7 @@ class Enemy(Character):
         self.mode_change_enable = True
         self.indexes_show_after_dead = 10
         self.has_attacked = False
+        self.isDead = False #just for testing
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         for i, mode in enumerate(all_mode):
@@ -441,7 +442,7 @@ class Enemy(Character):
                     else:
                         self.mode_change_enable = False
                         self.index += 1
-                self.image = self.surfaces[self.show_mode][
+            self.image = self.surfaces[self.show_mode][
                 self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
 
 class Crabby(Enemy):
@@ -476,7 +477,7 @@ class Fierce_Tooth(Enemy):
 class Pink_Star(Enemy):
     def __init__(self, pos):
         name = "Pink Star"
-        hp = 100
+        hp = 30
         damage = 30
         fps = 90
         speed = -5
