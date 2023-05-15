@@ -220,8 +220,11 @@ class Cat(Hero):
         self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self):
-        for rule in heroes:
-            rule.hp = rule.hp+0.03 if rule.hp <= 100 else rule.hp
+        target = 0
+        for index in range(len(heroes.sprites())):
+            if heroes.sprites()[index].hp < heroes.sprites()[target].hp:
+                target = index
+        heroes.sprites()[target].hp = heroes.sprites()[target].hp+10 if heroes.sprites()[target].hp <= heroesHP[heroes.sprites()[target].animal] else heroes.sprites()[target].hp
 
 class Fox(Hero):
     def __init__(self, pos):
