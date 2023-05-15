@@ -1,5 +1,5 @@
-import pygame, sys, random
-
+import pygame, sys, random, os, copy
+mode2index = {"Run":0, "Attack":1, "Hit":2, "Dead":3}
 coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
@@ -23,18 +23,13 @@ class Hero(Character):
     def __init__(self, hp, pos, damage, surface, fps):
         self.characterSide = "hero"
         super().__init__(hp, pos, damage, fps)
-        self.surface = [pygame.image.load(f"image/{self.characterSide}/{surface[0]}/{surface[0]}{i}.png").convert_alpha()
-                        for i in range(surface[1] + 1)]
+        self.surface = [pygame.image.load(f"image/{self.characterSide}/{surface[0]}/{surface[0]}{i}.png").convert_alpha() for i in range(surface[1] + 1)]
         self.rect = self.surface[0].get_rect(midbottom=self.pos)
         self.show = self.surface[0]
         x, y = pos2coord(self.pos)
         self.coord = (x, y)
         self.round = 0
 
-class Enemy(Character):
-    def __init__(self, hp, pos, damage, file, speed):
-        super().__init__(hp, pos, damage, file)
-        self.speed = speed
 
 class Bullet:
     def __init__(self, rect, surface, side, damage, speed_x, speed_y=0, index=0):
@@ -51,6 +46,14 @@ class Bullet:
         self.speed_y = speed_y
         self.side = side
         self.damage = damage
+
+class Enemy_bullet:
+    def __init__(self, rect, path, damage, bullet_speed):
+        self.rect = copy.deepcopy(rect)
+        self.rect.y += 30
+        self.surface = pygame.image.load(path).convert_alpha()
+        self.damage = damage
+        self.bullet_speed = bullet_speed
 
 class Dog(Hero):
     def __init__(self, hp, pos, damage):
@@ -354,17 +357,179 @@ class Turkey(Hero):
     def skill(self):
         pass
 
+class Enemy(Character):
+    def __init__(self, name, hp, pos, damage, speed, fps, attack_fps):
+        super().__init__(hp, pos, damage, fps)
+        self.name = name
+        self.characterSide = "enemy"
+        self.show_mode = "Run"
+        self.speed = speed;
+        self.attack_fps = attack_fps
+        self.is_dead = False
+        self.is_dead_load = False
+        self.mode_change_enable = True
+        self.indexes_show_after_dead = 10
+        self.has_attacked = False
+        self.surfaces = {}
+        all_mode = ["Run", "Attack", "Hit", "Dead"]
+        for i, mode in enumerate(all_mode):
+            project_dir = f"image/{self.characterSide}/{self.name}/{mode}"
+            file_count = 0
+            for folder, _, filenames in os.walk(project_dir):
+                for filename in filenames:
+                    if filename.endswith(".png"):
+                        file_count += 1
+            self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
+        self.show = self.surfaces[self.show_mode][self.index]
+        self.rect = self.show.get_rect(midbottom=self.pos)
+
+    # for the animation of the character
+    def animation(self, mode, attack_moving_speed = -5, has_bullet = False):
+            # if the mode change (different from the last time)
+            if mode != self.show_mode:
+                # if the character is dead then it's always sticks on the mode "Dead"
+                if self.hp > 0:
+                    # if the mode_change_enable is True which means that the other mode was loop over
+                    if self.mode_change_enable:
+                        self.index = 0
+                        self.show_mode = mode
+                else:
+                    self.show_mode = "Dead"
+
+            if self.hp <= 0:
+                # load for the first time
+                if not self.is_dead_load:
+                    self.index = 0
+                    self.show_mode = "Dead"
+                    self.is_dead_load = True
+                # if the dead animation is over
+                if self.index >= len(self.surfaces["Dead"]) - 1:
+                    self.index += 1
+                    # wait for indexes_show_after_dead amount of time
+                    if self.index >= (len(self.surfaces["Dead"]) - 1 + self.indexes_show_after_dead):
+                        self.is_dead = True
+                        # print(f"{self.characterSide} {self.name} is dead")
+                else:
+                    self.index += 1
+            else:
+                # show different animation depends on the self.show_mode
+                match self.show_mode:
+                    case "Run":
+                        self.rect.x += self.speed
+                        if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                            self.index = 0
+                        else:
+                            self.index += 1
+
+                    case "Attack":
+                        self.rect.x += attack_moving_speed
+                        # if the attack animation is over then enable self.mode_change_enable = True
+                        if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                            self.index = 0
+                            self.mode_change_enable = True
+                            if has_bullet:
+                                self.has_attacked = False
+                        else:
+                            self.mode_change_enable = False
+                            self.index += 1
+            # change surface for the character each and every time, if the self.index is greater than the length of "Dead", set it to the length of "Dead"
+            self.show = self.surfaces[self.show_mode][
+                self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
+
+
+class Crabby(Enemy):
+    def __init__(self, pos):
+        name = "Crabby"
+        hp = 200
+        damage = 50
+        fps = 90
+        speed = -5
+        attack_fps = 1000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+
+    def animation(self, mode):
+        super().animation(mode)
+        # brighten = 128
+        # self.surfaces["Run"][0].fill((brighten, brighten, brighten), special_flags=pygame.BLEND_RGB_ADD)
+
+
+class Fierce_Tooth(Enemy):
+    def __init__(self, pos):
+        name = "Fierce Tooth"
+        hp = 200
+        damage = 30
+        fps = 90
+        speed = -7
+        attack_fps = 1000
+
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+
+    def animation(self, mode):
+        super().animation(mode)
+
+class Pink_Star(Enemy):
+    def __init__(self, pos):
+        name = "Pink Star"
+        hp = 100
+        damage = 30
+        fps = 90
+        speed = -5
+        attack_fps = 1000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+
+    def animation(self, mode):
+        attack_moving_speed = -30
+        super().animation(mode,attack_moving_speed)
+
+class Seashell(Enemy):
+    def __init__(self, pos):
+        name = "Seashell"
+        hp = 200
+        damage = 30
+        fps = 90
+        speed = -1
+        attack_fps = 1000
+        self.bullet_speed = -8
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+
+    def animation(self, mode):
+        super().animation(mode, has_bullet=True)
+
+class Whale(Enemy):
+    def __init__(self, pos):
+        name = "Whale"
+        hp = 200
+        damage = 30
+        fps = 90
+        speed = -2
+        attack_fps = 2000
+        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+
+    def animation(self, mode):
+        attack_moving_speed = -7
+        super().animation(mode, attack_moving_speed)
+
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
+pygame.display.set_caption("EGG DEFENSE")
+pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
+cursor_surface = pygame.image.load("image/cursor/hand.png").convert_alpha()
+cursor_rect = cursor_surface.get_rect()
 
 heroes = []
 heroesFPS = []
 heroesBullet = []
+heroesBulletFPS = []
+enemies = []
+enemiesFPS = []
+enemies_attackFPS = []
+enemies_bullet = []
+enemies_bulletFPS = []
 FPSCounter = 0
-
-all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
+all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
+all_heroes = ["dog", "frog", "bird", "mushroom", "rino", "cat"]
 
 def create_hero(animal, x, y):
     if animal == 'dog':
@@ -401,6 +566,35 @@ def create_hero(animal, x, y):
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes[-1].fps)
     FPSCounter += 1
 
+def create_enemy(name, row):
+    default_x = 1370
+    match(name):
+        case "Crabby":
+            enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Fierce Tooth":
+            enemies.append(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Pink Star":
+            enemies.append(Pink_Star((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Seashell":
+            enemies.append(Seashell((default_x, 222.3947 + 124.7363 * row - 3)))
+        case "Whale":
+            enemies.append(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
+
+
+    global FPSCounter
+    enemiesFPS.append(pygame.USEREVENT + FPSCounter)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
+    FPSCounter += 1
+    enemies_attackFPS.append(pygame.USEREVENT + FPSCounter)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].attack_fps)
+    FPSCounter += 1
+
+create_enemy("Pink Star", 0)
+create_enemy("Fierce Tooth", 1)
+create_enemy("Crabby", 2)
+create_enemy("Whale", 3)
+create_enemy("Seashell", 4)
+
 def bullet_update():
     global FPSCounter
     for rule in heroes:
@@ -420,42 +614,91 @@ def bullet_update():
             if bullet.rect.left >= 1280:
                 heroesBullet.remove(bullet)
 
-while True:
-    screen.blit(bg_surface, (0, 0))
-    for rule in heroes:
-        if rule.hp <= 0 and (not rule.isDead):
-            rule.index = 0
-            rule.isDead = True
-        if rule.animal not in ("bird", "frog", "dog", "mushroom", "bee"):
-            rule.skill()
+def enemy_bullet_update():
+    global FPSCounter
+    for rule in enemies:
+        if rule.name in ("Seashell") and rule.show_mode == "Attack" and not rule.has_attacked:
+            enemies_bullet.append(
+                    Enemy_bullet(rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
+            rule.has_attacked = True
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-        for index, ruleFPS in enumerate(heroesFPS):
-            if event.type == ruleFPS:
-                heroes[index].animation()
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            x, y = event.pos
-            if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
-                x, y = pos2coord(event.pos)
-                if not coordinate[x][y]:
-                    animal = random.choice(all_heroes)
-                    create_hero(animal, x, y)
+    if enemies_bullet:
+        for bullet in enemies_bullet:
+            bullet.rect.x += bullet.bullet_speed
+            if bullet.rect.right <= 0:
+                enemies_bullet.remove(bullet)
 
-    for rule in heroes:
-        screen.blit(rule.show, rule.rect)
+def main():
+    while True:
+        screen.blit(bg_surface, (0, 0))
+        for rule in heroes:
+            if rule.hp <= 0 and (not rule.isDead):
+                rule.index = 0
+                rule.isDead = True
+            if rule.animal == "cat":
+                rule.skill()
+            else:
+                pass
+                # print(rule.hp)
 
-    bullet_update()
-    for bullet in heroesBullet:
-        screen.blit(bullet.show, bullet.rect)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            for index, ruleFPS in enumerate(heroesFPS):
+                if event.type == ruleFPS:
+                    heroes[index].animation()
 
-    for index, rule in enumerate(heroes):
-        if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0])):
-            heroes.remove(rule)
-            coordinate[rule.coord[0]][rule.coord[1]] = 0
-            heroesFPS.remove(heroesFPS[index])
+            for index, ruleFPS in enumerate(enemiesFPS):
+                if event.type == ruleFPS:
+                    enemies[index].hp -= 1
+                    enemies[index].animation("Run")
 
-    pygame.display.update()
-    clock.tick(90)
+            for index, ruleFPS in enumerate(enemies_attackFPS):
+                if event.type == ruleFPS:
+                    enemies[index].hp -= 1
+                    enemies[index].animation("Attack")
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = event.pos
+                # print(x, y)
+                if (x >= 136.9868) and (x <= 136.9868+892.2375) and (y >= 97.6584) and (y <= 97.6584+623.6815):
+                    x, y = pos2coord(event.pos)
+                    if not coordinate[x][y]:
+                        animal = random.choice(all_heroes)
+                        create_hero(animal, x, y)
+
+        bullet_update()
+        enemy_bullet_update()
+
+
+        for rule in heroes:
+            screen.blit(rule.show, rule.rect)
+        for rule in enemies:
+            screen.blit(rule.show, rule.rect)
+
+        for bullet in heroesBullet:
+            screen.blit(bullet.show, bullet.rect)
+        for bullet in enemies_bullet:
+            screen.blit(bullet.surface, bullet.rect)
+
+
+        for index, rule in enumerate(heroes):
+            if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (rule.characterAnimation[1][1]-rule.characterAnimation[1][0]-1)):
+                heroes.remove(rule)
+                coordinate[rule.coord[0]][rule.coord[1]] = 0
+                heroesFPS.remove(heroesFPS[index])
+
+        for index, rule in enumerate(enemies):
+            if rule.is_dead:
+                enemies.remove(rule)
+                enemiesFPS.remove(enemiesFPS[index])
+                enemies_attackFPS.remove(enemies_attackFPS[index])
+
+        cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+        screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+        pygame.display.update()
+        clock.tick(90)
+
+if __name__ == "__main__":
+    main()
