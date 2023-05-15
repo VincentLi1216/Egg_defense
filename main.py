@@ -438,27 +438,7 @@ class Enemy(Character):
                     else:
                         self.mode_change_enable = False
                         self.index += 1
-                # match self.show_mode:
-                #     case "Run":
-                #         self.rect.x += self.speed
-                #         if self.index == (len(self.surfaces[self.show_mode]) - 1):
-                #             self.index = 0
-                #         else:
-                #             self.index += 1
-                #
-                #     case "Attack":
-                #         self.rect.x += attack_moving_speed
-                #         # if the attack animation is over then enable self.mode_change_enable = True
-                #         if self.index == (len(self.surfaces[self.show_mode]) - 1):
-                #             self.index = 0
-                #             self.mode_change_enable = True
-                #             if has_bullet:
-                #                 self.has_attacked = False
-                #         else:
-                #             self.mode_change_enable = False
-                #             self.index += 1
-            # change surface for the character each and every time, if the self.index is greater than the length of "Dead", set it to the length of "Dead"
-            self.show = self.surfaces[self.show_mode][
+                self.show = self.surfaces[self.show_mode][
                 self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
 
 class Crabby(Enemy):
@@ -532,20 +512,21 @@ class Whale(Enemy):
         attack_moving_speed = -7
         super().animation(mode, attack_moving_speed)
 
-class Guidance_block:
-    def __init__(self):
-        self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
-        self.image.fill((255, 255, 255, 128))
-        self.rect = self.image.get_rect()
-    def update(self):
-        x, y = pygame.mouse.get_pos()
-        if (x >= 136.9868) and (x <= 136.9868 + 892.2375) and (y >= 97.6584) and (y <= 97.6584 + 623.6815):
-            x, y = pos2coord((x, y))
-            if not coordinate[x][y]:
-                self.image.fill((255, 255, 255, 40))
-                self.rect.x = y * 148.5726 + 139
-                self.rect.y = x * 124.7363 + 100
-                screen.blit(self.image, self.rect)
+# class Guidance_block:
+#     def __init__(self):
+#         self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
+#         self.image.fill((255, 255, 255, 128))
+#         self.rect = self.image.get_rect()
+#     def update(self):
+#         x, y = pygame.mouse.get_pos()
+#         print(x, y)
+#         if (x >= 136.9868) and (x <= 136.9868 + 892.2375) and (y >= 97.6584) and (y <= 97.6584 + 623.6815):
+#             x, y = pos2coord((x, y))
+#             if not coordinate[x][y]:
+#                 self.image.fill((255, 255, 255, 40))
+#                 self.rect.x = y * 148.5726 + 139
+#                 self.rect.y = x * 124.7363 + 100
+#                 screen.blit(self.image, self.rect)
 
 def create_hero(animal, x, y):
     if animal == 'dog':
@@ -673,7 +654,7 @@ FPSCounter = 0
 
 all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
 all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
-guidance_block = Guidance_block()
+# guidance_block = Guidance_block()
 
 create_enemy("Pink Star", 0)
 create_enemy("Fierce Tooth", 1)
@@ -717,7 +698,7 @@ def main():
                         animal = random.choice(all_heroes)
                         create_hero(animal, x, y)
 
-        guidance_block.update()
+        # guidance_block.update()
         bullet_update()
         enemy_bullet_update()
         heroes.draw(screen)
