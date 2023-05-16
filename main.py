@@ -1,5 +1,4 @@
 import pygame, sys, random, os, copy
-mode2index = {"Run":0, "Attack":1, "Hit":2, "Dead":3}
 coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
@@ -55,11 +54,12 @@ class Bullet(pygame.sprite.Sprite):
         self.side = side
         self.damage = damage
 
-class Enemy_bullet:
+class Enemy_bullet(pygame.sprite.Sprite):
     def __init__(self, rect, path, damage, bullet_speed):
+        super().__init__()
         self.rect = copy.deepcopy(rect)
         self.rect.y += 30
-        self.surface = pygame.image.load(path).convert_alpha()
+        self.image = pygame.image.load(path).convert_alpha()
         self.damage = damage
         self.bullet_speed = bullet_speed
 
@@ -381,6 +381,7 @@ class Enemy(Character):
         self.mode_change_enable = True
         self.indexes_show_after_dead = 10
         self.has_attacked = False
+        self.isDead = False #just for testing
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         for i, mode in enumerate(all_mode):
@@ -391,8 +392,8 @@ class Enemy(Character):
                     if filename.endswith(".png"):
                         file_count += 1
             self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
-        self.show = self.surfaces[self.show_mode][self.index]
-        self.rect = self.show.get_rect(midbottom=self.pos)
+        self.image = self.surfaces[self.show_mode][self.index]
+        self.rect = self.image.get_rect(midbottom=self.pos)
 
     # for the animation of the character
     def animation(self, mode, attack_moving_speed = -5, has_bullet = False):
@@ -423,7 +424,7 @@ class Enemy(Character):
                 else:
                     self.index += 1
             else:
-                # show different animation depends on the self.show_mode
+                # image different animation depends on the self.show_mode
                 if self.show_mode == "Run":
                     self.rect.x += self.speed
                     if self.index == (len(self.surfaces[self.show_mode]) - 1):
@@ -441,7 +442,7 @@ class Enemy(Character):
                     else:
                         self.mode_change_enable = False
                         self.index += 1
-                self.show = self.surfaces[self.show_mode][
+            self.image = self.surfaces[self.show_mode][
                 self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
 
 class Crabby(Enemy):
@@ -476,7 +477,7 @@ class Fierce_Tooth(Enemy):
 class Pink_Star(Enemy):
     def __init__(self, pos):
         name = "Pink Star"
-        hp = 100
+        hp = 30
         damage = 30
         fps = 90
         speed = -5
@@ -589,30 +590,30 @@ def bullet_update():
 
 def enemy_bullet_update():
     global FPSCounter
-    for rule in enemies:
+    for rule in enemies.sprites():
         if rule.name in ("Seashell") and rule.show_mode == "Attack" and not rule.has_attacked:
-            enemies_bullet.append(
-                    Enemy_bullet(rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
+            enemies_bullet.add(Enemy_bullet(rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
             rule.has_attacked = True
 
-    if enemies_bullet:
+    if enemies_bullet.sprites():
         for bullet in enemies_bullet:
             bullet.rect.x += bullet.bullet_speed
             if bullet.rect.right <= 0:
                 enemies_bullet.remove(bullet)
+                bullet.kill()
 
 def create_enemy(name, row):
     default_x = 1370
     if name == "Crabby":
-        enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
+        enemies.add(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
     elif name == "Fierce Tooth":
-        enemies.append(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
+        enemies.add(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
     elif name == "Pink Star":
-        enemies.append(Pink_Star((default_x, 222.3947 + 124.7363 * row - 3)))
+        enemies.add(Pink_Star((default_x, 222.3947 + 124.7363 * row - 3)))
     elif name == "Seashell":
-        enemies.append(Seashell((default_x, 222.3947 + 124.7363 * row - 3)))
+        enemies.add(Seashell((default_x, 222.3947 + 124.7363 * row - 3)))
     elif name == "Whale":
-        enemies.append(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
+        enemies.add(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
 
     # match(name):
     #     case "Crabby":
@@ -629,10 +630,10 @@ def create_enemy(name, row):
 
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies.sprites()[-1].fps)
     FPSCounter += 1
     enemies_attackFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies[-1].attack_fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies.sprites()[-1].attack_fps)
     FPSCounter += 1
 
 pygame.init()
@@ -649,10 +650,12 @@ heroes = pygame.sprite.Group()
 heroesFPS = []
 heroesBullet = pygame.sprite.Group()
 
-enemies = []
+# enemies = []
+enemies = pygame.sprite.Group()
 enemiesFPS = []
 enemies_attackFPS = []
-enemies_bullet = []
+# enemies_bullet = []
+enemies_bullet = pygame.sprite.Group()
 enemies_bulletFPS = []
 FPSCounter = 0
 
@@ -680,19 +683,20 @@ def main():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
             for index, ruleFPS in enumerate(heroesFPS):
                 if event.type == ruleFPS:
                     heroes.sprites()[index].animation()
 
             for index, ruleFPS in enumerate(enemiesFPS):
                 if event.type == ruleFPS:
-                    enemies[index].hp -= 1
-                    enemies[index].animation("Run")
+                    enemies.sprites()[index].hp -= 1
+                    enemies.sprites()[index].animation("Run")
 
             for index, ruleFPS in enumerate(enemies_attackFPS):
                 if event.type == ruleFPS:
-                    enemies[index].hp -= 1
-                    enemies[index].animation("Attack")
+                    enemies.sprites()[index].hp -= 1
+                    enemies.sprites()[index].animation("Attack")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
@@ -707,12 +711,9 @@ def main():
         enemy_bullet_update()
         heroes.draw(screen)
         heroesBullet.draw(screen)
+        enemies.draw(screen)
+        enemies_bullet.draw(screen)
 
-        for rule in enemies:
-            screen.blit(rule.show, rule.rect)
-
-        for bullet in enemies_bullet:
-            screen.blit(bullet.surface, bullet.rect)
 
         for index, rule in enumerate(heroes.sprites()):
             if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (
@@ -721,11 +722,12 @@ def main():
                 coordinate[rule.coord[0]][rule.coord[1]] = 0
                 heroesFPS.remove(heroesFPS[index])
 
-        for index, rule in enumerate(enemies):
+        for index, rule in enumerate(enemies.sprites()):
             if rule.is_dead:
                 enemies.remove(rule)
                 enemiesFPS.remove(enemiesFPS[index])
                 enemies_attackFPS.remove(enemies_attackFPS[index])
+                rule.kill()
 
         cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
         screen.blit(cursor_surface, cursor_rect)  # draw the cursor
