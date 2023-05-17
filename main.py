@@ -5,7 +5,7 @@ coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0]]
 
-heroesHP = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
+heroesHP = {"dog": 100, "cat": 50, "mushroom": 100, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
@@ -227,8 +227,17 @@ class Cat(Hero):
 
     def skill(self):
         target = 0
+        while True:
+            try:
+                if heroes.sprites()[target].animal == "cat":
+                    target += 1
+                else:
+                    break
+            except:
+                target -= 1
+                break
         for index in range(len(heroes.sprites())):
-            if heroes.sprites()[index].hp < heroes.sprites()[target].hp:
+            if heroes.sprites()[index].hp < heroes.sprites()[target].hp and heroes.sprites()[index].animal != "cat":
                 target = index
         heroes.sprites()[target].hp = heroes.sprites()[target].hp+10 if heroes.sprites()[target].hp <= heroesHP[heroes.sprites()[target].animal] else heroes.sprites()[target].hp
 
