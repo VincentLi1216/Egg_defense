@@ -11,6 +11,12 @@ heroesHP = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
+cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 1000, "rino": 1000,
+            "bird": 500, "frog": 500, "fox": 1000, "turtle": 1000, "turkey": 500}
+
+cardCost = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 1000, "rino": 3000,
+            "bird": 500, "frog": 500, "fox": 700, "turtle": 1000, "turkey": 900}
+
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
     y = int((pos[0] - 136.9868) / 148.5726)
@@ -281,7 +287,7 @@ class Turtle(Hero):
             if not self.load_dead:
                 self.surface = [
                     pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
-                    for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] +1)]
+                    for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
             if self.index == (self.characterAnimation[1][1] - self.characterAnimation[1][0]):
@@ -516,6 +522,33 @@ class Whale(Enemy):
         attack_moving_speed = -7
         super().animation(mode, attack_moving_speed)
 
+class Card:
+    def __init__(self, animal):
+        # super().__init__()
+        self.animal = animal
+        self.surface = [pygame.image.load(f"image/card/card_{self.animal}{i}.png").convert_alpha() for i in range(10)]
+        self.rect = self.surface[0].get_rect(topleft=(0, 12.4222))
+        self.image = self.surface[0]
+        self.index = 0
+        self.fps = cardCD[self.animal]
+        self.cost = cardCost[self.animal]
+
+    def cdTime(self):
+        if self.index < 8:
+            self.index += 1
+        elif self.index >= 8 and energy >= self.cost:
+            self.index = 9
+        else:
+            self.index = 8
+        self.image = self.surface[self.index]
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+
+class TmpCard:
+    def __init__(self, animal, pos):
+        self.animal = animal
+        self.image = pygame.image.load(f"image/hero/{self.animal}/{self.animal}0.png").convert_alpha()
+        self.rect = self.image.get_rect(center=pos)
+
 # class Guidance_block:
 #     def __init__(self):
 #         self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
@@ -636,6 +669,26 @@ def create_enemy(name, row):
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies.sprites()[-1].attack_fps)
     FPSCounter += 1
 
+def create_card():
+    for animal in playerCard:
+        cardSet.append(Card(animal))
+        global FPSCounter
+        cardsFPS.append(pygame.USEREVENT + FPSCounter)
+        pygame.time.set_timer(pygame.USEREVENT + FPSCounter, cardSet[-1].fps)
+        FPSCounter += 1
+
+def card_update():
+    global cardSet
+    cardSet = sorted(cardSet, key=lambda obj: (-obj.index, -obj.cost))
+    if len(playerCard) < 8:
+        for i in range(len(cardSet)):
+            cardSet[i].rect.x = 134.1848 + 86.7772 * i
+            screen.blit(cardSet[i].image, cardSet[i].rect)
+    else:
+        for i in range(7):
+            cardSet[i].rect.x = 134.1848 + 86.7772 * i
+            screen.blit(cardSet[i].image, cardSet[i].rect)
+
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
@@ -660,7 +713,6 @@ enemies_bulletFPS = []
 FPSCounter = 0
 
 all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
-all_heroes = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
 # guidance_block = Guidance_block()
 
 create_enemy("Pink Star", 0)
@@ -669,8 +721,21 @@ create_enemy("Crabby", 2)
 create_enemy("Whale", 3)
 create_enemy("Seashell", 4)
 
+playerCard = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
+cardSet = []
+cardsFPS = []
+
+energy = 0
+
 def main():
+    moving = False
+    create_card()
+
     while True:
+
+        global energy
+        energy += 1
+
         screen.blit(bg_surface, (0, 0))
         for rule in heroes.sprites():
             if rule.hp <= 0 and (not rule.isDead):
@@ -688,6 +753,30 @@ def main():
                 if event.type == ruleFPS:
                     heroes.sprites()[index].animation()
 
+            for index, cardFPS in enumerate(cardsFPS):
+                if event.type == cardFPS:
+                    cardSet[index].cdTime()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for card in cardSet:
+                    if card.rect.collidepoint(event.pos) and card.index == 9:
+                        moving = True
+                        tmpCard = TmpCard(card.animal, event.pos)
+                        break
+
+            if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
+                if moving:
+                    x, y = event.pos
+                    if (x >= 139) and (x <= 139 + 892.2375) and (y >= 100) and (y <= 100 + 623.6815):
+                        x, y = pos2coord(event.pos)
+                        if not coordinate[x][y]:
+                            create_hero(tmpCard.animal, x, y)
+                            energy -= cardCost[tmpCard.animal]
+                            for index, card in enumerate(cardSet):
+                                if card.animal == tmpCard.animal:
+                                    cardSet[index].index = 0
+                    moving = False
+
             for index, ruleFPS in enumerate(enemiesFPS):
                 if event.type == ruleFPS:
                     enemies.sprites()[index].hp -= 1
@@ -698,22 +787,18 @@ def main():
                     enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos
-                if (x >= 139) and (x <= 139 + 892.2375) and (y >= 100) and (y <= 100 + 623.6815):
-                    x, y = pos2coord(event.pos)
-                    if not coordinate[x][y]:
-                        animal = random.choice(all_heroes)
-                        create_hero(animal, x, y)
-
         # guidance_block.update()
         bullet_update()
         enemy_bullet_update()
+        card_update()
         heroes.draw(screen)
         heroesBullet.draw(screen)
         enemies.draw(screen)
         enemies_bullet.draw(screen)
 
+        if moving:
+            tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
+            screen.blit(tmpCard.image, tmpCard.rect)
 
         for index, rule in enumerate(heroes.sprites()):
             if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (
