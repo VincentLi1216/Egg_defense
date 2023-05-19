@@ -1,12 +1,8 @@
 {
-  "account": "Vincent",
-  "characters": [
-    "bee",
-    "bird",
-    "cat",
-    "dog"
-  ],
-  "coin": 300,
+  "account": "test",
+  "characters": "dog,cat",
+  "coin": 50,
   "level": 2,
-  "pw": "aaabbc123"
+  "pw": "qwerty",
+  "timestamp": "2023-05-19 17:15:52"
 }

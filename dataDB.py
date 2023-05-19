@@ -30,6 +30,10 @@ def connection_test():
 
 
 def update_data(data):
+
+    with open("local_data.json", "w", encoding='utf-8') as f:
+        json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
+
     if(connection_test()):
         #update the sql data
         import pymysql
@@ -41,11 +45,6 @@ def update_data(data):
         cursor.execute(sql, lst)
 
         player_db.commit()
-
-    else:
-        with open("local_data.json", "w", encoding='utf-8') as f:
-          json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
-
 
 def get_data(name):
     if(connection_test()):
@@ -76,6 +75,6 @@ data = {"account": "test", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:
 
 if __name__ == "__main__":
     print(connection_test())
-    # update_data(data)
+    update_data(data)
     print(get_data("test"))
 
