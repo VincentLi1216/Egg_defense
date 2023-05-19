@@ -543,12 +543,10 @@ class Card:
         self.cost = cardCost[self.animal]
 
     def cdTime(self):
-        if self.index < 8:
+        if self.index < 9:
             self.index += 1
-        elif self.index >= 8 and energy >= self.cost:
-            self.index = 9
         else:
-            self.index = 8
+            self.index = 9
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
 
@@ -681,22 +679,55 @@ def create_enemy(name, row):
 def create_card():
     for animal in playerCard:
         cardSet.append(Card(animal))
-        global FPSCounter
-        cardsFPS.append(pygame.USEREVENT + FPSCounter)
-        pygame.time.set_timer(pygame.USEREVENT + FPSCounter, cardSet[-1].fps)
-        FPSCounter += 1
 
 def card_update():
-    global cardSet
-    cardSet = sorted(cardSet, key=lambda obj: (-obj.index, -obj.cost))
-    if len(playerCard) < 8:
-        for i in range(len(cardSet)):
-            cardSet[i].rect.x = 134.1848 + 86.7772 * i
-            screen.blit(cardSet[i].image, cardSet[i].rect)
+    global cardSet, disp_card
+
+    if len(playerCard) <= 5:
+        a = [card.animal for card in cardSet]
+        b = [card.animal for card in disp_card]
+        lst = list(set(b).difference(set(a)))
+        if lst:
+            for animal in lst:
+                disp_card.append(Card(animal))
+
     else:
-        for i in range(7):
-            cardSet[i].rect.x = 134.1848 + 86.7772 * i
-            screen.blit(cardSet[i].image, cardSet[i].rect)
+        while (len(disp_card) < 5):
+            if disp_card:
+                animal = random.choice(playerCard)
+                isSame = False
+                for obj in disp_card:
+                    if animal == obj.animal:
+                        isSame = True
+                        break
+
+                if not isSame:
+                    disp_card.append(Card(animal))
+
+                    global FPSCounter
+                    cardsFPS.append(pygame.USEREVENT + FPSCounter)
+                    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                    FPSCounter += 1
+                    break
+            else:
+                animal = random.choice(playerCard)
+                disp_card.append(Card(animal))
+
+                cardsFPS.append(pygame.USEREVENT + FPSCounter)
+                pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                FPSCounter += 1
+                break
+
+
+    # disp_card = sorted(disp_card, key=lambda obj: (-obj.index, -obj.cost))
+    # if len(playerCard) < 6:
+    #     for i in range(len(cardSet)):
+    #         disp_card[i].rect.x = 134.1848 + 86.7772 * i
+    #         screen.blit(disp_card[i].image, disp_card[i].rect)
+    # else:
+    for i in range(len(disp_card)):
+        disp_card[i].rect.x = 134.1848 + 86.7772 * i
+        screen.blit(disp_card[i].image, disp_card[i].rect)
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -732,19 +763,14 @@ create_enemy("Seashell", 4)
 
 playerCard = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
 cardSet = []
+disp_card = []
 cardsFPS = []
-
-energy = 0
 
 def main():
     moving = False
     create_card()
 
     while True:
-
-        global energy
-        energy += 1
-
         screen.blit(bg_surface, (0, 0))
         for rule in heroes.sprites():
             if rule.hp <= 0 and (not rule.isDead):
@@ -764,10 +790,10 @@ def main():
 
             for index, cardFPS in enumerate(cardsFPS):
                 if event.type == cardFPS:
-                    cardSet[index].cdTime()
+                    disp_card[index].cdTime()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for card in cardSet:
+                for card in disp_card:
                     if card.rect.collidepoint(event.pos) and card.index == 9:
                         moving = True
                         tmpCard = TmpCard(card.animal, event.pos)
@@ -780,10 +806,10 @@ def main():
                         x, y = pos2coord(event.pos)
                         if not coordinate[x][y]:
                             create_hero(tmpCard.animal, x, y)
-                            energy -= cardCost[tmpCard.animal]
-                            for index, card in enumerate(cardSet):
+                            for index, card in enumerate(disp_card):
                                 if card.animal == tmpCard.animal:
-                                    cardSet[index].index = 0
+                                    disp_card.pop(index)
+                                    cardsFPS.pop(index)
                     moving = False
 
             for index, ruleFPS in enumerate(enemiesFPS):

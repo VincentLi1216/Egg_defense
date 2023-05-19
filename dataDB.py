@@ -76,6 +76,6 @@ data = {"account": "test", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:
 
 if __name__ == "__main__":
     print(connection_test())
-    update_data(data)
+    # update_data(data)
     print(get_data("test"))
 
