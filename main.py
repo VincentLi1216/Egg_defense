@@ -86,7 +86,6 @@ class Dog(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         else:
             if not self.load_dead:
                 self.surface = [
@@ -117,7 +116,6 @@ class Frog(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
@@ -137,7 +135,6 @@ class Bird(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
@@ -156,7 +153,6 @@ class Mushroom(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 3
         else:
             if not self.load_dead:
                 self.surface = [
@@ -210,7 +206,6 @@ class Cat(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 1
         else:
             if not self.load_dead:
                 self.surface = [
@@ -256,7 +251,6 @@ class Fox(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         else:
             if not self.load_dead:
                 self.surface = [
@@ -291,7 +285,6 @@ class Turtle(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         else:
             if not self.load_dead:
                 self.surface = [
@@ -326,7 +319,6 @@ class Bee(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            self.hp -= 2
         else:
             if not self.load_dead:
                 self.surface = [
