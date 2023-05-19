@@ -1,0 +1,12 @@
+{
+  "account": "Vincent",
+  "characters": [
+    "bee",
+    "bird",
+    "cat",
+    "dog"
+  ],
+  "coin": 300,
+  "level": 2,
+  "pw": "aaabbc123"
+}
