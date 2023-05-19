@@ -673,15 +673,21 @@ def create_card():
         cardSet.append(Card(animal))
 
 def card_update():
-    global cardSet, disp_card
+    global cardSet, disp_card, FPSCounter
 
     if len(playerCard) <= 5:
-        a = [card.animal for card in cardSet]
-        b = [card.animal for card in disp_card]
-        lst = list(set(b).difference(set(a)))
-        if lst:
-            for animal in lst:
-                disp_card.append(Card(animal))
+        while (len(disp_card) < len(playerCard)):
+            b = [card.animal for card in cardSet]
+            a = [card.animal for card in disp_card]
+            lst = list(set(b).difference(set(a)))
+            if lst:
+                for animal in lst:
+                    disp_card.append(Card(animal))
+
+                    cardsFPS.append(pygame.USEREVENT + FPSCounter)
+                    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                    FPSCounter += 1
+                    break
 
     else:
         while (len(disp_card) < 5):
@@ -696,7 +702,6 @@ def card_update():
                 if not isSame:
                     disp_card.append(Card(animal))
 
-                    global FPSCounter
                     cardsFPS.append(pygame.USEREVENT + FPSCounter)
                     pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
                     FPSCounter += 1
@@ -755,7 +760,7 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test")["characters"]
+playerCard = get_data("test")["characters"][:4]
 cardSet = []
 disp_card = []
 cardsFPS = []
