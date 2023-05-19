@@ -2,10 +2,18 @@
   "account": "test",
   "characters": [
     "dog",
-    "cat"
+    "frog",
+    "bird",
+    "mushroom",
+    "cat",
+    "bee",
+    "rino",
+    "fox",
+    "turtle",
+    "turkey"
   ],
   "coin": 50,
   "level": 2,
   "pw": "qwerty",
-  "timestamp": "2023-05-19 17:18:07"
+  "timestamp": "2023-05-19 18:16:15"
 }

@@ -761,7 +761,9 @@ create_enemy("Crabby", 2)
 create_enemy("Whale", 3)
 create_enemy("Seashell", 4)
 
-playerCard = ["dog", "frog", "bird", "mushroom", "cat", "bee", "rino", "fox", "turtle", "turkey"]
+from dataDB import get_data
+
+playerCard = get_data("test")["characters"]
 cardSet = []
 disp_card = []
 cardsFPS = []

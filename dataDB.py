@@ -69,13 +69,13 @@ def get_data(name):
             return json.load(f)
 
 
-from datetime import datetime
-
-data = {"account": "test", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-        "coin": 50, "characters": "dog,cat", "level": 2}
-
-if __name__ == "__main__":
-    print(connection_test())
-    # update_data(data)
-    print(get_data("test"))
+# from datetime import datetime
+#
+# data = {"account": "test", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+#         "coin": 50, "characters": "dog,frog,bird,mushroom,cat,bee,rino,fox,turtle,turkey", "level": 2}
+#
+# if __name__ == "__main__":
+#     print(connection_test())
+#     update_data(data)
+#     print(get_data("test"))
 
