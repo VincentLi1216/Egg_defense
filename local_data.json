@@ -1,8 +1,11 @@
 {
   "account": "test",
-  "characters": "dog,cat",
+  "characters": [
+    "dog",
+    "cat"
+  ],
   "coin": 50,
   "level": 2,
   "pw": "qwerty",
-  "timestamp": "2023-05-19 17:15:52"
+  "timestamp": "2023-05-19 17:18:07"
 }
