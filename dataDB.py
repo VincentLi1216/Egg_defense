@@ -60,6 +60,7 @@ def get_data(name):
 
         date = max(table_content, key=lambda x: x[1])
         player_dict = dict(zip(column_names, list(date)))
+        player_dict["characters"] = player_dict["characters"].split(",")
 
         return player_dict
 
