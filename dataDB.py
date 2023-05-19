@@ -31,22 +31,50 @@ def connection_test():
 
 def update_data(data):
     if(connection_test()):
-        pass #update the sql data
+        #update the sql data
+        import pymysql
+        player_db = pymysql.connect(**db_settings)
+        cursor = player_db.cursor()
+
+        sql = "INSERT INTO new_table (account, timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s, %s)"
+        lst = (data["account"], data["timestamp"], data["pw"], data["coin"], data["characters"], data["level"])
+        cursor.execute(sql, lst)
+
+        player_db.commit()
+
     else:
         with open("local_data.json", "w", encoding='utf-8') as f:
           json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
 
 
-def get_data():
+def get_data(name):
     if(connection_test()):
-        pass #get from the sql data
+        # get from the sql data
+        import pymysql
+        player_db = pymysql.connect(**db_settings)
+        cursor = player_db.cursor()
+        cursor.execute(f"SELECT * FROM new_table WHERE account='{name}'")
+
+        column_names = [i[0] for i in cursor.description]
+        table_content = cursor.fetchall()
+
+        date = max(table_content, key=lambda x: x[1])
+        player_dict = dict(zip(column_names, list(date)))
+
+        return player_dict
+
     else:
         with open('local_data.json') as f:
             return json.load(f)
 
 
+from datetime import datetime
+
+data = {"account": "test", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+        "coin": 50, "characters": "dog,cat", "level": 2}
 
 if __name__ == "__main__":
     print(connection_test())
-    print(get_data())
+    # update_data(data)
+    print(get_data("test"))
 
