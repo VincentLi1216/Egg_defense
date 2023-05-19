@@ -1,5 +1,5 @@
 {
-  "account": "sunnus.tw@gmail.com",
+  "account": "Vincent",
   "characters": [
     "bee",
     "bird",
@@ -8,6 +8,5 @@
   ],
   "coin": 300,
   "level": 2,
-  "name": "Vincent",
   "pw": "aaabbc123"
 }
