@@ -715,13 +715,6 @@ def card_update():
                 FPSCounter += 1
                 break
 
-
-    # disp_card = sorted(disp_card, key=lambda obj: (-obj.index, -obj.cost))
-    # if len(playerCard) < 6:
-    #     for i in range(len(cardSet)):
-    #         disp_card[i].rect.x = 134.1848 + 86.7772 * i
-    #         screen.blit(disp_card[i].image, disp_card[i].rect)
-    # else:
     for i in range(len(disp_card)):
         disp_card[i].rect.x = 134.1848 + 86.7772 * i
         screen.blit(disp_card[i].image, disp_card[i].rect)
@@ -760,7 +753,7 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test")["characters"][:4]
+playerCard = get_data("test")["characters"]
 cardSet = []
 disp_card = []
 cardsFPS = []
