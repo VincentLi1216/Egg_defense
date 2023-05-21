@@ -733,11 +733,9 @@ heroes = pygame.sprite.Group()
 heroesFPS = []
 heroesBullet = pygame.sprite.Group()
 
-# enemies = []
 enemies = pygame.sprite.Group()
 enemiesFPS = []
 enemies_attackFPS = []
-# enemies_bullet = []
 enemies_bullet = pygame.sprite.Group()
 enemies_bulletFPS = []
 FPSCounter = 0
