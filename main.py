@@ -816,10 +816,10 @@ def main():
         bullet_update()
         enemy_bullet_update()
         card_update()
-        heroes.draw(screen)
-        heroesBullet.draw(screen)
         enemies.draw(screen)
         enemies_bullet.draw(screen)
+        heroes.draw(screen)
+        heroesBullet.draw(screen)
 
         if moving:
             tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
