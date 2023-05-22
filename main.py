@@ -792,7 +792,7 @@ def heroes_enemies_collisions():
     for hero in collisions:
         heroes_attack = collisions[hero]
         for enemy in heroes_attack:
-            if hero.rect.centerx >= enemy.rect.midleft[0]-30:
+            if (hero.rect.centerx >= enemy.rect.midleft[0]-30) and (hero.animal != "turtle"):
                 hero.hp -= 0.1
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
