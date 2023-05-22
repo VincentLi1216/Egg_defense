@@ -272,7 +272,7 @@ class Fox(Hero):
     def skill(self):
         for enemy in enemies.sprites():
             enemy.speed = -0.5
-
+            enemy.attack_moving_speed = 0
 class Turtle(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 15), (16, 19)]
@@ -777,6 +777,8 @@ def heroes_skill_collisions():
         for enemy in heroes_attack:
             if hero.animal in ("rino", "turkey"):
                 enemy.hp -= hero.damage
+                if hero.animal == "turkey":
+                    hero.hp = -1
             if hero.animal == "turtle" and (enemy.rect.midleft <= hero.rect.center):
                 hero.hp = enemy.hp = -1
 
