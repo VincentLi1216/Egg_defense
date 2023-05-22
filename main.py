@@ -5,14 +5,17 @@ coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0]]
 
-heroesHP = {"dog": 100, "cat": 50, "mushroom": 100, "bee": 100, "rino": 100,
+heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
-cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 1000, "rino": 1000,
-            "bird": 500, "frog": 500, "fox": 1000, "turtle": 1000, "turkey": 500}
+enemies_speed = {"Crabby": -5, "Fierce Tooth": -7, "Pink Star": -5, "Seashell": -1, "Whale": -2}
+enemies_attack_moving_speed = {"Crabby": -5, "Fierce Tooth": -5, "Pink Star": -30, "Seashell": -5, "Whale": -7}
+
+cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 100, "rino": 1000,
+            "bird": 500, "frog": 500, "fox": 100, "turtle": 100, "turkey": 500}
 
 cardCost = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 1000, "rino": 3000,
             "bird": 500, "frog": 500, "fox": 700, "turtle": 1000, "turkey": 900}
@@ -251,6 +254,7 @@ class Fox(Hero):
                 self.index = 0
             else:
                 self.index += 1
+            # self.hp -= 3
         else:
             if not self.load_dead:
                 self.surface = [
@@ -266,7 +270,8 @@ class Fox(Hero):
         self.rect = self.image.get_rect(midbottom=self.pos)
 
     def skill(self):
-        pass
+        for enemy in enemies.sprites():
+            enemy.speed = -0.5
 
 class Turtle(Hero):
     def __init__(self, pos):
@@ -310,7 +315,7 @@ class Bee(Hero):
         self.load_dead = False
         self.speed_x = 5
         self.speed_y = (-5, 0, 5)
-        fps = 200
+        fps = 100
         super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
@@ -332,12 +337,21 @@ class Bee(Hero):
                 self.index += 1
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
+        for enemy in enemies.sprites():
+            if 50 <= enemy.rect.centery - self.rect.centery <= 150:
+                if 140 <= enemy.rect.centerx - self.rect.centerx <= 200:
+                    self.skill(2)
+            elif -50 <= enemy.rect.midbottom[1] - self.rect.midbottom[1] <= 50:
+                self.skill(1)
+            elif -150 <= enemy.rect.centery - self.rect.centery <= -50:
+                if 140 <= enemy.rect.centerx - self.rect.centerx <= 200:
+                    self.skill(0)
 
-    def skill(self, rule, direction):
-        rule.round = rule.index
-        if rule.index == (len(self.surface) // 2):
+    def skill(self, direction):
+        self.round = self.index
+        if self.index == (len(self.surface) // 2):
             heroesBullet.add(
-                Bullet(rule.rect, (self.animal, 3), self.characterSide, rule.damage, self.speed_x, self.speed_y[direction], direction))
+                Bullet(self.rect, (self.animal, 3), self.characterSide, self.damage, self.speed_x, self.speed_y[direction], direction))
 
 class Turkey(Hero):
     def __init__(self, pos):
@@ -381,7 +395,7 @@ class Enemy(Character):
         self.name = name
         self.characterSide = "enemy"
         self.show_mode = "Run"
-        self.speed = speed;
+        self.speed = speed
         self.attack_fps = attack_fps
         self.is_dead = False
         self.is_dead_load = False
@@ -403,7 +417,7 @@ class Enemy(Character):
         self.rect = self.image.get_rect(midbottom=self.pos)
 
     # for the animation of the character
-    def animation(self, mode, attack_moving_speed = -5, has_bullet = False):
+    def animation(self, mode, attack_moving_speed, has_bullet = False):
             # if the mode change (different from the last time)
             if mode != self.show_mode:
                 # if the character is dead then it's always sticks on the mode "Dead"
@@ -460,10 +474,11 @@ class Crabby(Enemy):
         fps = 90
         speed = -5
         attack_fps = 1000
+        self.attack_moving_speed = enemies_attack_moving_speed[name]
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        super().animation(mode)
+        super().animation(mode, self.attack_moving_speed)
         # brighten = 128
         # self.surfaces["Run"][0].fill((brighten, brighten, brighten), special_flags=pygame.BLEND_RGB_ADD)
 
@@ -473,13 +488,13 @@ class Fierce_Tooth(Enemy):
         hp = 200
         damage = 30
         fps = 90
-        speed = -7
+        speed = enemies_speed[name]
         attack_fps = 1000
-
+        self.attack_moving_speed = enemies_attack_moving_speed[name]
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        super().animation(mode)
+        super().animation(mode, self.attack_moving_speed)
 
 class Pink_Star(Enemy):
     def __init__(self, pos):
@@ -487,13 +502,13 @@ class Pink_Star(Enemy):
         hp = 30
         damage = 30
         fps = 90
-        speed = -5
+        speed = enemies_speed[name]
         attack_fps = 1000
+        self.attack_moving_speed = enemies_attack_moving_speed[name]
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        attack_moving_speed = -30
-        super().animation(mode,attack_moving_speed)
+        super().animation(mode, self.attack_moving_speed)
 
 class Seashell(Enemy):
     def __init__(self, pos):
@@ -501,13 +516,14 @@ class Seashell(Enemy):
         hp = 200
         damage = 30
         fps = 90
-        speed = -1
+        speed = enemies_speed[name]
         attack_fps = 1000
         self.bullet_speed = -8
+        self.attack_moving_speed = enemies_attack_moving_speed[name]
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        super().animation(mode, has_bullet=True)
+        super().animation(mode, self.attack_moving_speed, has_bullet=True)
 
 class Whale(Enemy):
     def __init__(self, pos):
@@ -515,13 +531,13 @@ class Whale(Enemy):
         hp = 200
         damage = 30
         fps = 90
-        speed = -2
+        speed = enemies_speed[name]
         attack_fps = 2000
+        self.attack_moving_speed = enemies_attack_moving_speed[name]
         super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
 
     def animation(self, mode):
-        attack_moving_speed = -7
-        super().animation(mode, attack_moving_speed)
+        super().animation(mode, self.attack_moving_speed)
 
 class Card:
     def __init__(self, animal):
@@ -609,9 +625,6 @@ def bullet_update():
             if rule.index == (len(rule.surface)//2):
                 heroesBullet.add(
                     Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
-
-        elif rule.animal == "bee" and (rule.round != rule.index) and True:   # True: some enemy near the bee
-            rule.skill(rule, 0)
 
     if heroesBullet.sprites():
         for bullet in heroesBullet:
@@ -751,10 +764,44 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test")["characters"]
+# playerCard = get_data("test")["characters"]
+playerCard = ["dog", 'turtle', "fox", "bee"]
 cardSet = []
 disp_card = []
 cardsFPS = []
+
+def heroes_skill_collisions():
+    collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
+    for hero in collisions:
+        heroes_attack = collisions[hero]
+        for enemy in heroes_attack:
+            if hero.animal in ("rino", "turkey"):
+                enemy.hp -= hero.damage
+            if hero.animal == "turtle" and (enemy.rect.midleft <= hero.rect.center):
+                hero.hp = enemy.hp = -1
+
+def heroes_bullet_collisions():
+    collisions = pygame.sprite.groupcollide(heroesBullet, enemies, True, False)
+    for sprite in collisions:
+        heroes_attack = collisions[sprite]
+        for collided_sprite in heroes_attack:
+            collided_sprite.hp -= sprite.damage
+
+def heroes_enemies_collisions():
+    collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
+    for hero in collisions:
+        heroes_attack = collisions[hero]
+        for enemy in heroes_attack:
+            if hero.rect.centerx >= enemy.rect.midleft[0]-30:
+                hero.hp -= 0.1
+                enemy.speed = 0
+                enemy.attack_moving_speed = 0
+                print(enemy.name)
+
+def set_enemies_speed():
+    for enemy in enemies.sprites():
+        enemy.speed = enemies_speed[enemy.name]
+        enemy.attack_moving_speed = enemies_attack_moving_speed[enemy.name]
 
 def main():
     moving = False
@@ -766,7 +813,7 @@ def main():
             if rule.hp <= 0 and (not rule.isDead):
                 rule.index = 0
                 rule.isDead = True
-            if rule.animal not in ("bird", "frog", "dog", "mushroom", "bee"):
+            if rule.animal in ("cat", "fox"):
                 rule.skill()
 
         for event in pygame.event.get():
@@ -804,13 +851,18 @@ def main():
 
             for index, ruleFPS in enumerate(enemiesFPS):
                 if event.type == ruleFPS:
-                    enemies.sprites()[index].hp -= 1
+                    # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Run")
 
             for index, ruleFPS in enumerate(enemies_attackFPS):
                 if event.type == ruleFPS:
-                    enemies.sprites()[index].hp -= 1
+                    # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
+
+        set_enemies_speed()
+        heroes_enemies_collisions()
+        heroes_skill_collisions()
+        heroes_bullet_collisions()
 
         # guidance_block.update()
         bullet_update()
