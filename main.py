@@ -254,7 +254,6 @@ class Fox(Hero):
                 self.index = 0
             else:
                 self.index += 1
-            # self.hp -= 3
         else:
             if not self.load_dead:
                 self.surface = [
@@ -271,8 +270,8 @@ class Fox(Hero):
 
     def skill(self):
         for enemy in enemies.sprites():
-            enemy.speed = -0.5
-            enemy.attack_moving_speed = 0
+            enemy.speed = -1
+            enemy.attack_moving_speed = -1
 class Turtle(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 15), (16, 19)]
@@ -282,7 +281,7 @@ class Turtle(Hero):
         self.speed_x = 7
         self.speed_y = 0
         fps = 100
-        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
+        super().__init__(heroesHP[self.animal], (pos[0], pos[1]-25), heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
