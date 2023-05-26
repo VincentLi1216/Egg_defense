@@ -8,11 +8,15 @@ coordinate = [[0, 0, 0, 0, 0, 0],
 heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
+enemiesInfo = {"Crabby":{"hp":200, "damage":50, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
+             "Fierce Tooth":{"hp":200, "damage":30, "fps":90, "speed":-7, "attack_fps":1000, "attack_moving_speed":-5},
+             "Pink Star":{"hp":30, "damage":30, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-30},
+             "Seashell": {"hp":200, "damage":30, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
+             "Whale":{"hp":200, "damage":30, "fps":90, "speed":-2, "attack_fps":2000, "attack_moving_speed":-7}}
+
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
                 "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
-enemies_speed = {"Crabby": -5, "Fierce Tooth": -7, "Pink Star": -5, "Seashell": -1, "Whale": -2}
-enemies_attack_moving_speed = {"Crabby": -5, "Fierce Tooth": -5, "Pink Star": -30, "Seashell": -5, "Whale": -7}
 
 cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 100, "rino": 1000,
           "bird": 500, "frog": 500, "fox": 100, "turtle": 100, "turkey": 500}
@@ -389,13 +393,13 @@ class Turkey(Hero):
         pass
 
 class Enemy(Character):
-    def __init__(self, name, hp, pos, damage, speed, fps, attack_fps):
-        super().__init__(hp, pos, damage, fps)
+    def __init__(self, name, pos):
+
         self.name = name
         self.characterSide = "enemy"
         self.show_mode = "Run"
-        self.speed = speed
-        self.attack_fps = attack_fps
+        for attribute in ["hp", "damage", "fps", "speed", "attack_fps", "attack_moving_speed"]:
+            self.__dict__[attribute] = enemiesInfo[name][str(attribute)]
         self.is_dead = False
         self.is_dead_load = False
         self.mode_change_enable = True
@@ -404,6 +408,8 @@ class Enemy(Character):
         self.isDead = False #just for testing
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
+        super().__init__(hp=self.hp, pos=pos, damage=self.damage, fps=self.fps)
+
         for i, mode in enumerate(all_mode):
             project_dir = f"image/{self.characterSide}/{self.name}/{mode}"
             file_count = 0
@@ -468,13 +474,7 @@ class Enemy(Character):
 class Crabby(Enemy):
     def __init__(self, pos):
         name = "Crabby"
-        hp = 200
-        damage = 50
-        fps = 90
-        speed = -5
-        attack_fps = 1000
-        self.attack_moving_speed = enemies_attack_moving_speed[name]
-        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+        super().__init__(name, pos)
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
@@ -484,13 +484,7 @@ class Crabby(Enemy):
 class Fierce_Tooth(Enemy):
     def __init__(self, pos):
         name = "Fierce Tooth"
-        hp = 200
-        damage = 30
-        fps = 90
-        speed = enemies_speed[name]
-        attack_fps = 1000
-        self.attack_moving_speed = enemies_attack_moving_speed[name]
-        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+        super().__init__(name, pos)
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
@@ -498,13 +492,7 @@ class Fierce_Tooth(Enemy):
 class Pink_Star(Enemy):
     def __init__(self, pos):
         name = "Pink Star"
-        hp = 30
-        damage = 30
-        fps = 90
-        speed = enemies_speed[name]
-        attack_fps = 1000
-        self.attack_moving_speed = enemies_attack_moving_speed[name]
-        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+        super().__init__(name, pos)
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
@@ -512,14 +500,8 @@ class Pink_Star(Enemy):
 class Seashell(Enemy):
     def __init__(self, pos):
         name = "Seashell"
-        hp = 200
-        damage = 30
-        fps = 90
-        speed = enemies_speed[name]
-        attack_fps = 1000
         self.bullet_speed = -8
-        self.attack_moving_speed = enemies_attack_moving_speed[name]
-        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+        super().__init__(name, pos)
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed, has_bullet=True)
@@ -527,13 +509,7 @@ class Seashell(Enemy):
 class Whale(Enemy):
     def __init__(self, pos):
         name = "Whale"
-        hp = 200
-        damage = 30
-        fps = 90
-        speed = enemies_speed[name]
-        attack_fps = 2000
-        self.attack_moving_speed = enemies_attack_moving_speed[name]
-        super().__init__(name, hp, pos, damage, speed, fps, attack_fps)
+        super().__init__(name, pos)
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
@@ -800,10 +776,6 @@ def heroes_enemies_collisions():
                 enemy.attack_moving_speed = 0
                 print(enemy.name)
 
-def set_enemies_speed():
-    for enemy in enemies.sprites():
-        enemy.speed = enemies_speed[enemy.name]
-        enemy.attack_moving_speed = enemies_attack_moving_speed[enemy.name]
 
 def main():
     moving = False
@@ -861,7 +833,6 @@ def main():
                     # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
 
-        set_enemies_speed()
         heroes_enemies_collisions()
         heroes_skill_collisions()
         heroes_bullet_collisions()
