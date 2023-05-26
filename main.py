@@ -763,7 +763,7 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test")["characters"]
+playerCard = get_data("test_5")["characters"]
 # playerCard = ["dog", 'turtle', "fox", "bee"]
 cardSet = []
 disp_card = []
