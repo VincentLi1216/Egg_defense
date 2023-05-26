@@ -9,13 +9,13 @@ heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
-            "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
+                "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
 enemies_speed = {"Crabby": -5, "Fierce Tooth": -7, "Pink Star": -5, "Seashell": -1, "Whale": -2}
 enemies_attack_moving_speed = {"Crabby": -5, "Fierce Tooth": -5, "Pink Star": -30, "Seashell": -5, "Whale": -7}
 
 cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 100, "rino": 1000,
-            "bird": 500, "frog": 500, "fox": 100, "turtle": 100, "turkey": 500}
+          "bird": 500, "frog": 500, "fox": 100, "turtle": 100, "turkey": 500}
 
 cardCost = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 1000, "rino": 3000,
             "bird": 500, "frog": 500, "fox": 700, "turtle": 1000, "turkey": 900}
@@ -775,7 +775,8 @@ def heroes_skill_collisions():
         heroes_attack = collisions[hero]
         for enemy in heroes_attack:
             if hero.animal in ("rino", "turkey"):
-                enemy.hp -= hero.damage
+                if hero.animal == "turkey" or hero.rect.midleft[0] >= enemy.rect.centerx:
+                    enemy.hp -= hero.damage
                 # if hero.animal == "turkey":
                 #     hero.hp = -1
             if hero.animal == "turtle" and (enemy.rect.midleft <= hero.rect.center):
