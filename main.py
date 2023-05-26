@@ -11,7 +11,7 @@ heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
 enemiesInfo = {"Crabby":{"hp":200, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
              "Fierce Tooth":{"hp":200, "damage":10, "fps":90, "speed":-7, "attack_fps":1000, "attack_moving_speed":-5},
              "Pink Star":{"hp":30, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-30},
-             "Seashell": {"hp":200, "damage":5, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
+             "Seashell": {"hp":200, "damage":30, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
              "Whale":{"hp":200, "damage":5, "fps":90, "speed":-2, "attack_fps":2000, "attack_moving_speed":-7}}
 
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
@@ -773,6 +773,14 @@ def enemies2heroes_collisions():
                 print(hero.animal)
                 hero.hp -= enemy.damage
 
+def enemies_bullet_collisions():
+    collisions = pygame.sprite.groupcollide(enemies_bullet, heroes, True, False)
+    for bullet in collisions:
+        enemies_attack = collisions[bullet]
+        for hero in enemies_attack:
+            hero.hp -= bullet.damage
+            print(hero.animal)
+
 
 def main():
     moving = False
@@ -834,6 +842,7 @@ def main():
         heroes_skill_collisions()
         heroes_bullet_collisions()
         enemies2heroes_collisions()
+        enemies_bullet_collisions()
 
         # guidance_block.update()
         bullet_update()
