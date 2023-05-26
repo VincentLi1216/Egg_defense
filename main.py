@@ -635,18 +635,6 @@ def create_enemy(name, row):
     elif name == "Whale":
         enemies.add(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
 
-    # match(name):
-    #     case "Crabby":
-    #         enemies.append(Crabby((default_x, 222.3947 + 124.7363 * row - 3)))
-    #     case "Fierce Tooth":
-    #         enemies.append(Fierce_Tooth((default_x, 222.3947 + 124.7363 * row - 3)))
-    #     case "Pink Star":
-    #         enemies.append(Pink_Star((default_x, 222.3947 + 124.7363 * row - 3)))
-    #     case "Seashell":
-    #         enemies.append(Seashell((default_x, 222.3947 + 124.7363 * row - 3)))
-    #     case "Whale":
-    #         enemies.append(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
-
 
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
