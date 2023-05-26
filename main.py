@@ -8,11 +8,11 @@ coordinate = [[0, 0, 0, 0, 0, 0],
 heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
             "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
-enemiesInfo = {"Crabby":{"hp":200, "damage":50, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
-             "Fierce Tooth":{"hp":200, "damage":30, "fps":90, "speed":-7, "attack_fps":1000, "attack_moving_speed":-5},
-             "Pink Star":{"hp":30, "damage":30, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-30},
-             "Seashell": {"hp":200, "damage":30, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
-             "Whale":{"hp":200, "damage":30, "fps":90, "speed":-2, "attack_fps":2000, "attack_moving_speed":-7}}
+enemiesInfo = {"Crabby":{"hp":200, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
+             "Fierce Tooth":{"hp":200, "damage":10, "fps":90, "speed":-7, "attack_fps":1000, "attack_moving_speed":-5},
+             "Pink Star":{"hp":30, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-30},
+             "Seashell": {"hp":200, "damage":5, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
+             "Whale":{"hp":200, "damage":5, "fps":90, "speed":-2, "attack_fps":2000, "attack_moving_speed":-7}}
 
 heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
                 "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
@@ -276,6 +276,7 @@ class Fox(Hero):
         for enemy in enemies.sprites():
             enemy.speed = -1
             enemy.attack_moving_speed = -1
+
 class Turtle(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 15), (16, 19)]
@@ -753,7 +754,7 @@ def heroes_bullet_collisions():
         for collided_sprite in heroes_attack:
             collided_sprite.hp -= sprite.damage
 
-def heroes_enemies_collisions():
+def heroes2enemies_collisions():
     collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
     for hero in collisions:
         heroes_attack = collisions[hero]
@@ -762,7 +763,15 @@ def heroes_enemies_collisions():
                 hero.hp -= 0.1
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
-                print(enemy.name)
+
+def enemies2heroes_collisions():
+    collisions = pygame.sprite.groupcollide(enemies, heroes, False, False)
+    for enemy in collisions:
+        enemies_attack = collisions[enemy]
+        for hero in enemies_attack:
+            if enemy.show_mode == "Attack" and enemy.index == 0:
+                print(hero.animal)
+                hero.hp -= enemy.damage
 
 
 def main():
@@ -821,9 +830,10 @@ def main():
                     # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
 
-        heroes_enemies_collisions()
+        heroes2enemies_collisions()
         heroes_skill_collisions()
         heroes_bullet_collisions()
+        enemies2heroes_collisions()
 
         # guidance_block.update()
         bullet_update()
