@@ -5,23 +5,21 @@ coordinate = [[0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0]]
 
-heroesInfo = {"dog": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 7, "speed_y": 0},
-              "cat": {"hp": 500, "damage": 100, "fps": 200},
-              "mushroom": {"hp": 1000, "damage": 100, "fps": 200},
-              "bee": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 5, "speed_y": (-5, 0, 5)},
-              "rino": {"hp": 100, "damage": 100, "fps": 10},
-              "bird": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 7, "speed_y": 0},
-              "frog": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 8, "speed_y": 0},
-              "fox": {"hp": 500, "damage": 100, "fps": 100},
-              "turtle": {"hp": 100, "damage": 100, "fps": 100},
-              "turkey": {"hp": 100, "damage": 100, "fps": 10}
-              }
+heroesInfo = {"dog": {"hp":100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
+            "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
+heroesHP = {"dog": 100, "cat": 50, "mushroom": 1000, "bee": 100, "rino": 100,
+            "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
 
 enemiesInfo = {"Crabby":{"hp":200, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
              "Fierce Tooth":{"hp":200, "damage":10, "fps":90, "speed":-7, "attack_fps":1000, "attack_moving_speed":-5},
              "Pink Star":{"hp":30, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-30},
              "Seashell": {"hp":200, "damage":30, "fps":90, "speed":-1, "attack_fps":1000, "attack_moving_speed":-5},
              "Whale":{"hp":200, "damage":5, "fps":90, "speed":-2, "attack_fps":2000, "attack_moving_speed":-7}}
+
+heroesDamage = {"dog": 100, "cat": 100, "mushroom": 100, "bee": 100, "rino": 100,
+                "bird": 100, "frog": 100, "fox": 100, "turtle": 100, "turkey": 100}
+
+
 
 cardCD = {"dog": 500, "cat": 100, "mushroom": 1000, "bee": 100, "rino": 1000,
           "bird": 500, "frog": 500, "fox": 100, "turtle": 100, "turkey": 500}
@@ -89,7 +87,8 @@ class Dog(Hero):
         self.load_dead = False
         self.speed_x = 7
         self.speed_y = 0
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 100
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -118,7 +117,8 @@ class Frog(Hero):
         self.isDead = False
         self.speed_x = 5
         self.speed_y = 0
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 100
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -136,8 +136,8 @@ class Bird(Hero):
         self.isDead = False
         self.speed_x = 8
         self.speed_y = 0
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 100
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -154,8 +154,8 @@ class Mushroom(Hero):
         self.animal = "mushroom"
         self.isDead = False
         self.load_dead = False
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 200
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -183,8 +183,8 @@ class Rino(Hero):
         self.animal = "rino"
         self.isDead = False
         self.speed = 8
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 10
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.rect.midleft[0] <= 1280:
@@ -207,8 +207,8 @@ class Cat(Hero):
         self.animal = "cat"
         self.isDead = False
         self.load_dead = False
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        fps = 200
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -239,12 +239,12 @@ class Cat(Hero):
                 break
         if target != -1:
             for index in range(target, len(heroes.sprites())):
-                if (heroesInfo[heroes.sprites()[index].animal]["hp"] - heroes.sprites()[index].hp) > \
-                        (heroesInfo[heroes.sprites()[target].animal]["hp"] - heroes.sprites()[target].hp) and heroes.sprites()[index].animal != "cat":
+                if (heroesHP[heroes.sprites()[index].animal] - heroes.sprites()[index].hp) > \
+                        (heroesHP[heroes.sprites()[target].animal] - heroes.sprites()[target].hp) and heroes.sprites()[index].animal != "cat":
                     target = index
             print(heroes.sprites()[target].animal)
-            heroes.sprites()[target].hp = heroes.sprites()[target].hp + 10 if heroes.sprites()[target].hp < heroesInfo[
-                heroes.sprites()[target].animal]["hp"] else heroes.sprites()[target].hp
+            heroes.sprites()[target].hp = heroes.sprites()[target].hp + 10 if heroes.sprites()[target].hp < heroesHP[
+                heroes.sprites()[target].animal] else heroes.sprites()[target].hp
 
 class Fox(Hero):
     def __init__(self, pos):
@@ -253,8 +253,7 @@ class Fox(Hero):
         self.isDead = False
         self.load_dead = False
         fps = 100
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -290,8 +289,7 @@ class Turtle(Hero):
         self.speed_x = 7
         self.speed_y = 0
         fps = 100
-        super().__init__(heroesInfo[self.animal]["hp"], (pos[0], pos[1]-25), heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesHP[self.animal], (pos[0], pos[1]-25), heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -325,8 +323,7 @@ class Bee(Hero):
         self.speed_x = 5
         self.speed_y = (-5, 0, 5)
         fps = 100
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.hp > 0:
@@ -361,7 +358,7 @@ class Bee(Hero):
         self.round = self.index
         if self.index == (len(self.surface) // 2):
             heroesBullet.add(
-                Bullet(self.rect, (self.animal, 3), self.characterSide, self.damage, heroesInfo[self.animal]["speed_x"], heroesInfo[self.animal]["speed_y"][direction], direction))
+                Bullet(self.rect, (self.animal, 3), self.characterSide, self.damage, self.speed_x, self.speed_y[direction], direction))
 
 class Turkey(Hero):
     def __init__(self, pos):
@@ -371,8 +368,7 @@ class Turkey(Hero):
         self.load_dead = False
         self.speed = 10
         fps = 10
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
-                         (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesHP[self.animal], pos, heroesDamage[self.animal], (self.animal, self.characterAnimation[0][1]), fps)
 
     def animation(self):
         if self.rect.midbottom[1] <= 720:
@@ -607,7 +603,7 @@ def bullet_update():
             rule.round = rule.index
             if rule.index == (len(rule.surface)//2):
                 heroesBullet.add(
-                    Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, heroesInfo[rule.animal]["speed_x"], heroesInfo[rule.animal]["speed_y"]))
+                    Bullet(rule.rect, (rule.animal, 3), rule.characterSide, rule.damage, rule.speed_x, rule.speed_y))
 
     if heroesBullet.sprites():
         for bullet in heroesBullet:
@@ -768,7 +764,6 @@ def heroes2enemies_collisions():
         for enemy in heroes_attack:
             if (hero.rect.centerx >= enemy.rect.midleft[0]-30) and (hero.animal != "turtle") \
                     and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
-                print("OK")
                 hero.hp -= 0.1
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
@@ -853,18 +848,17 @@ def main():
                     # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
 
+        reset_enemies_speed()
+        heroes2enemies_collisions()
+        heroes_skill_collisions()
+        heroes_bullet_collisions()
+        enemies2heroes_collisions()
+        enemies_bullet_collisions()
+
         # guidance_block.update()
         bullet_update()
         enemy_bullet_update()
         card_update()
-
-        reset_enemies_speed()
-        heroes_skill_collisions()
-        heroes_bullet_collisions()
-        heroes2enemies_collisions()
-        enemies2heroes_collisions()
-        enemies_bullet_collisions()
-
         enemies.draw(screen)
         enemies_bullet.draw(screen)
         heroes.draw(screen)
