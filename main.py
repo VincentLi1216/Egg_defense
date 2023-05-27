@@ -899,7 +899,7 @@ def main():
         cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
         screen.blit(cursor_surface, cursor_rect)  # draw the cursor
         pygame.display.update()
-        clock.tick(100)
+        clock.tick(90)
 
 if __name__ == "__main__":
     main()
