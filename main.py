@@ -236,7 +236,6 @@ class Cat(Hero):
                 if (heroesInfo[heroes.sprites()[index].animal]["hp"] - heroes.sprites()[index].hp) > \
                         (heroesInfo[heroes.sprites()[target].animal]["hp"] - heroes.sprites()[target].hp) and heroes.sprites()[index].animal != "cat":
                     target = index
-            print(heroes.sprites()[target].animal)
             heroes.sprites()[target].hp = heroes.sprites()[target].hp + 10 if heroes.sprites()[target].hp < heroesInfo[
                 heroes.sprites()[target].animal]["hp"] else heroes.sprites()[target].hp
 
@@ -448,7 +447,6 @@ class Enemy(Character):
                     # wait for indexes_show_after_dead amount of time
                     if self.index >= (len(self.surfaces["Dead"]) - 1 + self.indexes_show_after_dead):
                         self.is_dead = True
-                        # print(f"{self.characterSide} {self.name} is dead")
                 else:
                     self.index += 1
             else:
@@ -546,7 +544,6 @@ class TmpCard:
 #         self.rect = self.image.get_rect()
 #     def update(self):
 #         x, y = pygame.mouse.get_pos()
-#         print(x, y)
 #         if (x >= 136.9868) and (x <= 136.9868 + 892.2375) and (y >= 97.6584) and (y <= 97.6584 + 623.6815):
 #             x, y = pos2coord((x, y))
 #             if not coordinate[x][y]:
@@ -762,7 +759,6 @@ def heroes2enemies_collisions():
         for enemy in heroes_attack:
             if (hero.rect.centerx >= enemy.rect.midleft[0]-30) and (hero.animal != "turtle") \
                     and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
-                print("OK")
                 hero.hp -= 0.1
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
@@ -773,7 +769,6 @@ def enemies2heroes_collisions():
         enemies_attack = collisions[enemy]
         for hero in enemies_attack:
             if enemy.show_mode == "Attack" and enemy.index == 0 and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
-                print(hero.animal, hero.hp)
                 hero.hp -= enemy.damage
 
 def enemies_bullet_collisions():
@@ -860,10 +855,6 @@ def main():
                 if event.type == ruleFPS:
                     # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
-
-        for index, rule in enumerate(enemies.sprites()):
-            if rule.speed == 0:
-                print(rule.name)
 
         enemies.draw(screen)
         enemies_bullet.draw(screen)
