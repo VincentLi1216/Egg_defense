@@ -755,11 +755,13 @@ def heroes_skill_collisions():
                 hero.hp = enemy.hp = -1
 
 def heroes_bullet_collisions():
-    collisions = pygame.sprite.groupcollide(heroesBullet, enemies, True, False)
-    for sprite in collisions:
-        heroes_attack = collisions[sprite]
-        for collided_sprite in heroes_attack:
-            collided_sprite.hp -= sprite.damage
+    collisions = pygame.sprite.groupcollide(heroesBullet, enemies, False, False)
+    for bullet in collisions:
+        heroes_attack = collisions[bullet]
+        for enemy in heroes_attack:
+            if enemy.rect.centerx - bullet.rect.centerx <= 20:
+                enemy.hp -= bullet.damage
+                bullet.kill()
 
 def heroes2enemies_collisions():
     collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
@@ -783,12 +785,13 @@ def enemies2heroes_collisions():
                 hero.hp -= enemy.damage
 
 def enemies_bullet_collisions():
-    collisions = pygame.sprite.groupcollide(enemies_bullet, heroes, True, False)
+    collisions = pygame.sprite.groupcollide(enemies_bullet, heroes, False, False)
     for bullet in collisions:
         enemies_attack = collisions[bullet]
         for hero in enemies_attack:
-            hero.hp -= bullet.damage
-            print(hero.animal)
+            if bullet.rect.centerx - hero.rect.centerx <= 20:
+                hero.hp -= bullet.damage
+                bullet.kill()
 
 def reset_enemies_speed():
     for enemy in enemies.sprites():
@@ -801,6 +804,9 @@ def main():
 
     while True:
         screen.blit(bg_surface, (0, 0))
+
+        reset_enemies_speed()
+
         for rule in heroes.sprites():
             if rule.hp <= 0 and (not rule.isDead):
                 rule.index = 0
@@ -809,6 +815,17 @@ def main():
                 rule.skill()
             if rule.animal == "fox":
                 rule.skill()
+
+        # guidance_block.update()
+        bullet_update()
+        enemy_bullet_update()
+        card_update()
+
+        heroes_skill_collisions()
+        heroes_bullet_collisions()
+        heroes2enemies_collisions()
+        enemies2heroes_collisions()
+        enemies_bullet_collisions()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -853,17 +870,9 @@ def main():
                     # enemies.sprites()[index].hp -= 1
                     enemies.sprites()[index].animation("Attack")
 
-        # guidance_block.update()
-        bullet_update()
-        enemy_bullet_update()
-        card_update()
-
-        reset_enemies_speed()
-        heroes_skill_collisions()
-        heroes_bullet_collisions()
-        heroes2enemies_collisions()
-        enemies2heroes_collisions()
-        enemies_bullet_collisions()
+        for index, rule in enumerate(enemies.sprites()):
+            if rule.speed == 0:
+                print(rule.name)
 
         enemies.draw(screen)
         enemies_bullet.draw(screen)
@@ -891,7 +900,7 @@ def main():
         cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
         screen.blit(cursor_surface, cursor_rect)  # draw the cursor
         pygame.display.update()
-        clock.tick(90)
+        clock.tick(100)
 
 if __name__ == "__main__":
     main()
