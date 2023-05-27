@@ -751,7 +751,7 @@ def heroes_skill_collisions():
                     enemy.hp -= hero.damage
                 if hero.animal == "rino" and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
                     enemy.hp -= hero.damage
-            if hero.animal == "turtle" and (enemy.rect.midleft <= hero.rect.center):
+            if hero.animal == "turtle" and (enemy.rect.midleft[0] <= hero.rect.midright[0]-20):
                 hero.hp = enemy.hp = -1
 
 def heroes_bullet_collisions():
