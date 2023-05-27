@@ -9,12 +9,12 @@ heroesInfo = {"dog": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 7, "speed
               "cat": {"hp": 500, "damage": 100, "fps": 200},
               "mushroom": {"hp": 1000, "damage": 100, "fps": 200},
               "bee": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 5, "speed_y": (-5, 0, 5)},
-              "rino": {"hp": 100, "damage": 100, "fps": 10},
+              "rino": {"hp": float('inf'), "damage": 100, "fps": 10},
               "bird": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 7, "speed_y": 0},
               "frog": {"hp": 100, "damage": 100, "fps": 100, "speed_x": 8, "speed_y": 0},
               "fox": {"hp": 500, "damage": 100, "fps": 100},
               "turtle": {"hp": 100, "damage": 100, "fps": 100},
-              "turkey": {"hp": 100, "damage": 100, "fps": 10}
+              "turkey": {"hp": float('inf'), "damage": 100, "fps": 10}
               }
 
 enemiesInfo = {"Crabby":{"hp":200, "damage":5, "fps":90, "speed":-5, "attack_fps":1000, "attack_moving_speed":-5},
