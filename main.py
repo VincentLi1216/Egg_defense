@@ -806,7 +806,6 @@ def main():
         screen.blit(bg_surface, (0, 0))
 
         reset_enemies_speed()
-
         for rule in heroes.sprites():
             if rule.hp <= 0 and (not rule.isDead):
                 rule.index = 0
@@ -823,9 +822,9 @@ def main():
 
         heroes_skill_collisions()
         heroes_bullet_collisions()
+        enemies_bullet_collisions()
         heroes2enemies_collisions()
         enemies2heroes_collisions()
-        enemies_bullet_collisions()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
