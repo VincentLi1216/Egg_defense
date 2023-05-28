@@ -249,8 +249,8 @@ class Fox(Hero):
 
     def skill(self):
         for enemy in enemies.sprites():
-            enemy.speed = -1
-            enemy.attack_moving_speed = -1
+            enemy.speed = -3
+            enemy.attack_moving_speed = -3
 
 class Turtle(Hero):
     def __init__(self, pos):
@@ -703,7 +703,7 @@ create_enemy("Seashell", 4)
 from dataDB import get_data
 
 playerCard = get_data("test")["characters"]
-# playerCard = ["dog", 'turtle', "fox", "bee"]
+# playerCard = ["dog", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
 cardsFPS = []
