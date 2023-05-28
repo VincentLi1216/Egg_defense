@@ -324,7 +324,8 @@ class Bee(Hero):
                 if 140 <= enemy.rect.centerx - self.rect.centerx <= 200:
                     self.skill(2)
             elif -50 <= enemy.rect.midbottom[1] - self.rect.midbottom[1] <= 50:
-                self.skill(1)
+                if enemy.rect.centerx - self.rect.centerx > 0:
+                    self.skill(1)
             elif -150 <= enemy.rect.centery - self.rect.centery <= -50:
                 if 140 <= enemy.rect.centerx - self.rect.centerx <= 200:
                     self.skill(0)
@@ -703,8 +704,8 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test_new")["characters"]
-# playerCard = ["dog", 'turtle', "fox", "bee", "mushroom"]
+# playerCard = get_data("test_new")["characters"]
+playerCard = ["cat", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
 cardsFPS = []
