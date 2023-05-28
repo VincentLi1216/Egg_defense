@@ -71,8 +71,8 @@ def get_data(name):
 
 from datetime import datetime
 #
-data = {"account": "test_5", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-        "coin": 50, "characters": "cat,bee,rino,fox,turtle,turkey", "level": 2}
+data = {"account": "test_new", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+        "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey", "level": 2}
 #
 if __name__ == "__main__":
     print(connection_test())

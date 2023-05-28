@@ -1,9 +1,9 @@
 {
-  "account": "test_5",
+  "account": "test_new",
   "characters": [
     "cat",
     "bee",
-    "rino",
+    "rhino",
     "fox",
     "turtle",
     "turkey"
@@ -11,5 +11,5 @@
   "coin": 50,
   "level": 2,
   "pw": "qwerty",
-  "timestamp": "2023-05-26 17:18:33"
+  "timestamp": "2023-05-28 22:25:19"
 }

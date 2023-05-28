@@ -149,10 +149,10 @@ class Mushroom(Hero):
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
-class Rino(Hero):
+class rhino(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 5)]
-        self.animal = "rino"
+        self.animal = "rhino"
         self.isDead = False
         self.speed = 8
         super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"],
@@ -543,8 +543,8 @@ def create_hero(animal, x, y):
     elif animal == 'mushroom':
         heroes.add(Mushroom((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 1
-    elif animal == 'rino':
-        heroes.add(Rino((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+    elif animal == 'rhino':
+        heroes.add(rhino((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 0
     elif animal == 'turkey':
         heroes.add(Turkey((211.2731 + 148.5726 * y, 0)))
@@ -702,7 +702,7 @@ create_enemy("Seashell", 4)
 
 from dataDB import get_data
 
-playerCard = get_data("test")["characters"]
+playerCard = get_data("test_new")["characters"]
 # playerCard = ["dog", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
@@ -713,10 +713,10 @@ def heroes_skill_collisions():
     for hero in collisions:
         heroes_attack = collisions[hero]
         for enemy in heroes_attack:
-            if hero.animal in ("rino", "turkey"):
+            if hero.animal in ("rhino", "turkey"):
                 if hero.animal == "turkey" and (enemy.rect.centerx - hero.rect.centerx) <= 75:
                     enemy.hp -= hero.damage
-                if hero.animal == "rino" and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
+                if hero.animal == "rhino" and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
                     enemy.hp -= hero.damage
             if hero.animal == "turtle" and (enemy.rect.midleft[0] <= hero.rect.midright[0]-20):
                 hero.hp = enemy.hp = -1
