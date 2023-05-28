@@ -215,7 +215,7 @@ class Cat(Hero):
                 if (heroesInfo[heroes.sprites()[index].animal]["hp"] - heroes.sprites()[index].hp) > \
                         (heroesInfo[heroes.sprites()[target].animal]["hp"] - heroes.sprites()[target].hp) and heroes.sprites()[index].animal != "cat":
                     target = index
-            heroes.sprites()[target].hp = heroes.sprites()[target].hp + 10 if heroes.sprites()[target].hp < heroesInfo[
+            heroes.sprites()[target].hp = heroes.sprites()[target].hp + 5 if heroes.sprites()[target].hp < heroesInfo[
                 heroes.sprites()[target].animal]["hp"] else heroes.sprites()[target].hp
 
 class Fox(Hero):
@@ -738,7 +738,7 @@ def heroes2enemies_collisions():
         heroes_attack = collisions[hero]
         for enemy in heroes_attack:
             if (hero.rect.centerx >= enemy.rect.midleft[0]-30) and (hero.animal != "turtle") \
-                    and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
+                    and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60 and hero.rect.midright[0]+20 <= enemy.rect.midright[0]:
                 hero.hp -= 0.1
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
