@@ -1,5 +1,6 @@
 import pygame, sys, random, os, copy
 from character_dict import *
+use_mouse = True
 
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
