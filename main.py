@@ -775,8 +775,8 @@ def heroes_skill_collisions():
         heroes_attack = collisions[hero]
         for enemy in heroes_attack:
             if hero.animal in ("rhino", "turkey"):
-                if hero.animal == "turkey" and (enemy.rect.centerx - hero.rect.centerx) <= 75:
-                    enemy.hp -= hero.damage
+                if hero.animal == "turkey" and (enemy.rect.centerx - hero.rect.centerx) <= 90:
+                    enemy.hp = -1
                 if hero.animal == "rhino" and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
                     enemy.hp -= hero.damage
             if hero.animal == "turtle" and (enemy.rect.midleft[0] <= hero.rect.midright[0]-20):
