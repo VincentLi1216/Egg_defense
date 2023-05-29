@@ -6,7 +6,8 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(0)
+
+cap = cv2.VideoCapture(1)
 
 
 def distance(x1, y1, x2, y2):
@@ -16,7 +17,7 @@ def distance(x1, y1, x2, y2):
 # mediapipe 啟用偵測手掌
 with mp_hands.Hands(
     model_complexity=0,
-    # max_num_hands=1,
+    max_num_hands=1,
     min_detection_confidence=0.5,
         min_tracking_confidence=0.5) as hands:
 
@@ -50,7 +51,7 @@ with mp_hands.Hands(
                 y0 = hand_landmarks.landmark[0].y * h  # 取得食指末端 y 座標
                 x5 = hand_landmarks.landmark[5].x * w  # 取得食指末端 x 座標
                 y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
-                if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.2:
+                if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                     print(f'tapped{x8}')
                 # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 

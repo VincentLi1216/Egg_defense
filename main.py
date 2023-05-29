@@ -1,3 +1,6 @@
+import cv2
+import math
+import mediapipe as mp
 from dataDB import get_data
 import pygame
 import sys
@@ -6,7 +9,7 @@ import os
 import copy
 from character_dict import *
 from hand_detection import *
-use_mouse = True
+use_mouse = False
 
 
 def pos2coord(pos):
@@ -759,8 +762,8 @@ create_enemy("Whale", 3)
 create_enemy("Seashell", 4)
 
 
-# playerCard = get_data("test_new")["characters"]
-playerCard = ["cat", 'turtle', "fox", "bee", "mushroom"]
+playerCard = get_data("test_new")["characters"]
+# playerCard = ["cat", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
 cardsFPS = []
@@ -829,111 +832,191 @@ def reset_enemies_speed():
         enemy.attack_moving_speed = enemiesInfo[enemy.name]["attack_moving_speed"]
 
 
+mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
+mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
+mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
+
+cap = cv2.VideoCapture(1)
+
+
+def distance(x1, y1, x2, y2):
+    return math.sqrt(pow(x1-x2, 2)+pow(y1-y2, 2))
+
+
 def main():
+    global moving
+    global use_mouse
     moving = False
+    hand_closed = False
     create_card()
+    x4 = 0
+    y4 = 0
 
-    while True:
-        # get_hand_movement()
-        screen.blit(bg_surface, (0, 0))
+    # mediapipe 啟用偵測手掌
+    with mp_hands.Hands(
+        model_complexity=0,
+        max_num_hands=1,
+        min_detection_confidence=0.5,
+            min_tracking_confidence=0.5) as hands:
 
-        reset_enemies_speed()
-        for rule in heroes.sprites():
-            if rule.hp <= 0 and (not rule.isDead):
-                rule.index = 0
-                rule.isDead = True
-            if rule.animal == "cat" and rule.index == len(rule.surface)/2:
-                rule.skill()
-            if rule.animal == "fox":
-                rule.skill()
+        if not cap.isOpened():
+            print("Cannot open camera")
+            exit()
+        while True:
+            ret, img = cap.read()
+            img = cv2.flip(img, 1)
+            size = img.shape   # 取得攝影機影像尺寸
+            w = size[1]        # 取得畫面寬度
+            h = size[0]        # 取得畫面高度
+            if not ret:
+                print("Cannot receive frame")
+                break
+            img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)   # 將 BGR 轉換成 RGB
+            results = hands.process(img2)                 # 偵測手掌
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    # 將節點和骨架繪製到影像中
+                    mp_drawing.draw_landmarks(
+                        img,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing_styles.get_default_hand_landmarks_style(),
+                        mp_drawing_styles.get_default_hand_connections_style())
+                    x8 = hand_landmarks.landmark[8].x * w  # 取得食指末端 x 座標
+                    y8 = hand_landmarks.landmark[8].y * h  # 取得食指末端 y 座標
+                    x4 = hand_landmarks.landmark[4].x * w  # 取得食指末端 x 座標
+                    y4 = hand_landmarks.landmark[4].y * h  # 取得食指末端 y 座標
+                    x0 = hand_landmarks.landmark[0].x * w  # 取得食指末端 x 座標
+                    y0 = hand_landmarks.landmark[0].y * h  # 取得食指末端 y 座標
+                    x5 = hand_landmarks.landmark[5].x * w  # 取得食指末端 x 座標
+                    y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
+                    if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
+                        hand_closed = True
+                        print(f'hand closed:{int(x4)}, {int(y4)}')
+                    else:
+                        hand_closed = False
+                    # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 
-        # guidance_block.update()
-        bullet_update()
-        enemy_bullet_update()
-        card_update()
+            # cv2.imshow('Hand Detection', img)
+            # if cv2.waitKey(5) == ord('q'):
+            #     break    # 按下 q 鍵停止
 
-        heroes_skill_collisions()
-        heroes_bullet_collisions()
-        enemies_bullet_collisions()
-        heroes2enemies_collisions()
-        enemies2heroes_collisions()
+            # main game start here
+            screen.blit(bg_surface, (0, 0))
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+            reset_enemies_speed()
+            for rule in heroes.sprites():
+                if rule.hp <= 0 and (not rule.isDead):
+                    rule.index = 0
+                    rule.isDead = True
+                if rule.animal == "cat" and rule.index == len(rule.surface)/2:
+                    rule.skill()
+                if rule.animal == "fox":
+                    rule.skill()
 
-            for index, ruleFPS in enumerate(heroesFPS):
-                if event.type == ruleFPS:
-                    heroes.sprites()[index].animation()
+            # guidance_block.update()
+            bullet_update()
+            enemy_bullet_update()
+            card_update()
 
-            for index, cardFPS in enumerate(cardsFPS):
-                if event.type == cardFPS:
-                    disp_card[index].cdTime()
+            heroes_skill_collisions()
+            heroes_bullet_collisions()
+            enemies_bullet_collisions()
+            heroes2enemies_collisions()
+            enemies2heroes_collisions()
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for card in disp_card:
-                    if card.rect.collidepoint(event.pos) and card.index == 9:
-                        moving = True
-                        tmpCard = TmpCard(card.animal, event.pos)
-                        break
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-            if event.type == pygame.MOUSEBUTTONUP and use_mouse:  # 获取松开鼠标事件
-                if moving:
-                    x, y = event.pos
-                    if (x >= 139) and (x <= 139 + 892.2375) and (y >= 100) and (y <= 100 + 623.6815):
-                        x, y = pos2coord(event.pos)
-                        if not coordinate[x][y]:
-                            create_hero(tmpCard.animal, x, y)
-                            for index, card in enumerate(disp_card):
-                                if card.animal == tmpCard.animal:
-                                    disp_card.pop(index)
-                                    cardsFPS.pop(index)
-                    moving = False
+                for index, ruleFPS in enumerate(heroesFPS):
+                    if event.type == ruleFPS:
+                        heroes.sprites()[index].animation()
 
-            for index, ruleFPS in enumerate(enemiesFPS):
-                if event.type == ruleFPS:
-                    # enemies.sprites()[index].hp -= 1
-                    enemies.sprites()[index].animation("Run")
+                for index, cardFPS in enumerate(cardsFPS):
+                    if event.type == cardFPS:
+                        disp_card[index].cdTime()
 
-            for index, ruleFPS in enumerate(enemies_attackFPS):
-                if event.type == ruleFPS:
-                    # enemies.sprites()[index].hp -= 1
-                    enemies.sprites()[index].animation("Attack")
+                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (not use_mouse and hand_closed):
+                    for card in disp_card:
+                        if use_mouse:
+                            if card.rect.collidepoint(event.pos) and card.index == 9:
+                                moving = True
+                                tmpCard = TmpCard(card.animal, event.pos)
+                                break
+                        else:
+                            if card.rect.collidepoint((round(x4), round(y4))) and card.index == 9:
+                                moving = True
+                                tmpCard = TmpCard(
+                                    card.animal, (round(x4), round(y4)))
+                                break
 
-        enemies.draw(screen)
-        enemies_bullet.draw(screen)
-        heroes.draw(screen)
-        heroesBullet.draw(screen)
+                if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (not use_mouse and not hand_closed):  # 获取松开鼠标事件
+                    if moving:
+                        if use_mouse:
+                            x, y = event.pos
+                        else:
+                            x, y = (round(x4), round(y4))
+                        if (x >= 139) and (x <= 139 + 892.2375) and (y >= 100) and (y <= 100 + 623.6815):
+                            if use_mouse:
+                                x, y = pos2coord(event.pos)
+                            else:
+                                x, y = pos2coord((round(x4), round(y4)))
 
-        if moving:
+                            if not coordinate[x][y]:
+                                create_hero(tmpCard.animal, x, y)
+                                for index, card in enumerate(disp_card):
+                                    if card.animal == tmpCard.animal:
+                                        disp_card.pop(index)
+                                        cardsFPS.pop(index)
+                        moving = False
+
+                for index, ruleFPS in enumerate(enemiesFPS):
+                    if event.type == ruleFPS:
+                        # enemies.sprites()[index].hp -= 1
+                        enemies.sprites()[index].animation("Run")
+
+                for index, ruleFPS in enumerate(enemies_attackFPS):
+                    if event.type == ruleFPS:
+                        # enemies.sprites()[index].hp -= 1
+                        enemies.sprites()[index].animation("Attack")
+
+            enemies.draw(screen)
+            enemies_bullet.draw(screen)
+            heroes.draw(screen)
+            heroesBullet.draw(screen)
+
+            if moving:
+                if use_mouse:
+                    tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
+                else:
+                    tmpCard.rect.center = (round(x4), round(y4))
+                screen.blit(tmpCard.image, tmpCard.rect)
+
+            for index, rule in enumerate(heroes.sprites()):
+                if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (
+                        rule.characterAnimation[1][1] - rule.characterAnimation[1][0])):
+                    rule.kill()
+                    coordinate[rule.coord[0]][rule.coord[1]] = 0
+                    heroesFPS.remove(heroesFPS[index])
+
+            for index, rule in enumerate(enemies.sprites()):
+                if rule.is_dead:
+                    enemies.remove(rule)
+                    enemiesFPS.remove(enemiesFPS[index])
+                    enemies_attackFPS.remove(enemies_attackFPS[index])
+                    rule.kill()
+
             if use_mouse:
-                tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
+                cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+                screen.blit(cursor_surface, cursor_rect)  # draw the cursor
             else:
-                pass  # hand detection
-            screen.blit(tmpCard.image, tmpCard.rect)
-
-        for index, rule in enumerate(heroes.sprites()):
-            if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (
-                    rule.characterAnimation[1][1] - rule.characterAnimation[1][0])):
-                rule.kill()
-                coordinate[rule.coord[0]][rule.coord[1]] = 0
-                heroesFPS.remove(heroesFPS[index])
-
-        for index, rule in enumerate(enemies.sprites()):
-            if rule.is_dead:
-                enemies.remove(rule)
-                enemiesFPS.remove(enemiesFPS[index])
-                enemies_attackFPS.remove(enemies_attackFPS[index])
-                rule.kill()
-
-        if use_mouse:
-            cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
-            screen.blit(cursor_surface, cursor_rect)  # draw the cursor
-        else:
-            pass  # hand detection
-        pygame.display.update()
-        clock.tick(90)
+                cursor_rect.center = (round(x4), round(y4))
+                screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+                print((round(x4), round(y4)))
+            pygame.display.update()
+            clock.tick(90)
 
 
 if __name__ == "__main__":
