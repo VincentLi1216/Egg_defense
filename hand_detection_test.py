@@ -50,7 +50,7 @@ with mp_hands.Hands(
                 y0 = hand_landmarks.landmark[0].y * h  # 取得食指末端 y 座標
                 x5 = hand_landmarks.landmark[5].x * w  # 取得食指末端 x 座標
                 y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
-                if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.2:
+                if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                     print(f'tapped{x8}')
                 # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 
