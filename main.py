@@ -1,11 +1,19 @@
-import pygame, sys, random, os, copy
+from dataDB import get_data
+import pygame
+import sys
+import random
+import os
+import copy
 from character_dict import *
+from hand_detection import *
 use_mouse = True
+
 
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
     y = int((pos[0] - 136.9868) / 148.5726)
     return x, y
+
 
 class Character(pygame.sprite.Sprite):
     def __init__(self, hp, pos, damage, fps):
@@ -15,6 +23,7 @@ class Character(pygame.sprite.Sprite):
         self.damage = damage
         self.index = 0
         self.fps = fps
+
 
 class Hero(Character):
     def __init__(self, hp, pos, damage, surface, fps):
@@ -28,6 +37,7 @@ class Hero(Character):
         self.coord = (x, y)
         self.round = 0
 
+
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, rect, surface, side, damage, speed_x, speed_y=0, index=0):
         super().__init__()
@@ -35,15 +45,18 @@ class Bullet(pygame.sprite.Sprite):
         self.name = "bullet"
         self.animal = surface[0]
         if surface[0] != "bee":
-            self.surface = [pygame.image.load(f"image/{side}/{self.name}/{surface[0]}_{self.name}.png").convert_alpha()]
+            self.surface = [pygame.image.load(
+                f"image/{side}/{self.name}/{surface[0]}_{self.name}.png").convert_alpha()]
         else:
-            self.surface = [pygame.image.load(f"image/{side}/{self.name}/{surface[0]}_{self.name}{index}.png").convert_alpha()]
+            self.surface = [pygame.image.load(
+                f"image/{side}/{self.name}/{surface[0]}_{self.name}{index}.png").convert_alpha()]
         self.image = self.surface[0]
         self.rect = self.image.get_rect(center=rect.center)
         self.speed_x = speed_x
         self.speed_y = speed_y
         self.side = side
         self.damage = damage
+
 
 class Enemy_bullet(pygame.sprite.Sprite):
     def __init__(self, rect, path, damage, bullet_speed):
@@ -54,6 +67,7 @@ class Enemy_bullet(pygame.sprite.Sprite):
         self.damage = damage
         self.bullet_speed = bullet_speed
 
+
 class Dog(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 11), (12, 18)]
@@ -62,7 +76,8 @@ class Dog(Hero):
         self.load_dead = False
         self.speed_x = 7
         self.speed_y = 0
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (
+            self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
 
     def animation(self):
         if self.hp > 0:
@@ -73,7 +88,8 @@ class Dog(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -84,6 +100,7 @@ class Dog(Hero):
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
+
 class Frog(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 11)]
@@ -91,7 +108,8 @@ class Frog(Hero):
         self.isDead = False
         self.speed_x = 5
         self.speed_y = 0
-        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
+        super().__init__(heroesInfo[self.animal]["hp"], pos, heroesInfo[self.animal]["damage"], (
+            self.animal, self.characterAnimation[0][1]), heroesInfo[self.animal]["fps"])
 
     def animation(self):
         if self.hp > 0:
@@ -101,6 +119,7 @@ class Frog(Hero):
                 self.index += 1
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
+
 
 class Bird(Hero):
     def __init__(self, pos):
@@ -121,6 +140,7 @@ class Bird(Hero):
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
+
 class Mushroom(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 7), (8, 16)]
@@ -139,7 +159,8 @@ class Mushroom(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -149,6 +170,7 @@ class Mushroom(Hero):
                 self.index += 1
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
+
 
 class rhino(Hero):
     def __init__(self, pos):
@@ -174,6 +196,7 @@ class rhino(Hero):
     def skill(self):
         pass
 
+
 class Cat(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 7), (8, 14)]
@@ -192,7 +215,8 @@ class Cat(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -218,6 +242,7 @@ class Cat(Hero):
             heroes.sprites()[target].hp = heroes.sprites()[target].hp + 5 if heroes.sprites()[target].hp < heroesInfo[
                 heroes.sprites()[target].animal]["hp"] else heroes.sprites()[target].hp
 
+
 class Fox(Hero):
     def __init__(self, pos):
         self.characterAnimation = [(0, 10), (11, 17)]
@@ -237,7 +262,8 @@ class Fox(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -252,6 +278,7 @@ class Fox(Hero):
         for enemy in enemies.sprites():
             enemy.speed = -3
             enemy.attack_moving_speed = -3
+
 
 class Turtle(Hero):
     def __init__(self, pos):
@@ -274,7 +301,8 @@ class Turtle(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -287,6 +315,7 @@ class Turtle(Hero):
 
     def skill(self):
         pass
+
 
 class Bee(Hero):
     def __init__(self, pos):
@@ -309,7 +338,8 @@ class Bee(Hero):
         else:
             if not self.load_dead:
                 self.surface = [
-                    pygame.image.load(f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
+                    pygame.image.load(
+                        f"image/{self.characterSide}/{self.animal}/{self.animal}{i}.png").convert_alpha()
                     for i in range(self.characterAnimation[1][0], self.characterAnimation[1][1] + 1)]
                 self.load_dead = True
                 self.index = 0
@@ -335,6 +365,7 @@ class Bee(Hero):
         if self.index == (len(self.surface) // 2):
             heroesBullet.add(
                 Bullet(self.rect, (self.animal, 3), self.characterSide, self.damage, heroesInfo[self.animal]["speed_x"], heroesInfo[self.animal]["speed_y"][direction], direction))
+
 
 class Turkey(Hero):
     def __init__(self, pos):
@@ -373,6 +404,7 @@ class Turkey(Hero):
     def skill(self):
         pass
 
+
 class Enemy(Character):
     def __init__(self, name, pos):
 
@@ -386,7 +418,7 @@ class Enemy(Character):
         self.mode_change_enable = True
         self.indexes_show_after_dead = 10
         self.has_attacked = False
-        self.isDead = False #just for testing
+        self.isDead = False  # just for testing
         self.surfaces = {}
         all_mode = ["Run", "Attack", "Hit", "Dead"]
         super().__init__(hp=self.hp, pos=pos, damage=self.damage, fps=self.fps)
@@ -398,58 +430,60 @@ class Enemy(Character):
                 for filename in filenames:
                     if filename.endswith(".png"):
                         file_count += 1
-            self.surfaces[mode] = [pygame.image.load(f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
+            self.surfaces[mode] = [pygame.image.load(
+                f'{project_dir}/{j + 1}.png').convert_alpha() for j in range(file_count)]
         self.image = self.surfaces[self.show_mode][self.index]
         self.rect = self.image.get_rect(midbottom=self.pos)
 
     # for the animation of the character
-    def animation(self, mode, attack_moving_speed, has_bullet = False):
-            # if the mode change (different from the last time)
-            if mode != self.show_mode:
-                # if the character is dead then it's always sticks on the mode "Dead"
-                if self.hp > 0:
-                    # if the mode_change_enable is True which means that the other mode was loop over
-                    if self.mode_change_enable:
-                        self.index = 0
-                        self.show_mode = mode
-                else:
-                    self.show_mode = "Dead"
-
-            if self.hp <= 0:
-                # load for the first time
-                if not self.is_dead_load:
+    def animation(self, mode, attack_moving_speed, has_bullet=False):
+        # if the mode change (different from the last time)
+        if mode != self.show_mode:
+            # if the character is dead then it's always sticks on the mode "Dead"
+            if self.hp > 0:
+                # if the mode_change_enable is True which means that the other mode was loop over
+                if self.mode_change_enable:
                     self.index = 0
-                    self.show_mode = "Dead"
-                    self.is_dead_load = True
-                # if the dead animation is over
-                if self.index >= len(self.surfaces["Dead"]) - 1:
-                    self.index += 1
-                    # wait for indexes_show_after_dead amount of time
-                    if self.index >= (len(self.surfaces["Dead"]) - 1 + self.indexes_show_after_dead):
-                        self.is_dead = True
+                    self.show_mode = mode
+            else:
+                self.show_mode = "Dead"
+
+        if self.hp <= 0:
+            # load for the first time
+            if not self.is_dead_load:
+                self.index = 0
+                self.show_mode = "Dead"
+                self.is_dead_load = True
+            # if the dead animation is over
+            if self.index >= len(self.surfaces["Dead"]) - 1:
+                self.index += 1
+                # wait for indexes_show_after_dead amount of time
+                if self.index >= (len(self.surfaces["Dead"]) - 1 + self.indexes_show_after_dead):
+                    self.is_dead = True
+            else:
+                self.index += 1
+        else:
+            # image different animation depends on the self.show_mode
+            if self.show_mode == "Run":
+                self.rect.x += self.speed
+                if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                    self.index = 0
                 else:
                     self.index += 1
-            else:
-                # image different animation depends on the self.show_mode
-                if self.show_mode == "Run":
-                    self.rect.x += self.speed
-                    if self.index == (len(self.surfaces[self.show_mode]) - 1):
-                        self.index = 0
-                    else:
-                        self.index += 1
-                elif self.show_mode == "Attack":
-                    self.rect.x += attack_moving_speed
-                    # if the attack animation is over then enable self.mode_change_enable = True
-                    if self.index == (len(self.surfaces[self.show_mode]) - 1):
-                        self.index = 0
-                        self.mode_change_enable = True
-                        if has_bullet:
-                            self.has_attacked = False
-                    else:
-                        self.mode_change_enable = False
-                        self.index += 1
-            self.image = self.surfaces[self.show_mode][
-                self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
+            elif self.show_mode == "Attack":
+                self.rect.x += attack_moving_speed
+                # if the attack animation is over then enable self.mode_change_enable = True
+                if self.index == (len(self.surfaces[self.show_mode]) - 1):
+                    self.index = 0
+                    self.mode_change_enable = True
+                    if has_bullet:
+                        self.has_attacked = False
+                else:
+                    self.mode_change_enable = False
+                    self.index += 1
+        self.image = self.surfaces[self.show_mode][
+            self.index if self.index < len(self.surfaces["Dead"]) else len(self.surfaces["Dead"]) - 1]
+
 
 class Crabby(Enemy):
     def __init__(self, pos):
@@ -461,6 +495,7 @@ class Crabby(Enemy):
         # brighten = 128
         # self.surfaces["Run"][0].fill((brighten, brighten, brighten), special_flags=pygame.BLEND_RGB_ADD)
 
+
 class Fierce_Tooth(Enemy):
     def __init__(self, pos):
         name = "Fierce Tooth"
@@ -469,6 +504,7 @@ class Fierce_Tooth(Enemy):
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
 
+
 class Pink_Star(Enemy):
     def __init__(self, pos):
         name = "Pink Star"
@@ -476,6 +512,7 @@ class Pink_Star(Enemy):
 
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
+
 
 class Seashell(Enemy):
     def __init__(self, pos):
@@ -486,6 +523,7 @@ class Seashell(Enemy):
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed, has_bullet=True)
 
+
 class Whale(Enemy):
     def __init__(self, pos):
         name = "Whale"
@@ -494,10 +532,12 @@ class Whale(Enemy):
     def animation(self, mode):
         super().animation(mode, self.attack_moving_speed)
 
+
 class Card:
     def __init__(self, animal):
         self.animal = animal
-        self.surface = [pygame.image.load(f"image/card/card_{self.animal}{i}.png").convert_alpha() for i in range(10)]
+        self.surface = [pygame.image.load(
+            f"image/card/card_{self.animal}{i}.png").convert_alpha() for i in range(10)]
         self.rect = self.surface[0].get_rect(topleft=(0, 12.4222))
         self.image = self.surface[0]
         self.index = 0
@@ -511,10 +551,12 @@ class Card:
         self.image = self.surface[self.index]
         self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
 
+
 class TmpCard:
     def __init__(self, animal, pos):
         self.animal = animal
-        self.image = pygame.image.load(f"image/hero/{self.animal}/{self.animal}0.png").convert_alpha()
+        self.image = pygame.image.load(
+            f"image/hero/{self.animal}/{self.animal}0.png").convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
 # class Guidance_block:
@@ -532,6 +574,7 @@ class TmpCard:
 #                 self.rect.y = x * 124.7363 + 100
 #                 screen.blit(self.image, self.rect)
 
+
 def create_hero(animal, x, y):
     if animal == 'dog':
         heroes.add(Dog((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
@@ -543,7 +586,8 @@ def create_hero(animal, x, y):
         heroes.add(Bird((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 1
     elif animal == 'mushroom':
-        heroes.add(Mushroom((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
+        heroes.add(
+            Mushroom((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 1
     elif animal == 'rhino':
         heroes.add(rhino((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
@@ -566,8 +610,10 @@ def create_hero(animal, x, y):
 
     global FPSCounter
     heroesFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, heroes.sprites()[-1].fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter,
+                          heroes.sprites()[-1].fps)
     FPSCounter += 1
+
 
 def bullet_update():
     global FPSCounter
@@ -585,11 +631,13 @@ def bullet_update():
             if bullet.rect.left >= 1280:
                 bullet.kill()
 
+
 def enemy_bullet_update():
     global FPSCounter
     for rule in enemies.sprites():
         if rule.name in ("Seashell") and rule.show_mode == "Attack" and not rule.has_attacked:
-            enemies_bullet.add(Enemy_bullet(rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
+            enemies_bullet.add(Enemy_bullet(
+                rule.rect, "image/enemy/Pearl/Idle/1.png", rule.damage, rule.bullet_speed))
             rule.has_attacked = True
 
     if enemies_bullet.sprites():
@@ -598,6 +646,7 @@ def enemy_bullet_update():
             if bullet.rect.right <= 0:
                 enemies_bullet.remove(bullet)
                 bullet.kill()
+
 
 def create_enemy(name, row):
     default_x = 1370
@@ -612,18 +661,21 @@ def create_enemy(name, row):
     elif name == "Whale":
         enemies.add(Whale((default_x, 222.3947 + 124.7363 * row - 3)))
 
-
     global FPSCounter
     enemiesFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies.sprites()[-1].fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter,
+                          enemies.sprites()[-1].fps)
     FPSCounter += 1
     enemies_attackFPS.append(pygame.USEREVENT + FPSCounter)
-    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, enemies.sprites()[-1].attack_fps)
+    pygame.time.set_timer(pygame.USEREVENT + FPSCounter,
+                          enemies.sprites()[-1].attack_fps)
     FPSCounter += 1
+
 
 def create_card():
     for animal in playerCard:
         cardSet.append(Card(animal))
+
 
 def card_update():
     global cardSet, disp_card, FPSCounter
@@ -638,7 +690,8 @@ def card_update():
                     disp_card.append(Card(animal))
 
                     cardsFPS.append(pygame.USEREVENT + FPSCounter)
-                    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                    pygame.time.set_timer(
+                        pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
                     FPSCounter += 1
                     break
 
@@ -656,7 +709,8 @@ def card_update():
                     disp_card.append(Card(animal))
 
                     cardsFPS.append(pygame.USEREVENT + FPSCounter)
-                    pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                    pygame.time.set_timer(
+                        pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
                     FPSCounter += 1
                     break
             else:
@@ -664,13 +718,15 @@ def card_update():
                 disp_card.append(Card(animal))
 
                 cardsFPS.append(pygame.USEREVENT + FPSCounter)
-                pygame.time.set_timer(pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
+                pygame.time.set_timer(
+                    pygame.USEREVENT + FPSCounter, disp_card[-1].fps)
                 FPSCounter += 1
                 break
 
     for i in range(len(disp_card)):
         disp_card[i].rect.x = 134.1848 + 86.7772 * i
         screen.blit(disp_card[i].image, disp_card[i].rect)
+
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -702,13 +758,13 @@ create_enemy("Crabby", 2)
 create_enemy("Whale", 3)
 create_enemy("Seashell", 4)
 
-from dataDB import get_data
 
 # playerCard = get_data("test_new")["characters"]
 playerCard = ["cat", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
 cardsFPS = []
+
 
 def heroes_skill_collisions():
     collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
@@ -723,14 +779,17 @@ def heroes_skill_collisions():
             if hero.animal == "turtle" and (enemy.rect.midleft[0] <= hero.rect.midright[0]-20):
                 hero.hp = enemy.hp = -1
 
+
 def heroes_bullet_collisions():
-    collisions = pygame.sprite.groupcollide(heroesBullet, enemies, False, False)
+    collisions = pygame.sprite.groupcollide(
+        heroesBullet, enemies, False, False)
     for bullet in collisions:
         heroes_attack = collisions[bullet]
         for enemy in heroes_attack:
             if enemy.rect.centerx - bullet.rect.centerx <= 20:
                 enemy.hp -= bullet.damage
                 bullet.kill()
+
 
 def heroes2enemies_collisions():
     collisions = pygame.sprite.groupcollide(heroes, enemies, False, False)
@@ -743,6 +802,7 @@ def heroes2enemies_collisions():
                 enemy.speed = 0
                 enemy.attack_moving_speed = 0
 
+
 def enemies2heroes_collisions():
     collisions = pygame.sprite.groupcollide(enemies, heroes, False, False)
     for enemy in collisions:
@@ -751,8 +811,10 @@ def enemies2heroes_collisions():
             if enemy.show_mode == "Attack" and enemy.index == 0 and -60 <= (enemy.rect.centery - hero.rect.centery) <= 60:
                 hero.hp -= enemy.damage
 
+
 def enemies_bullet_collisions():
-    collisions = pygame.sprite.groupcollide(enemies_bullet, heroes, False, False)
+    collisions = pygame.sprite.groupcollide(
+        enemies_bullet, heroes, False, False)
     for bullet in collisions:
         enemies_attack = collisions[bullet]
         for hero in enemies_attack:
@@ -760,16 +822,19 @@ def enemies_bullet_collisions():
                 hero.hp -= bullet.damage
                 bullet.kill()
 
+
 def reset_enemies_speed():
     for enemy in enemies.sprites():
         enemy.speed = enemiesInfo[enemy.name]["speed"]
         enemy.attack_moving_speed = enemiesInfo[enemy.name]["attack_moving_speed"]
+
 
 def main():
     moving = False
     create_card()
 
     while True:
+        get_hand_movement()
         screen.blit(bg_surface, (0, 0))
 
         reset_enemies_speed()
@@ -813,7 +878,7 @@ def main():
                         tmpCard = TmpCard(card.animal, event.pos)
                         break
 
-            if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
+            if event.type == pygame.MOUSEBUTTONUP and use_mouse:  # 获取松开鼠标事件
                 if moving:
                     x, y = event.pos
                     if (x >= 139) and (x <= 139 + 892.2375) and (y >= 100) and (y <= 100 + 623.6815):
@@ -842,7 +907,10 @@ def main():
         heroesBullet.draw(screen)
 
         if moving:
-            tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
+            if use_mouse:
+                tmpCard.rect.center = pygame.mouse.get_pos()  # 更新圆心位置为鼠标当前位置
+            else:
+                pass  # hand detection
             screen.blit(tmpCard.image, tmpCard.rect)
 
         for index, rule in enumerate(heroes.sprites()):
@@ -859,10 +927,14 @@ def main():
                 enemies_attackFPS.remove(enemies_attackFPS[index])
                 rule.kill()
 
-        cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
-        screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+        if use_mouse:
+            cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+            screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+        else:
+            pass  # hand detection
         pygame.display.update()
         clock.tick(90)
+
 
 if __name__ == "__main__":
     main()
