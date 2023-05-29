@@ -10,6 +10,7 @@ import copy
 import time
 from character_dict import *
 from hand_detection import *
+from level_design import *
 use_mouse = False
 level = 1
 
@@ -987,6 +988,7 @@ def main():
                     if event.type == ruleFPS:
                         # enemies.sprites()[index].hp -= 1
                         enemies.sprites()[index].animation("Attack")
+            print(len(level_design[1]))
 
             enemies.draw(screen)
             enemies_bullet.draw(screen)
