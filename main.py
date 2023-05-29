@@ -836,7 +836,7 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 
 def distance(x1, y1, x2, y2):
@@ -865,6 +865,7 @@ def main():
         while True:
             ret, img = cap.read()
             img = cv2.flip(img, 1)
+            img = cv2.resize(img, (1280, 720))
             size = img.shape   # 取得攝影機影像尺寸
             w = size[1]        # 取得畫面寬度
             h = size[0]        # 取得畫面高度
