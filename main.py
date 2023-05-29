@@ -889,11 +889,11 @@ def main():
                         print(f'tapped{x8}')
                     # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 
-            cv2.imshow('oxxostudio', img)
+            cv2.imshow('Hand Detection', img)
             if cv2.waitKey(5) == ord('q'):
                 break    # 按下 q 鍵停止
 
-            # main game start
+            # main game start here
             screen.blit(bg_surface, (0, 0))
 
             reset_enemies_speed()
