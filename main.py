@@ -7,9 +7,11 @@ import sys
 import random
 import os
 import copy
+import time
 from character_dict import *
 from hand_detection import *
 use_mouse = False
+level = 1
 
 
 def pos2coord(pos):
@@ -836,7 +838,7 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 
 def distance(x1, y1, x2, y2):
@@ -862,6 +864,9 @@ def main():
         if not cap.isOpened():
             print("Cannot open camera")
             exit()
+
+        begin_time = time.time()
+
         while True:
             ret, img = cap.read()
             img = cv2.flip(img, 1)
