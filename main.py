@@ -834,7 +834,7 @@ def main():
     create_card()
 
     while True:
-        get_hand_movement()
+        # get_hand_movement()
         screen.blit(bg_surface, (0, 0))
 
         reset_enemies_speed()
