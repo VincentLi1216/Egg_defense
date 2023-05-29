@@ -758,18 +758,13 @@ FPSCounter = 0
 all_enemies = ["Crabby", "Fierce Tooth", "Pink Star", "Seashell", "Whale"]
 # guidance_block = Guidance_block()
 
-create_enemy("Pink Star", 0)
-create_enemy("Fierce Tooth", 1)
-create_enemy("Crabby", 2)
-create_enemy("Whale", 3)
-create_enemy("Seashell", 4)
-
 
 playerCard = get_data("test_new")["characters"]
 # playerCard = ["cat", 'turtle', "fox", "bee", "mushroom"]
 cardSet = []
 disp_card = []
 cardsFPS = []
+game_design = copy.deepcopy(level_design)
 
 
 def heroes_skill_collisions():
@@ -854,6 +849,8 @@ def main():
     create_card()
     x4 = 0
     y4 = 0
+    rm_enemy_num = 0
+    begin_time = time.time()
 
     # mediapipe 啟用偵測手掌
     with mp_hands.Hands(
@@ -866,9 +863,23 @@ def main():
             print("Cannot open camera")
             exit()
 
-        begin_time = time.time()
-
         while True:
+
+            # create enemy from the dict
+            for i in range(len(game_design[level])):
+                if game_design[level][i]["time"] <= time.time() - begin_time:
+                    print(len(game_design[level]))
+                    create_enemy(
+                        game_design[level][i]["enemy"], game_design[level][i]["row"])
+                    print(game_design[level][i]["enemy"])
+                    rm_enemy_num += 1
+
+            for _ in range(rm_enemy_num):
+                game_design[level].pop(0)
+                print(game_design[level])
+
+            rm_enemy_num = 0
+
             ret, img = cap.read()
             img = cv2.flip(img, 1)
             img = cv2.resize(img, (1280, 720))
@@ -899,7 +910,7 @@ def main():
                     y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
                     if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                         hand_closed = True
-                        print(f'hand closed:{int(x4)}, {int(y4)}')
+                        # print(f'hand closed:{int(x4)}, {int(y4)}')
                     else:
                         hand_closed = False
                     # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
@@ -988,7 +999,6 @@ def main():
                     if event.type == ruleFPS:
                         # enemies.sprites()[index].hp -= 1
                         enemies.sprites()[index].animation("Attack")
-            print(len(level_design[1]))
 
             enemies.draw(screen)
             enemies_bullet.draw(screen)
@@ -1022,7 +1032,7 @@ def main():
             else:
                 cursor_rect.center = (round(x4), round(y4))
                 screen.blit(cursor_surface, cursor_rect)  # draw the cursor
-                print((round(x4), round(y4)))
+                # print((round(x4), round(y4)))
             pygame.display.update()
             clock.tick(90)
 
