@@ -956,7 +956,7 @@ def main():
                     if event.type == cardFPS:
                         disp_card[index].cdTime()
 
-                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (not use_mouse and hand_closed):
+                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN and not moving) or (not use_mouse and hand_closed and not moving):
                     for card in disp_card:
                         if use_mouse:
                             if card.rect.collidepoint(event.pos) and card.index == 9:
