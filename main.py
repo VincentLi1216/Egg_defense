@@ -868,15 +868,15 @@ def main():
             # create enemy from the dict
             for i in range(len(game_design[level])):
                 if game_design[level][i]["time"] <= time.time() - begin_time:
-                    print(len(game_design[level]))
+                    # print(len(game_design[level]))
                     create_enemy(
                         game_design[level][i]["enemy"], game_design[level][i]["row"])
-                    print(game_design[level][i]["enemy"])
+                    # print(game_design[level][i]["enemy"])
                     rm_enemy_num += 1
 
             for _ in range(rm_enemy_num):
                 game_design[level].pop(0)
-                print(game_design[level])
+                # print(game_design[level])
 
             rm_enemy_num = 0
 
@@ -1019,7 +1019,8 @@ def main():
                     coordinate[rule.coord[0]][rule.coord[1]] = 0
                     heroesFPS.remove(heroesFPS[index])
 
-            for index, rule in enumerate(enemies.sprites()):
+            # reversed the list to prevent kill the two enemies at the same time
+            for index, rule in list(reversed(list(enumerate(enemies.sprites())))):
                 if rule.is_dead:
                     enemies.remove(rule)
                     enemiesFPS.remove(enemiesFPS[index])
