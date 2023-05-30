@@ -11,7 +11,7 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = False
+use_mouse = True
 level = 1
 
 
