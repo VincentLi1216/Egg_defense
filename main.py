@@ -740,9 +740,11 @@ pygame.display.set_caption("EGG DEFENSE")
 pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
-cursor_surface = pygame.image.load("image/cursor/cursor2.png").convert_alpha()
-cursor_surface = pygame.transform.scale(cursor_surface, (70, 70))
-cursor_rect = cursor_surface.get_rect()
+cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
+), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
+cursor_surface = [pygame.transform.scale(
+    cursor_surface[0], (70, 70)), pygame.transform.scale(cursor_surface[1], (70, 70))]
+cursor_rect = cursor_surface[0].get_rect()
 
 heroes = pygame.sprite.Group()
 heroesFPS = []
@@ -846,6 +848,7 @@ def main():
     global use_mouse
     moving = False
     hand_closed = False
+    cursor_grabbed = False
     create_card()
     x4 = 0
     y4 = 0
@@ -910,9 +913,11 @@ def main():
                     y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
                     if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                         hand_closed = True
+                        cursor_grabbed = True
                         # print(f'hand closed:{int(x4)}, {int(y4)}')
                     else:
                         hand_closed = False
+                        cursor_grabbed = False
                     # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 
             # cv2.imshow('Hand Detection', img)
@@ -955,6 +960,11 @@ def main():
                 for index, cardFPS in enumerate(cardsFPS):
                     if event.type == cardFPS:
                         disp_card[index].cdTime()
+
+                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (not use_mouse and hand_closed):
+                    cursor_grabbed = True
+                else:
+                    cursor_grabbed = False
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN and not moving) or (not use_mouse and hand_closed and not moving):
                     for card in disp_card:
@@ -1029,10 +1039,21 @@ def main():
 
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
-                screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+                if cursor_grabbed:
+                    # draw the cursor
+                    screen.blit(cursor_surface[1], cursor_rect)
+                else:
+                    # draw the cursor
+                    screen.blit(cursor_surface[0], cursor_rect)
+
             else:
                 cursor_rect.center = (round(x4), round(y4))
-                screen.blit(cursor_surface, cursor_rect)  # draw the cursor
+                if cursor_grabbed:
+                    # draw the cursor
+                    screen.blit(cursor_surface[1], cursor_rect)
+                else:
+                    # draw the cursor
+                    screen.blit(cursor_surface[0], cursor_rect)
                 # print((round(x4), round(y4)))
             pygame.display.update()
             clock.tick(90)
