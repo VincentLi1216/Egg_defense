@@ -849,6 +849,7 @@ def main():
     moving = False
     hand_closed = False
     cursor_grabbed = False
+    mouse_down = False
     create_card()
     x4 = 0
     y4 = 0
@@ -962,9 +963,20 @@ def main():
                         disp_card[index].cdTime()
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (not use_mouse and hand_closed):
+                    if use_mouse:
+                        mouse_down = True
                     cursor_grabbed = True
+
                 else:
-                    cursor_grabbed = False
+                    if not use_mouse:
+                        cursor_grabbed = False
+                    elif use_mouse and mouse_down and event.type == pygame.MOUSEBUTTONUP:
+                        print("hi i am here")
+                        cursor_grabbed = False
+                        mouse_down = False
+
+                if cursor_grabbed:
+                    print("cursor grabbed")
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN and not moving) or (not use_mouse and hand_closed and not moving):
                     for card in disp_card:
@@ -1022,7 +1034,7 @@ def main():
                     tmpCard.rect.center = (round(x4), round(y4))
                 screen.blit(tmpCard.image, tmpCard.rect)
 
-            for index, rule in enumerate(heroes.sprites()):
+            for index, rule in list(reversed(list(enumerate(heroes.sprites())))):
                 if rule.isDead and (len(rule.characterAnimation) == 1 or rule.index == (
                         rule.characterAnimation[1][1] - rule.characterAnimation[1][0])):
                     rule.kill()
