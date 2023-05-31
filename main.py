@@ -991,11 +991,13 @@ def main():
                     y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
                     if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                         hand_closed = True
-                        cursor_grabbed = True
+                        if not use_mouse:
+                            cursor_grabbed = True
                         # print(f'hand closed:{int(x4)}, {int(y4)}')
                     else:
                         hand_closed = False
-                        cursor_grabbed = False
+                        if not use_mouse:
+                            cursor_grabbed = False
                     # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
 
             # cv2.imshow('Hand Detection', img)
@@ -1048,12 +1050,8 @@ def main():
                     if not use_mouse:
                         cursor_grabbed = False
                     elif use_mouse and mouse_down and event.type == pygame.MOUSEBUTTONUP:
-                        print("hi i am here")
                         cursor_grabbed = False
                         mouse_down = False
-
-                if cursor_grabbed:
-                    print("cursor grabbed")
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN and not moving) or (not use_mouse and hand_closed and not moving):
                     for card in disp_card:
