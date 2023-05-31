@@ -13,6 +13,7 @@ from hand_detection import *
 from level_design import *
 use_mouse = True
 level = 1
+begin_time = time.time()
 
 
 def pos2coord(pos):
@@ -565,6 +566,12 @@ class TmpCard:
             f"image/hero/{self.animal}/{self.animal}0.png").convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
+class Pause:
+    def __init__(self):
+        self.image = pygame.image.load(f"image/pause/pause.png").convert_alpha()
+        self.rect = self.image.get_rect(topleft=(0,0))
+        self.state = False
+
 # class Guidance_block:
 #     def __init__(self):
 #         self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
@@ -740,6 +747,7 @@ pygame.display.set_caption("EGG DEFENSE")
 pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 bg_surface = pygame.image.load('image/backgroud.png').convert()
+pause_btn = Pause()
 cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
 ), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
 cursor_surface = [pygame.transform.scale(
@@ -836,7 +844,7 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 
 def distance(x1, y1, x2, y2):
@@ -855,6 +863,75 @@ def main():
     y4 = 0
     rm_enemy_num = 0
     begin_time = time.time()
+
+    def pause_game():
+        global begin_time
+        pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+        pause_bg.fill((0, 0, 0, 128))
+        class Exit:
+            def __init__(self):
+                self.image = pygame.image.load(f"image/pause/exit.png").convert_alpha()
+                self.rect = self.image.get_rect(center=(640, 360))
+                self.state = False
+        exit_btn = Exit()
+
+        while True:
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
+                        not use_mouse and hand_closed):
+                    if use_mouse:
+                        if exit_btn.rect.collidepoint(event.pos):
+                            exit_btn.state = True
+
+                    else:
+                        if exit_btn.rect.collidepoint((round(x4), round(y4))):
+                            exit_btn.state = True
+
+                if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
+                        not use_mouse and not hand_closed):  # 获取松开鼠标事件
+                    if exit_btn.state:
+                        begin_time = time.time() #TODO: still have some bugs need to be fixed
+                        return
+
+            screen.blit(bg_surface, (0, 0))
+            enemies.draw(screen)
+            enemies_bullet.draw(screen)
+            heroes.draw(screen)
+            heroesBullet.draw(screen)
+            screen.blit(pause_btn.image, pause_btn.rect)
+
+            for i in range(len(disp_card)):
+                disp_card[i].rect.x = 134.1848 + 86.7772 * i
+                screen.blit(disp_card[i].image, disp_card[i].rect)
+
+            screen.blit(pause_bg, (0, 0))
+            screen.blit(exit_btn.image, exit_btn.rect)
+
+            if use_mouse:
+                cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+                if cursor_grabbed:
+                    # draw the cursor
+                    screen.blit(cursor_surface[1], cursor_rect)
+                else:
+                    # draw the cursor
+                    screen.blit(cursor_surface[0], cursor_rect)
+
+            else:
+                cursor_rect.center = (round(x4), round(y4))
+                if cursor_grabbed:
+                    # draw the cursor
+                    screen.blit(cursor_surface[1], cursor_rect)
+                else:
+                    # draw the cursor
+                    screen.blit(cursor_surface[0], cursor_rect)
+
+            pygame.display.update()
+            clock.tick(90)
 
     # mediapipe 啟用偵測手掌
     with mp_hands.Hands(
@@ -985,12 +1062,16 @@ def main():
                                 moving = True
                                 tmpCard = TmpCard(card.animal, event.pos)
                                 break
+                            elif pause_btn.rect.collidepoint(event.pos):
+                                pause_btn.state = True
                         else:
                             if card.rect.collidepoint((round(x4), round(y4))) and card.index == 9:
                                 moving = True
                                 tmpCard = TmpCard(
                                     card.animal, (round(x4), round(y4)))
                                 break
+                            elif pause_btn.rect.collidepoint((round(x4), round(y4))):
+                                pause_btn.state = True
 
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if moving:
@@ -1011,6 +1092,9 @@ def main():
                                         disp_card.pop(index)
                                         cardsFPS.pop(index)
                         moving = False
+                    elif pause_btn.state:
+                        pause_btn.state = False
+                        pause_game()
 
                 for index, ruleFPS in enumerate(enemiesFPS):
                     if event.type == ruleFPS:
@@ -1026,6 +1110,7 @@ def main():
             enemies_bullet.draw(screen)
             heroes.draw(screen)
             heroesBullet.draw(screen)
+            screen.blit(pause_btn.image, pause_btn.rect)
 
             if moving:
                 if use_mouse:
