@@ -864,10 +864,10 @@ def main():
     rm_enemy_num = 0
     begin_time = time.time()
 
-    def pause_game():
-        global begin_time
+    def pause_game(begin_time):
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pause_bg.fill((0, 0, 0, 128))
+        pause_time = time.time()
         class Exit:
             def __init__(self):
                 self.image = pygame.image.load(f"image/pause/exit.png").convert_alpha()
@@ -895,8 +895,7 @@ def main():
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if exit_btn.state:
-                        begin_time = time.time() #TODO: still have some bugs need to be fixed
-                        return
+                        return begin_time + (time.time()-pause_time)
 
             screen.blit(bg_surface, (0, 0))
             enemies.draw(screen)
@@ -1092,7 +1091,7 @@ def main():
                         moving = False
                     elif pause_btn.state:
                         pause_btn.state = False
-                        pause_game()
+                        begin_time = pause_game(begin_time)
 
                 for index, ruleFPS in enumerate(enemiesFPS):
                     if event.type == ruleFPS:
