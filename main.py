@@ -866,22 +866,26 @@ except:
 def distance(x1, y1, x2, y2):
     return math.sqrt(pow(x1-x2, 2)+pow(y1-y2, 2))
 
+hand_closed = False
+cursor_grabbed = False
+mouse_down = False
+x4 = 0
+y4 = 0
 
 def main():
     global moving
     global use_mouse
+    global hand_closed, cursor_grabbed, mouse_down
+    global x4, y4
     moving = False
-    hand_closed = False
-    cursor_grabbed = False
-    mouse_down = False
     create_card()
-    x4 = 0
-    y4 = 0
     rm_enemy_num = 0
     begin_time = time.time()
 
     def pause_game(begin_time):
         global use_mouse
+        global hand_closed, cursor_grabbed, mouse_down
+        global x4, y4
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pause_bg.fill((0, 0, 0, 128))
         pause_time = time.time()
@@ -917,16 +921,68 @@ def main():
         switch_btn = Switch()
         level_text = Text(f"- level {level} -", (640, 200), 150)
         if use_mouse:
-            mode_text = Text("Mouse", (540, 500), 120)
+            mode_text = Text("Mouse", (540, 500), 110)
         else:
-            mode_text = Text("Gesture", (540, 500), 120)
-
+            mode_text = Text("Gesture", (540, 500), 100)
+        
         while True:
+
+            ret, img = cap.read()
+            img = cv2.flip(img, 1)
+            img = cv2.resize(img, (1280, 720))
+            size = img.shape  # 取得攝影機影像尺寸
+            w = size[1]  # 取得畫面寬度
+            h = size[0]  # 取得畫面高度
+            if not ret:
+                print("Cannot receive frame")
+                break
+            img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 將 BGR 轉換成 RGB
+            results = hands.process(img2)  # 偵測手掌
+            if results.multi_hand_landmarks:
+                for hand_landmarks in results.multi_hand_landmarks:
+                    # 將節點和骨架繪製到影像中
+                    mp_drawing.draw_landmarks(
+                        img,
+                        hand_landmarks,
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing_styles.get_default_hand_landmarks_style(),
+                        mp_drawing_styles.get_default_hand_connections_style())
+                    x8 = hand_landmarks.landmark[8].x * w  # 取得食指末端 x 座標
+                    y8 = hand_landmarks.landmark[8].y * h  # 取得食指末端 y 座標
+                    x4 = hand_landmarks.landmark[4].x * w  # 取得食指末端 x 座標
+                    y4 = hand_landmarks.landmark[4].y * h  # 取得食指末端 y 座標
+                    x0 = hand_landmarks.landmark[0].x * w  # 取得食指末端 x 座標
+                    y0 = hand_landmarks.landmark[0].y * h  # 取得食指末端 y 座標
+                    x5 = hand_landmarks.landmark[5].x * w  # 取得食指末端 x 座標
+                    y5 = hand_landmarks.landmark[5].y * h  # 取得食指末端 y 座標
+                    if distance(x8, y8, x4, y4) / distance(x0, y0, x5, y5) <= 0.3:
+                        hand_closed = True
+                        if not use_mouse:
+                            cursor_grabbed = True
+                        # print(f'hand closed:{int(x4)}, {int(y4)}')
+                    else:
+                        hand_closed = False
+                        if not use_mouse:
+                            cursor_grabbed = False
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+
+                if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (not use_mouse and hand_closed):
+                    if use_mouse:
+                        mouse_down = True
+                    cursor_grabbed = True
+
+                else:
+                    if not use_mouse:
+                        cursor_grabbed = False
+                    elif use_mouse and mouse_down and event.type == pygame.MOUSEBUTTONUP:
+                        cursor_grabbed = False
+                        mouse_down = False
+
+
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
                         not use_mouse and hand_closed):
@@ -958,7 +1014,7 @@ def main():
                         if use_mouse:
                             mode_text = Text(" Mouse ", (540, 500), 110)
                         else:
-                            mode_text = Text("Gesture", (540, 500), 110)
+                            mode_text = Text("Gesture", (540, 500), 100)
                     elif exit_btn.state:
                         pygame.quit()
                         sys.exit()
