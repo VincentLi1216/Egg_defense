@@ -11,7 +11,7 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = True
+use_mouse = False
 level = 1
 begin_time = time.time()
 
@@ -846,7 +846,21 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(1)
+try:
+    import cam_selection
+    cap = cv2.VideoCapture(cam_selection.selected_cam)
+    print(f'{cap.get(3)}')
+    print(f'Cam:{cam_selection.selected_cam}')
+except:
+    try:
+        cap = cv2.VideoCapture(0)
+        print(f'{cap.get(3)}')
+        print(f'Cam:0')
+    except:
+        cap = cv2.VideoCapture(1)
+        print(f'{cap.get(3)}')
+        print(f'Cam:0')
+
 
 
 def distance(x1, y1, x2, y2):
@@ -894,12 +908,7 @@ def main():
 
         class Switch:
             def __init__(self):
-<<<<<<< HEAD
-                self.image = pygame.image.load(
-                    f"image/pause/swift.png").convert_alpha()
-=======
                 self.image = pygame.image.load(f"image/pause/switch.png").convert_alpha()
->>>>>>> refs/remotes/origin/main
                 self.rect = self.image.get_rect(center=(750, 510))
                 self.state = False
 
