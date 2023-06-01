@@ -11,10 +11,10 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = False
+use_mouse = True
 level = 1
 begin_time = time.time()
-
+game_state = "main"
 
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
@@ -841,7 +841,6 @@ def reset_enemies_speed():
         enemy.speed = enemiesInfo[enemy.name]["speed"]
         enemy.attack_moving_speed = enemiesInfo[enemy.name]["attack_moving_speed"]
 
-
 mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
@@ -872,11 +871,18 @@ mouse_down = False
 x4 = 0
 y4 = 0
 
+def game_is_over():
+    for enemy in enemies.sprites():
+        if enemy.rect.centerx <= 97:
+            return True
+    return False
+
 def main():
     global moving
     global use_mouse
     global hand_closed, cursor_grabbed, mouse_down
     global x4, y4
+    global game_state
     moving = False
     create_card()
     rm_enemy_num = 0
@@ -1275,9 +1281,27 @@ def main():
                     # draw the cursor
                     screen.blit(cursor_surface[0], cursor_rect)
                 # print((round(x4), round(y4)))
+
+            if game_is_over() and game_state != "game_over":
+                game_state = "game_over"
+                over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+                over_alpha = 0
+                over_bg.fill((255, 255, 255, over_alpha))
+
+
+            if game_state == "game_over":
+                over_alpha += 5
+                if over_alpha >= 255:
+                    break
+                over_bg.fill((255, 255, 255, over_alpha))
+                screen.blit(over_bg, (0, 0))
+
             pygame.display.update()
             clock.tick(90)
 
-
 if __name__ == "__main__":
     main()
+    if game_state == "game_over":
+        from game_over import game_over
+        game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down)
+
