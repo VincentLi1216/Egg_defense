@@ -51,11 +51,14 @@ cursor_rect = cursor_surface[0].get_rect()
 
 black = (0, 0, 0)
 
-def game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down):
-
+def game_over():
+    from main import use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
     egg = Egg()
     game_over_text = Text("YOU LOSE", (screen.get_size()[0]/2, screen.get_size()[1]/2+120), 180, black)
     pygame.time.set_timer(pygame.USEREVENT, egg.fps)
+
+    trans_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+    trans_alpha = 255
 
     with mp_hands.Hands(
             model_complexity=0,
@@ -146,6 +149,11 @@ def game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_d
 
             screen.blit(egg.image, egg.rect)
             screen.blit(game_over_text.text, game_over_text.rect)
+
+            if trans_alpha >= 0:
+                trans_bg.fill((0, 0, 0, trans_alpha))
+                screen.blit(trans_bg, (0, 0))
+                trans_alpha -= 5
 
             pygame.display.update()
             clock.tick(90)

@@ -1286,14 +1286,14 @@ def main():
                 game_state = "game_over"
                 over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
                 over_alpha = 0
-                over_bg.fill((255, 255, 255, over_alpha))
+                over_bg.fill((0, 0, 0, over_alpha))
 
 
             if game_state == "game_over":
                 over_alpha += 5
                 if over_alpha >= 255:
                     break
-                over_bg.fill((255, 255, 255, over_alpha))
+                over_bg.fill((0, 0, 0, over_alpha))
                 screen.blit(over_bg, (0, 0))
 
             pygame.display.update()
@@ -1303,5 +1303,5 @@ if __name__ == "__main__":
     main()
     if game_state == "game_over":
         from game_over import game_over
-        game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down)
+        game_over()
 
