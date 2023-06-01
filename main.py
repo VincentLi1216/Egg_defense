@@ -11,7 +11,7 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = False
+use_mouse = True
 level = 1
 begin_time = time.time()
 
@@ -566,10 +566,12 @@ class TmpCard:
             f"image/hero/{self.animal}/{self.animal}0.png").convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
+
 class Pause:
     def __init__(self):
-        self.image = pygame.image.load(f"image/pause/pause.png").convert_alpha()
-        self.rect = self.image.get_rect(topleft=(0,0))
+        self.image = pygame.image.load(
+            f"image/pause/pause.png").convert_alpha()
+        self.rect = self.image.get_rect(topleft=(0, 0))
         self.state = False
 
 # class Guidance_block:
@@ -844,7 +846,7 @@ mp_drawing = mp.solutions.drawing_utils          # mediapipe 繪圖方法
 mp_drawing_styles = mp.solutions.drawing_styles  # mediapipe 繪圖樣式
 mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 
 def distance(x1, y1, x2, y2):
@@ -869,14 +871,18 @@ def main():
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pause_bg.fill((0, 0, 0, 128))
         pause_time = time.time()
+
         class Exit:
             def __init__(self):
-                self.image = pygame.image.load(f"image/pause/exit.png").convert_alpha()
+                self.image = pygame.image.load(
+                    f"image/pause/exit.png").convert_alpha()
                 self.rect = self.image.get_rect(center=(760, 360))
                 self.state = False
+
         class Continue:
             def __init__(self):
-                self.image = pygame.image.load(f"image/pause/continue.png").convert_alpha()
+                self.image = pygame.image.load(
+                    f"image/pause/continue.png").convert_alpha()
                 self.rect = self.image.get_rect(center=(560, 360))
                 self.state = False
 
@@ -888,7 +894,8 @@ def main():
 
         class Swift:
             def __init__(self):
-                self.image = pygame.image.load(f"image/pause/swift.png").convert_alpha()
+                self.image = pygame.image.load(
+                    f"image/pause/swift.png").convert_alpha()
                 self.rect = self.image.get_rect(center=(750, 510))
                 self.state = False
 
@@ -900,7 +907,7 @@ def main():
             mode_text = Text("Mouse", (540, 500), 120)
         else:
             mode_text = Text("Gesture", (540, 500), 120)
-        
+
         while True:
 
             for event in pygame.event.get():
