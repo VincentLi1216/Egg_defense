@@ -1,7 +1,17 @@
 import pygame, sys, cv2
 from main import distance
 
+class Bg:
+    def __init__(self):
+        self.pos = (screen.get_size()[0]/2, screen.get_size()[1]/2-70)
+        self.surface = [pygame.image.load(f"image/game_over/lose_bg/lose_bg{i}.png").convert_alpha() for i in range(2)]
+        self.index = 0
+        self.rect = self.surface[0].get_rect(center=self.pos)
+        self.fps_counter = pygame.USEREVENT + 1
+        self.fps = 50
 
+    def animation(self):
+        self.index = 0 if self.index else 1
 class Text:
     def __init__(self, text, pos, size, color):
         font = pygame.font.Font('fonts/void_pixel-7.ttf', size)
@@ -29,8 +39,9 @@ screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
 pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
-over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
-over_bg.fill((255, 255, 255, 255))
+# over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+# over_bg.fill((255, 255, 255, 255))
+lose_bg = Bg()
 
 cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
 ), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
@@ -53,7 +64,7 @@ def game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_d
             min_tracking_confidence=0.5) as hands:
 
         while True:
-            screen.blit(over_bg, (0, 0))
+            screen.blit(lose_bg.surface[lose_bg.index], (0, 0))
             ret, img = cap.read()
             img = cv2.flip(img, 1)
             img = cv2.resize(img, (1280, 720))
@@ -95,6 +106,9 @@ def game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_d
 
                 if event.type == egg.fps_counter:
                     egg.animation()
+
+                if event.type == lose_bg.fps_counter:
+                    lose_bg.animation()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
