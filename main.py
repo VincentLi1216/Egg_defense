@@ -865,6 +865,7 @@ def main():
     begin_time = time.time()
 
     def pause_game(begin_time):
+        global use_mouse
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pause_bg.fill((0, 0, 0, 128))
         pause_time = time.time()
@@ -885,10 +886,20 @@ def main():
                 self.text = font.render(text, False, (255, 255, 255))
                 self.rect = self.text.get_rect(center=pos)
 
+        class Swift:
+            def __init__(self):
+                self.image = pygame.image.load(f"image/pause/swift.png").convert_alpha()
+                self.rect = self.image.get_rect(center=(750, 510))
+                self.state = False
 
         exit_btn = Exit()
         continue_btn = Continue()
+        swift_btn = Swift()
         level_text = Text(f"- level {level} -", (640, 200), 150)
+        if use_mouse:
+            mode_text = Text("Mouse", (540, 500), 120)
+        else:
+            mode_text = Text("Gesture", (540, 500), 120)
         
         while True:
 
@@ -904,17 +915,29 @@ def main():
                             continue_btn.state = True
                         elif exit_btn.rect.collidepoint(event.pos):
                             exit_btn.state = True
+                        elif swift_btn.rect.collidepoint(event.pos):
+                            print("OK")
+                            swift_btn.state = True
 
                     else:
                         if continue_btn.rect.collidepoint((round(x4), round(y4))):
                             continue_btn.state = True
                         elif exit_btn.rect.collidepoint((round(x4), round(y4))):
                             exit_btn.state = True
+                        elif swift_btn.rect.collidepoint((round(x4), round(y4))):
+                            swift_btn.state = True
 
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
                         return begin_time + (time.time()-pause_time)
+                    elif swift_btn.state:
+                        use_mouse = not use_mouse
+                        print(use_mouse)
+                        if use_mouse:
+                            mode_text = Text(" Mouse ", (540, 500), 110)
+                        else:
+                            mode_text = Text("Gesture", (540, 500), 110)
                     elif exit_btn.state:
                         pygame.quit()
                         sys.exit()
@@ -933,7 +956,9 @@ def main():
             screen.blit(pause_bg, (0, 0))
             screen.blit(continue_btn.image, continue_btn.rect)
             screen.blit(exit_btn.image, exit_btn.rect)
+            screen.blit(swift_btn.image, swift_btn.rect)
             screen.blit(level_text.text, level_text.rect)
+            screen.blit(mode_text.text, mode_text.rect)
 
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
