@@ -11,7 +11,7 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = False
+use_mouse = True
 level = 1
 begin_time = time.time()
 
@@ -886,15 +886,15 @@ def main():
                 self.text = font.render(text, False, (255, 255, 255))
                 self.rect = self.text.get_rect(center=pos)
 
-        class Swift:
+        class Switch:
             def __init__(self):
-                self.image = pygame.image.load(f"image/pause/swift.png").convert_alpha()
+                self.image = pygame.image.load(f"image/pause/switch.png").convert_alpha()
                 self.rect = self.image.get_rect(center=(750, 510))
                 self.state = False
 
         exit_btn = Exit()
         continue_btn = Continue()
-        swift_btn = Swift()
+        switch_btn = Switch()
         level_text = Text(f"- level {level} -", (640, 200), 150)
         if use_mouse:
             mode_text = Text("Mouse", (540, 500), 120)
@@ -915,24 +915,24 @@ def main():
                             continue_btn.state = True
                         elif exit_btn.rect.collidepoint(event.pos):
                             exit_btn.state = True
-                        elif swift_btn.rect.collidepoint(event.pos):
+                        elif switch_btn.rect.collidepoint(event.pos):
                             print("OK")
-                            swift_btn.state = True
+                            switch_btn.state = True
 
                     else:
                         if continue_btn.rect.collidepoint((round(x4), round(y4))):
                             continue_btn.state = True
                         elif exit_btn.rect.collidepoint((round(x4), round(y4))):
                             exit_btn.state = True
-                        elif swift_btn.rect.collidepoint((round(x4), round(y4))):
-                            swift_btn.state = True
+                        elif switch_btn.rect.collidepoint((round(x4), round(y4))):
+                            switch_btn.state = True
 
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
                         return begin_time + (time.time()-pause_time)
-                    elif swift_btn.state:
-                        swift_btn.state = False
+                    elif switch_btn.state:
+                        switch_btn.state = False
                         use_mouse = not use_mouse
                         print(use_mouse)
                         if use_mouse:
@@ -957,7 +957,7 @@ def main():
             screen.blit(pause_bg, (0, 0))
             screen.blit(continue_btn.image, continue_btn.rect)
             screen.blit(exit_btn.image, exit_btn.rect)
-            screen.blit(swift_btn.image, swift_btn.rect)
+            screen.blit(switch_btn.image, switch_btn.rect)
             screen.blit(level_text.text, level_text.rect)
             screen.blit(mode_text.text, mode_text.rect)
 
