@@ -881,7 +881,7 @@ def main():
 
         class Text:
             def __init__(self, text, pos, size):
-                font = pygame.font.Font('void_pixel-7.ttf', size)
+                font = pygame.font.Font('fonts/void_pixel-7.ttf', size)
                 self.text = font.render(text, False, (255, 255, 255))
                 self.rect = self.text.get_rect(center=pos)
 
