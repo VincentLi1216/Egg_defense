@@ -871,10 +871,25 @@ def main():
         class Exit:
             def __init__(self):
                 self.image = pygame.image.load(f"image/pause/exit.png").convert_alpha()
-                self.rect = self.image.get_rect(center=(640, 360))
+                self.rect = self.image.get_rect(center=(760, 360))
                 self.state = False
-        exit_btn = Exit()
+        class Continue:
+            def __init__(self):
+                self.image = pygame.image.load(f"image/pause/continue.png").convert_alpha()
+                self.rect = self.image.get_rect(center=(560, 360))
+                self.state = False
 
+        class Text:
+            def __init__(self, text, pos, size):
+                font = pygame.font.Font('void_pixel-7.ttf', size)
+                self.text = font.render(text, False, (255, 255, 255))
+                self.rect = self.text.get_rect(center=pos)
+
+
+        exit_btn = Exit()
+        continue_btn = Continue()
+        level_text = Text(f"- level {level} -", (640, 200), 150)
+        
         while True:
 
             for event in pygame.event.get():
@@ -885,17 +900,24 @@ def main():
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
                         not use_mouse and hand_closed):
                     if use_mouse:
-                        if exit_btn.rect.collidepoint(event.pos):
+                        if continue_btn.rect.collidepoint(event.pos):
+                            continue_btn.state = True
+                        elif exit_btn.rect.collidepoint(event.pos):
                             exit_btn.state = True
 
                     else:
-                        if exit_btn.rect.collidepoint((round(x4), round(y4))):
+                        if continue_btn.rect.collidepoint((round(x4), round(y4))):
+                            continue_btn.state = True
+                        elif exit_btn.rect.collidepoint((round(x4), round(y4))):
                             exit_btn.state = True
 
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
-                    if exit_btn.state:
+                    if continue_btn.state:
                         return begin_time + (time.time()-pause_time)
+                    elif exit_btn.state:
+                        pygame.quit()
+                        sys.exit()
 
             screen.blit(bg_surface, (0, 0))
             enemies.draw(screen)
@@ -909,7 +931,9 @@ def main():
                 screen.blit(disp_card[i].image, disp_card[i].rect)
 
             screen.blit(pause_bg, (0, 0))
+            screen.blit(continue_btn.image, continue_btn.rect)
             screen.blit(exit_btn.image, exit_btn.rect)
+            screen.blit(level_text.text, level_text.rect)
 
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
