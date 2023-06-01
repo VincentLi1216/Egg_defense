@@ -11,7 +11,7 @@ import time
 from character_dict import *
 from hand_detection import *
 from level_design import *
-use_mouse = True
+use_mouse = False
 level = 1
 begin_time = time.time()
 
@@ -932,6 +932,7 @@ def main():
                     if continue_btn.state:
                         return begin_time + (time.time()-pause_time)
                     elif swift_btn.state:
+                        swift_btn.state = False
                         use_mouse = not use_mouse
                         print(use_mouse)
                         if use_mouse:
