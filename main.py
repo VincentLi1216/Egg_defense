@@ -1305,10 +1305,5 @@ if __name__ == "__main__":
     main()
     if game_state == "game_over":
         from game_over import game_over
-<<<<<<< HEAD
-        game_over(use_mouse, cursor_grabbed, x4, y4, cap, mp_hands,
-                  mp_drawing, mp_drawing_styles, mouse_down)
-=======
-        game_over()
 
->>>>>>> refs/remotes/origin/main
+        game_over(use_mouse=use_mouse)
