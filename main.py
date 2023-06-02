@@ -1325,9 +1325,4 @@ def main(game_state, level, use_mouse=True):
             clock.tick(90)
 
 # if __name__ == "__main__":
-#     while True:
-#         if game_state == "main":
-#             game_state = main()
-#         if game_state == "game_over":
-#             from game_over import game_over
-#             game_state = game_over(use_mouse=use_mouse)
+#     main()
