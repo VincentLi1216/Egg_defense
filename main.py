@@ -10,11 +10,6 @@ import copy
 import time
 from character_dict import *
 from level_design import *
-use_mouse = True
-level = 1
-begin_time = time.time()
-game_state = "main"
-
 
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
@@ -574,6 +569,12 @@ class Pause:
         self.rect = self.image.get_rect(topleft=(0, 0))
         self.state = False
 
+class Text:
+    def __init__(self, text, pos, size, color):
+        font = pygame.font.Font('fonts/Cubic_11_1.013_R.ttf', size)
+        self.text = font.render(text, False, color)
+        self.rect = self.text.get_rect(center=pos)
+
 # class Guidance_block:
 #     def __init__(self):
 #         self.image = pygame.Surface((148.5726, 124.7363), pygame.SRCALPHA)
@@ -879,20 +880,37 @@ def game_is_over():
             return True
     return False
 
+def restart_game():
+    global heroes, heroesFPS, heroesBullet, enemies, enemiesFPS, enemies_attackFPS, enemies_bullet, enemies_bulletFPS, FPSCounter
 
-def main():
+    heroes = pygame.sprite.Group()
+    heroesFPS = []
+    heroesBullet = pygame.sprite.Group()
+
+    enemies = pygame.sprite.Group()
+    enemiesFPS = []
+    enemies_attackFPS = []
+    enemies_bullet = pygame.sprite.Group()
+    enemies_bulletFPS = []
+    FPSCounter = 0
+
+    global playerCard, cardSet, disp_card, cardsFPS, game_design
+    playerCard = get_data("test_new")["characters"]
+    cardSet = []
+    disp_card = []
+    cardsFPS = []
+    game_design = copy.deepcopy(level_design)
+
+def main(game_state, level, use_mouse=True):
+    restart_game()
     global moving
-    global use_mouse
     global hand_closed, cursor_grabbed, mouse_down
     global x4, y4
-    global game_state
     moving = False
     create_card()
     rm_enemy_num = 0
     begin_time = time.time()
-
-    def pause_game(begin_time):
-        global use_mouse
+    def pause_game(begin_time, use_mouse):
         global hand_closed, cursor_grabbed, mouse_down
         global x4, y4
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -903,21 +921,15 @@ def main():
             def __init__(self):
                 self.image = pygame.image.load(
                     f"image/pause/exit.png").convert_alpha()
-                self.rect = self.image.get_rect(center=(760, 360))
+                self.rect = self.image.get_rect(center=(740, 360))
                 self.state = False
 
         class Continue:
             def __init__(self):
                 self.image = pygame.image.load(
                     f"image/pause/continue.png").convert_alpha()
-                self.rect = self.image.get_rect(center=(560, 360))
+                self.rect = self.image.get_rect(center=(540, 360))
                 self.state = False
-
-        class Text:
-            def __init__(self, text, pos, size):
-                font = pygame.font.Font('fonts/void_pixel-7.ttf', size)
-                self.text = font.render(text, False, (255, 255, 255))
-                self.rect = self.text.get_rect(center=pos)
 
         class Switch:
             def __init__(self):
@@ -929,11 +941,11 @@ def main():
         exit_btn = Exit()
         continue_btn = Continue()
         switch_btn = Switch()
-        level_text = Text(f"- level {level} -", (640, 200), 150)
+        level_text = Text(f"- level {level} -", (640, 200), 110, (255, 255, 255))
         if use_mouse:
-            mode_text = Text("Mouse", (540, 500), 110)
+            mode_text = Text("Mouse", (540, 510), 65, (255, 255, 255))
         else:
-            mode_text = Text("Gesture", (540, 500), 100)
+            mode_text = Text("Gesture", (540, 510), 60, (255, 255, 255))
 
         while True:
 
@@ -969,7 +981,6 @@ def main():
                         hand_closed = True
                         if not use_mouse:
                             cursor_grabbed = True
-                        # print(f'hand closed:{int(x4)}, {int(y4)}')
                     else:
                         hand_closed = False
                         if not use_mouse:
@@ -1000,7 +1011,6 @@ def main():
                         elif exit_btn.rect.collidepoint(event.pos):
                             exit_btn.state = True
                         elif switch_btn.rect.collidepoint(event.pos):
-                            print("OK")
                             switch_btn.state = True
 
                     else:
@@ -1014,15 +1024,14 @@ def main():
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
-                        return begin_time + (time.time()-pause_time)
+                        return (begin_time + (time.time()-pause_time)), use_mouse
                     elif switch_btn.state:
                         switch_btn.state = False
                         use_mouse = not use_mouse
-                        print(use_mouse)
                         if use_mouse:
-                            mode_text = Text(" Mouse ", (540, 500), 110)
+                            mode_text = Text(" Mouse ", (540, 510), 65, (255, 255, 255))
                         else:
-                            mode_text = Text("Gesture", (540, 500), 100)
+                            mode_text = Text("Gesture", (540, 510), 60, (255, 255, 255))
                     elif exit_btn.state:
                         pygame.quit()
                         sys.exit()
@@ -1078,6 +1087,8 @@ def main():
             exit()
 
         while True:
+
+            level_text = Text(f"Level {level}", (1125, 50), 50, (80, 80, 80))
 
             # create enemy from the dict
             for i in range(len(game_design[level])):
@@ -1139,6 +1150,7 @@ def main():
 
             # main game start here
             screen.blit(bg_surface, (0, 0))
+            screen.blit(level_text.text, level_text.rect)
 
             reset_enemies_speed()
             for rule in heroes.sprites():
@@ -1225,7 +1237,7 @@ def main():
                         moving = False
                     elif pause_btn.state:
                         pause_btn.state = False
-                        begin_time = pause_game(begin_time)
+                        begin_time, use_mouse = pause_game(begin_time, use_mouse)
 
                 for index, ruleFPS in enumerate(enemiesFPS):
                     if event.type == ruleFPS:
@@ -1293,17 +1305,19 @@ def main():
             if game_state == "game_over":
                 over_alpha += 5
                 if over_alpha >= 255:
-                    break
+                    return game_state, use_mouse
+                    # game_state = "main"
+                    # main(game_state, level)
                 over_bg.fill((0, 0, 0, over_alpha))
                 screen.blit(over_bg, (0, 0))
 
             pygame.display.update()
             clock.tick(90)
 
-
-if __name__ == "__main__":
-    main()
-    if game_state == "game_over":
-        from game_over import game_over
-
-        game_over(use_mouse=use_mouse)
+# if __name__ == "__main__":
+#     while True:
+#         if game_state == "main":
+#             game_state = main()
+#         if game_state == "game_over":
+#             from game_over import game_over
+#             game_state = game_over(use_mouse=use_mouse)

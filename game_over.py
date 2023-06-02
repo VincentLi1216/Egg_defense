@@ -20,14 +20,21 @@ class Bg:
 
 class Text:
     def __init__(self, text, pos, size, color):
-        font = pygame.font.Font('fonts/void_pixel-7.ttf', size)
+        font = pygame.font.Font('fonts/Cubic_11_1.013_R.ttf', size)
         self.text = font.render(text, False, color)
         self.rect = self.text.get_rect(center=pos)
+
+class Btn:
+    def __init__(self, func, pos):
+        self.image = pygame.image.load(
+            f"image/game_over/{func}.png").convert_alpha()
+        self.rect = self.image.get_rect(center=pos)
+        self.state = False
 
 
 class Egg:
     def __init__(self):
-        self.pos = (screen.get_size()[0]/2, screen.get_size()[1]/2-70)
+        self.pos = (screen.get_size()[0]/2-300, screen.get_size()[1]/2)
         self.image = pygame.image.load(
             f"image/game_over/egg0.png").convert_alpha()
         self.rect = self.image.get_rect(center=self.pos)
@@ -36,10 +43,10 @@ class Egg:
         self.fps = 15
 
     def animation(self):
-        if self.rect.centery <= self.pos[1] - 50:
-            self.move = 1
-        elif self.rect.centery >= self.pos[1]:
-            self.move = -1
+        if self.rect.centery <= self.pos[1]-80:
+            self.move = 2
+        elif self.rect.centery >= self.pos[1]+40:
+            self.move = -2
         self.rect.centery += self.move
 
 
@@ -60,12 +67,14 @@ cursor_rect = cursor_surface[0].get_rect()
 
 black = (0, 0, 0)
 
+restart_btn = Btn("restart", (670, 430))
+exit_btn = Btn("exit", (950, 430))
+
 
 def game_over(use_mouse):
     from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
     egg = Egg()
-    game_over_text = Text("YOU LOSE", (screen.get_size()[
-                          0]/2, screen.get_size()[1]/2+120), 180, black)
+    game_over_text = Text("YOU LOSE", (810, 250), 110, black)
     pygame.time.set_timer(pygame.USEREVENT, egg.fps)
 
     trans_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -143,6 +152,30 @@ def game_over(use_mouse):
 
             screen.blit(egg.image, egg.rect)
             screen.blit(game_over_text.text, game_over_text.rect)
+            screen.blit(exit_btn.image, exit_btn.rect)
+            screen.blit(restart_btn.image, restart_btn.rect)
+
+            if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
+                    not use_mouse and hand_closed):
+                if use_mouse:
+                    if exit_btn.rect.collidepoint(event.pos):
+                        exit_btn.state = True
+                    elif restart_btn.rect.collidepoint(event.pos):
+                        restart_btn.state = True
+
+                else:
+                    if exit_btn.rect.collidepoint((round(x4), round(y4))):
+                        exit_btn.state = True
+                    elif restart_btn.rect.collidepoint((round(x4), round(y4))):
+                        restart_btn.state = True
+
+            if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
+                    not use_mouse and not hand_closed):  # 获取松开鼠标事件
+                if exit_btn.state:
+                    pygame.quit()
+                    sys.exit()
+                if restart_btn.state:
+                    return "main"
 
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
