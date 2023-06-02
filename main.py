@@ -910,6 +910,11 @@ def main(game_state, level, use_mouse=True):
     create_card()
     rm_enemy_num = 0
     begin_time = time.time()
+
+    enemy_generate_time = 0
+    for enemy in game_design[level]:
+        if enemy["time"] > enemy_generate_time:
+            enemy_generate_time = enemy["time"]
     def pause_game(begin_time, use_mouse):
         global hand_closed, cursor_grabbed, mouse_down
         global x4, y4
@@ -1104,6 +1109,7 @@ def main(game_state, level, use_mouse=True):
                 # print(game_design[level])
 
             rm_enemy_num = 0
+
 
             ret, img = cap.read()
             img = cv2.flip(img, 1)
@@ -1302,12 +1308,16 @@ def main(game_state, level, use_mouse=True):
                 over_alpha = 0
                 over_bg.fill((0, 0, 0, over_alpha))
 
+            if time.time() - begin_time > enemy_generate_time and not enemiesFPS and game_state != "game_over":
+                game_state = "game_over"
+                over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+                over_alpha = 0
+                over_bg.fill((0, 0, 0, over_alpha))
+
             if game_state == "game_over":
                 over_alpha += 5
                 if over_alpha >= 255:
                     return game_state, use_mouse
-                    # game_state = "main"
-                    # main(game_state, level)
                 over_bg.fill((0, 0, 0, over_alpha))
                 screen.blit(over_bg, (0, 0))
 
