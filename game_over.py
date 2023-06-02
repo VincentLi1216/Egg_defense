@@ -1,10 +1,14 @@
-import pygame, sys, cv2
+import pygame
+import sys
+import cv2
 from main import distance
+
 
 class Bg:
     def __init__(self):
         self.pos = (screen.get_size()[0]/2, screen.get_size()[1]/2-70)
-        self.surface = [pygame.image.load(f"image/game_over/lose_bg/lose_bg{i}.png").convert_alpha() for i in range(2)]
+        self.surface = [pygame.image.load(
+            f"image/game_over/lose_bg/lose_bg{i}.png").convert_alpha() for i in range(2)]
         self.index = 0
         self.rect = self.surface[0].get_rect(center=self.pos)
         self.fps_counter = pygame.USEREVENT + 1
@@ -12,16 +16,20 @@ class Bg:
 
     def animation(self):
         self.index = 0 if self.index else 1
+
+
 class Text:
     def __init__(self, text, pos, size, color):
         font = pygame.font.Font('fonts/void_pixel-7.ttf', size)
         self.text = font.render(text, False, color)
         self.rect = self.text.get_rect(center=pos)
 
+
 class Egg:
     def __init__(self):
         self.pos = (screen.get_size()[0]/2, screen.get_size()[1]/2-70)
-        self.image = pygame.image.load(f"image/game_over/egg0.png").convert_alpha()
+        self.image = pygame.image.load(
+            f"image/game_over/egg0.png").convert_alpha()
         self.rect = self.image.get_rect(center=self.pos)
         self.move = -1
         self.fps_counter = pygame.USEREVENT
@@ -33,6 +41,7 @@ class Egg:
         elif self.rect.centery >= self.pos[1]:
             self.move = -1
         self.rect.centery += self.move
+
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
@@ -51,10 +60,12 @@ cursor_rect = cursor_surface[0].get_rect()
 
 black = (0, 0, 0)
 
-def game_over():
-    from main import use_mouse, cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
+
+def game_over(use_mouse):
+    from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
     egg = Egg()
-    game_over_text = Text("YOU LOSE", (screen.get_size()[0]/2, screen.get_size()[1]/2+120), 180, black)
+    game_over_text = Text("YOU LOSE", (screen.get_size()[
+                          0]/2, screen.get_size()[1]/2+120), 180, black)
     pygame.time.set_timer(pygame.USEREVENT, egg.fps)
 
     trans_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
@@ -72,6 +83,7 @@ def game_over():
             img = cv2.flip(img, 1)
             img = cv2.resize(img, (1280, 720))
             size = img.shape  # 取得攝影機影像尺寸
+            hand_closed = False
             w = size[1]  # 取得畫面寬度
             h = size[0]  # 取得畫面高度
             if not ret:
@@ -129,6 +141,9 @@ def game_over():
                         cursor_grabbed = False
                         mouse_down = False
 
+            screen.blit(egg.image, egg.rect)
+            screen.blit(game_over_text.text, game_over_text.rect)
+
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
                 if cursor_grabbed:
@@ -146,9 +161,6 @@ def game_over():
                 else:
                     # draw the cursor
                     screen.blit(cursor_surface[0], cursor_rect)
-
-            screen.blit(egg.image, egg.rect)
-            screen.blit(game_over_text.text, game_over_text.rect)
 
             if trans_alpha >= 0:
                 trans_bg.fill((0, 0, 0, trans_alpha))

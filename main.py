@@ -1305,5 +1305,5 @@ if __name__ == "__main__":
     main()
     if game_state == "game_over":
         from game_over import game_over
-        game_over()
 
+        game_over(use_mouse=use_mouse)
