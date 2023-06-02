@@ -83,6 +83,7 @@ def game_over(use_mouse):
             img = cv2.flip(img, 1)
             img = cv2.resize(img, (1280, 720))
             size = img.shape  # 取得攝影機影像尺寸
+            hand_closed = False
             w = size[1]  # 取得畫面寬度
             h = size[0]  # 取得畫面高度
             if not ret:
@@ -140,6 +141,9 @@ def game_over(use_mouse):
                         cursor_grabbed = False
                         mouse_down = False
 
+            screen.blit(egg.image, egg.rect)
+            screen.blit(game_over_text.text, game_over_text.rect)
+
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
                 if cursor_grabbed:
@@ -157,9 +161,6 @@ def game_over(use_mouse):
                 else:
                     # draw the cursor
                     screen.blit(cursor_surface[0], cursor_rect)
-
-            screen.blit(egg.image, egg.rect)
-            screen.blit(game_over_text.text, game_over_text.rect)
 
             if trans_alpha >= 0:
                 trans_bg.fill((0, 0, 0, trans_alpha))
