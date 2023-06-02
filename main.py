@@ -1302,19 +1302,19 @@ def main(game_state, level, use_mouse=True):
                     screen.blit(cursor_surface[0], cursor_rect)
                 # print((round(x4), round(y4)))
 
-            if game_is_over() and game_state != "game_over":
-                game_state = "game_over"
+            if game_is_over() and game_state != "game_over_lose":
+                game_state = "game_over_lose"
                 over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
                 over_alpha = 0
                 over_bg.fill((0, 0, 0, over_alpha))
 
-            if time.time() - begin_time > enemy_generate_time and not enemiesFPS and game_state != "game_over":
-                game_state = "game_over"
+            if time.time() - begin_time > enemy_generate_time and not enemiesFPS and game_state != "game_over_win":
+                game_state = "game_over_win"
                 over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
                 over_alpha = 0
                 over_bg.fill((0, 0, 0, over_alpha))
 
-            if game_state == "game_over":
+            if game_state == "game_over_win" or game_state == "game_over_lose":
                 over_alpha += 5
                 if over_alpha >= 255:
                     return game_state, use_mouse

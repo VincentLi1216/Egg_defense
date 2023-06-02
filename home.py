@@ -7,6 +7,6 @@ if __name__ == "__main__":
         if game_state == "main":
             from main import main
             game_state, use_mouse = main(game_state, level)
-        if game_state == "game_over":
-            from game_over import game_over
-            game_state = game_over(use_mouse=use_mouse)
+        if game_state == "game_over_lose":
+            from game_over import lose
+            game_state = lose(use_mouse=use_mouse)

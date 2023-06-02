@@ -5,10 +5,10 @@ from main import distance
 
 
 class Bg:
-    def __init__(self):
+    def __init__(self, file):
         self.pos = (screen.get_size()[0]/2, screen.get_size()[1]/2-70)
         self.surface = [pygame.image.load(
-            f"image/game_over/lose_bg/lose_bg{i}.png").convert_alpha() for i in range(2)]
+            f"image/game_over/{file}{i}.png").convert_alpha() for i in range(2)]
         self.index = 0
         self.rect = self.surface[0].get_rect(center=self.pos)
         self.fps_counter = pygame.USEREVENT + 1
@@ -32,24 +32,6 @@ class Btn:
         self.state = False
 
 
-class Egg:
-    def __init__(self):
-        self.pos = (screen.get_size()[0]/2-300, screen.get_size()[1]/2)
-        self.image = pygame.image.load(
-            f"image/game_over/egg0.png").convert_alpha()
-        self.rect = self.image.get_rect(center=self.pos)
-        self.move = -1
-        self.fps_counter = pygame.USEREVENT
-        self.fps = 15
-
-    def animation(self):
-        if self.rect.centery <= self.pos[1]-80:
-            self.move = 2
-        elif self.rect.centery >= self.pos[1]+40:
-            self.move = -2
-        self.rect.centery += self.move
-
-
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
@@ -57,7 +39,6 @@ pygame.mouse.set_visible(False)
 clock = pygame.time.Clock()
 # over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
 # over_bg.fill((255, 255, 255, 255))
-lose_bg = Bg()
 
 cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
 ), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
@@ -67,18 +48,35 @@ cursor_rect = cursor_surface[0].get_rect()
 
 black = (0, 0, 0)
 
-restart_btn = Btn("restart", (670, 430))
-exit_btn = Btn("exit", (950, 430))
-
-
-def game_over(use_mouse):
+def lose(use_mouse):
     from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
+    class Egg:
+        def __init__(self):
+            self.pos = (screen.get_size()[0] / 2 - 300, screen.get_size()[1] / 2)
+            self.image = pygame.image.load(
+                f"image/game_over/egg0.png").convert_alpha()
+            self.rect = self.image.get_rect(center=self.pos)
+            self.move = -1
+            self.fps_counter = pygame.USEREVENT
+            self.fps = 15
+
+        def animation(self):
+            if self.rect.centery <= self.pos[1] - 80:
+                self.move = 2
+            elif self.rect.centery >= self.pos[1] + 40:
+                self.move = -2
+            self.rect.centery += self.move
+
+    lose_bg = Bg("lose_bg/lose_bg")
     egg = Egg()
     game_over_text = Text("YOU LOSE", (810, 250), 110, black)
     pygame.time.set_timer(pygame.USEREVENT, egg.fps)
 
     trans_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     trans_alpha = 255
+
+    restart_btn = Btn("restart", (670, 430))
+    exit_btn = Btn("exit", (950, 430))
 
     with mp_hands.Hands(
             model_complexity=0,
