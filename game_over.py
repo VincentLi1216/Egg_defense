@@ -50,6 +50,12 @@ black = (0, 0, 0)
 
 def lose(use_mouse):
     from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
+    global screen, clock
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption("EGG DEFENSE")
+    pygame.mouse.set_visible(False)
+    clock = pygame.time.Clock()
     class Egg:
         def __init__(self):
             self.pos = (screen.get_size()[0] / 2 - 300, screen.get_size()[1] / 2)
@@ -170,8 +176,7 @@ def lose(use_mouse):
             if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                     not use_mouse and not hand_closed):  # 获取松开鼠标事件
                 if exit_btn.state:
-                    pygame.quit()
-                    sys.exit()
+                    return "home"
                 if restart_btn.state:
                     return "main"
 
@@ -202,16 +207,22 @@ def lose(use_mouse):
             clock.tick(90)
 
 def win(use_mouse, level, user):
+    import time
+    from datetime import datetime
+    from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
+    from dataDB import get_data, update_data
+
+    pygame.init()
+    global screen, clock
+    screen = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption("EGG DEFENSE")
+    pygame.mouse.set_visible(False)
+    clock = pygame.time.Clock()
 
     new_card = {1: ["dog", "fox"], 2: ["frog", "rhino"], 3: ["turkey", "turtle"]}
     db_card = {1: "cat,bee,mushroom,bird,dog,fox",
                2: "cat,bee,mushroom,bird,dog,fox,frog,rhino",
                3: "cat,bee,mushroom,bird,dog,fox,frog,rhino,turkey,turtle"}
-
-    import time
-    from datetime import datetime
-    from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
-    from dataDB import get_data, update_data
     if get_data(user)["level"] == level:
         next_level = level+1 if level < 3 else level
         data = {"account": user, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
@@ -351,7 +362,7 @@ def win(use_mouse, level, user):
                     not use_mouse and not hand_closed):  # 获取松开鼠标事件
                 if home_btn.state:
                     pygame.quit()
-                    sys.exit()
+                    return "home"
 
             if use_mouse:
                 cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
