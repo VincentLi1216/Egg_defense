@@ -2,7 +2,6 @@ from datetime import datetime
 import json
 table_name = 'users'
 
-# player_data = {"account": "Vincent", "pw":"aaabbc123", "coin":300, "characters":["bee", "bird", "cat", "dog"], "level":2}
 # 資料庫設定
 db_settings = {
     "host": "server.gems.com.tw",
@@ -88,7 +87,4 @@ data = {"account": "test_new1", "timestamp": datetime.now().strftime("%Y-%m-%d %
 if __name__ == "__main__":
     print(connection_test())
     update_data(data)
-    # try:
-    #     print(get_data("hi"))
-    # except:
-    #     print("error")
+    print(get_data("hi"))
