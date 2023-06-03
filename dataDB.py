@@ -38,13 +38,23 @@ def update_data(data):
         import pymysql
         player_db = pymysql.connect(**db_settings)
         cursor = player_db.cursor()
+        try:
+            sql = f"INSERT INTO {table_name} (account, timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s, %s)"
+            lst = (data["account"], data["timestamp"], data["pw"],
+                   data["coin"], data["characters"], data["level"])
+            cursor.execute(sql, lst)
 
-        sql = f"INSERT INTO {table_name} (account, timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s, %s)"
-        lst = (data["account"], data["timestamp"], data["pw"],
-               data["coin"], data["characters"], data["level"])
-        cursor.execute(sql, lst)
+            player_db.commit()
+        except:
+            print("i am here")
+            sql = f'UPDATE {table_name} SET timestamp = NOW(), pw = \'{data["pw"]}\', coin = {data["coin"]}, characters = \'{data["characters"]}\', level = {data["level"]} WHERE account = \'{data["account"]}\''
+            print(sql)
+            # sql = f"UPDATE {table_name} SET (timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s) WHERE account = \'{data['account']}\'"
+            # lst = (data["timestamp"], data["pw"],
+            #        data["coin"], data["characters"], data["level"])
+            cursor.execute(sql)
 
-        player_db.commit()
+            player_db.commit()
 
     data["characters"] = data["characters"].split(",")
 
@@ -76,7 +86,7 @@ def get_data(name):
 
 #
 data = {"account": "test_new4", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-        "coin": 52, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
+        "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
 #
 if __name__ == "__main__":
     print(connection_test())
