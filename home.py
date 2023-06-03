@@ -1,9 +1,9 @@
 import pygame, sys, cv2
 
 user = "test_level1"
-level = 1
+level = 3
 
-game_state = "home"
+game_state = "main"
 use_mouse = True
 
 class Water:

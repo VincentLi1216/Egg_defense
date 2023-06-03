@@ -1,4 +1,11 @@
-level_design = {1: [{"enemy": "Crabby", "time": 0, "row": 0},
+level_design = {1: [{"enemy": "Seashell", "time": 0, "row": 3},
+                    {"enemy": "Fierce Tooth", "time": 0, "row": 2},
+                    {"enemy": "Crabby", "time": 7, "row": 1},
+                    {"enemy": "Seashell", "time": 9, "row": 2},
+                    {"enemy": "Whale", "time": 10, "row": 0},
+                    {"enemy": "Whale", "time": 10, "row": 4}
+                    ],
+                2: [{"enemy": "Crabby", "time": 0, "row": 0},
                     {"enemy": "Fierce Tooth", "time": 0, "row": 1},
                     {"enemy": "Seashell", "time": 7, "row": 3},
                     {"enemy": "Fierce Tooth", "time": 9, "row": 2},
@@ -9,5 +16,18 @@ level_design = {1: [{"enemy": "Crabby", "time": 0, "row": 0},
                     {"enemy": "Seashell", "time": 13, "row": 2},
                     {"enemy": "Whale", "time": 13, "row": 4}
                     ],
-                2: [],
-                3: []}
+                3: [{"enemy": "Pink Star", "time": 0, "row": 2},
+                    {"enemy": "Seashell", "time": 1, "row": 1},
+                    {"enemy": "Fierce Tooth", "time": 1, "row": 3},
+                    {"enemy": "Crabby", "time": 2, "row": 1},
+                    {"enemy": "Pink Star", "time": 2.5, "row": 4},
+                    {"enemy": "Seashell", "time": 3, "row": 0},
+                    {"enemy": "Fierce Tooth", "time": 3, "row": 3},
+                    {"enemy": "Crabby", "time": 3, "row": 4},
+                    {"enemy": "Pink Star", "time": 6, "row": 0},
+                    {"enemy": "Whale", "time": 6.5, "row": 1},
+                    {"enemy": "Seashell", "time": 7, "row": 2},
+                    {"enemy": "Fierce Tooth", "time": 8, "row": 3},
+                    {"enemy": "Seashell", "time": 8.5, "row": 4},
+                    {"enemy": "Whale", "time": 9, "row": 0}
+                    ]}

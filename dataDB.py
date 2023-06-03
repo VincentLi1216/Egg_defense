@@ -120,7 +120,7 @@ def delete_data(account):
 
 
 #
-data = {"account": "test_level1", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+data = {"account": "test_level3", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
         "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1}
 #
 if __name__ == "__main__":
