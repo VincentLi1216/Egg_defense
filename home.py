@@ -303,7 +303,7 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    # game_state = login()
+    game_state = login()
     while True:
         if game_state == "home":
             pygame.quit()
