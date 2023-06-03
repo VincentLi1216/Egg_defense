@@ -1,3 +1,5 @@
+import time
+
 import pygame, sys, cv2
 
 user = "test_level1"
@@ -60,9 +62,11 @@ def login():
     create_btn = Btn("create_btn", (800, 470))
 
     enter_state = "name"
-
-    name_text = Text("", (750, 285), 40, black)
-    pw_text = Text("", (745, 370), 20, black)
+    name = ""
+    pw = ""
+    name_text = Text(name, (750, 285), 40, black)
+    pw_text = Text(pw, (745, 370), 20, black)
+    type_time = time.time()
 
     while True:
         screen.blit(water_bg.image, water_bg.rect)
@@ -92,15 +96,40 @@ def login():
                     cursor_grabbed = False
                     mouse_down = False
 
-            # if event.type == pygame.MOUSEBUTTONDOWN:
-            #     if play.rect.collidepoint(event.pos):
-            #         play.state = True
-            #
-            # if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
-            #     if play.state:
-            #         play.state = False
-            #         pygame.quit()
-            #         return "main"
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if login_btn.rect.collidepoint(event.pos):
+                    login_btn.state = True
+                if create_btn.rect.collidepoint(event.pos):
+                    create_btn.state = True
+
+            if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
+                if login_btn.state:
+                    login_btn.state = False
+                    info = get_data(name)
+                    if info:
+                        print(name, pw)
+                        if info["pw"] == pw:
+                            print("ok")
+                            global user
+                            user = name
+                            return "home"
+                        else:
+                            name = ""
+                            pw = ""
+                    else:
+                        name = ""
+                        pw = ""
+                if create_btn.state:
+                    if not get_data(name):
+                        from datetime import datetime
+                        data = {"account": name, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1}
+                        insert_data(data)
+                        user = name
+                        return "home"
+                    else:
+                        name = ""
+                        pw = ""
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
             if cursor_grabbed:
@@ -109,6 +138,98 @@ def login():
             else:
                 # draw the cursor
                 screen.blit(cursor_surface[0], cursor_rect)
+
+            char = ""
+            if pygame.key.get_pressed()[pygame.K_0]:
+                char = "0" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_1]:
+                char = "1" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_2]:
+                char = "2" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_3]:
+                char = "3" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_4]:
+                char = "4" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_5]:
+                char = "5" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_6]:
+                char = "6" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_7]:
+                char = "7" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_8]:
+                char = "8" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_9]:
+                char = "9" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_a]:
+                char = "a" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_b]:
+                char = "b" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_c]:
+                char = "c" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_d]:
+                char = "d" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_e]:
+                char = "e" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_f]:
+                char = "f" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_g]:
+                char = "g" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_h]:
+                char = "h" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_i]:
+                char = "i" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_j]:
+                char = "j" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_k]:
+                char = "k" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_l]:
+                char = "l" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_m]:
+                char = "m" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_n]:
+                char = "n" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_o]:
+                char = "o" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_p]:
+                char = "p" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_q]:
+                char = "q" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_r]:
+                char = "r" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_s]:
+                char = "s" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_t]:
+                char = "t" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_u]:
+                char = "u" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_v]:
+                char = "v" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_w]:
+                char = "w" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_x]:
+                char = "x" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_y]:
+                char = "y" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_z]:
+                char = "z" if time.time() - type_time >= 0.05 else char
+            elif pygame.key.get_pressed()[pygame.K_RETURN]:
+                if time.time() - type_time >= 0.05:
+                    enter_state = "pw"
+                    char = ""
+            elif pygame.key.get_pressed()[pygame.K_BACKSPACE]:
+                if time.time() - type_time >= 0.05:
+                    name = name[:-1] if enter_state == "name" else name
+                    pw = pw[:-1] if enter_state == "pw" else pw
+                    name_text = Text(name, (750, 285), 40, black)
+                    pw_text = Text(" *" * len(pw), (745, 370), 20, black)
+                    type_time = time.time()
+                char = ""
+            if time.time() - type_time >= 0.05:
+                name = name + char if enter_state == "name" else name
+                pw = pw + char if enter_state == "pw" else pw
+                name_text = Text(name, (750, 285), 40, black)
+                pw_text = Text(" *"*len(pw), (745, 370), 20, black)
+                type_time = time.time()
 
             pygame.display.update()
             clock.tick(90)
@@ -182,7 +303,7 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    # login()
+    game_state = login()
     while True:
         if game_state == "home":
             pygame.quit()
