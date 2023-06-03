@@ -1262,7 +1262,7 @@ def main(game_state, user, level, use_mouse=True):
                         if game_state == "home":
                             restart_game(user)
                             pygame.quit()
-                            return game_state
+                            return game_state, use_mouse
 
                 for index, ruleFPS in enumerate(enemiesFPS):
                     if event.type == ruleFPS:
