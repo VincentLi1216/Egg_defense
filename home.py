@@ -3,9 +3,9 @@ from dataDB import *
 import pygame, sys, cv2
 
 user = "testlevel3"
-level = 3
+level = 1
 
-game_state = "home"
+game_state = "main"
 use_mouse = True
 
 class Water:

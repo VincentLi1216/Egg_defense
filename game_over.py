@@ -219,15 +219,15 @@ def win(use_mouse, level, user):
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
 
-    new_card = {1: ["dog", "fox"], 2: ["frog", "rhino"], 3: ["turkey", "turtle"]}
-    db_card = {1: "cat,bee,mushroom,bird,dog,fox",
-               2: "cat,bee,mushroom,bird,dog,fox,frog,rhino",
-               3: "cat,bee,mushroom,bird,dog,fox,frog,rhino,turkey,turtle"}
+    new_card = {1: ["dog", "fox","frog"], 2: ["turkey", "turtle", "rhino"]}
+    db_card = {1: "cat,bee,mushroom,bird,dog,fox,frog",
+               2: "cat,bee,mushroom,bird,dog,fox,frog,rhino,turkey,turtle"}
     if get_data(user)["level"] == level:
         next_level = level+1 if level < 3 else level
-        data = {"account": user, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-                "coin": 50, "characters": db_card[level], "level": next_level}
-        update_data(data)
+        if level < 3:
+            data = {"account": user, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+                    "coin": 50, "characters": db_card[level], "level": next_level}
+            update_data(data)
 
     class Chick:
         def __init__(self):
@@ -265,9 +265,14 @@ def win(use_mouse, level, user):
 
     home_btn = Btn("home", (290, 340))
     begin_time = time.time()
+    if level < 3:
+        card1 = Card(new_card[level][0], (680, 600))
+        card2 = Card(new_card[level][1], (880, 600))
+        card3 = Card(new_card[level][2], (1080, 600))
+        new_card_img = Btn("card_txt", (360, 600))
+    else:
+        congratulate_text = Btn("finish", (650, 600))
 
-    card1 = Card(new_card[level][0], (850, 600))
-    card2 = Card(new_card[level][1], (1050, 600))
 
     with mp_hands.Hands(
             model_complexity=0,
@@ -342,11 +347,20 @@ def win(use_mouse, level, user):
             screen.blit(chick.image, chick.rect)
             screen.blit(home_btn.image, home_btn.rect)
 
-            if time.time() - begin_time >= 2.5:
-                screen.blit(card1.image, card1.rect)
-                screen.blit(card2.image, card2.rect)
-            if time.time() - begin_time >= 2:
-                screen.blit(card1.image, card1.rect)
+
+            if level < 3:
+                if time.time() - begin_time >= 3:
+                    screen.blit(card1.image, card1.rect)
+                    screen.blit(card2.image, card2.rect)
+                    screen.blit(card3.image, card3.rect)
+                elif time.time() - begin_time >= 2.5:
+                    screen.blit(card1.image, card1.rect)
+                    screen.blit(card2.image, card2.rect)
+                elif time.time() - begin_time >= 2:
+                    screen.blit(card1.image, card1.rect)
+                screen.blit(new_card_img.image, new_card_img.rect)
+            else:
+                screen.blit(congratulate_text.image, congratulate_text.rect)
 
             if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
                     not use_mouse and hand_closed):
