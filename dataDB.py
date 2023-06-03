@@ -102,6 +102,22 @@ def get_data(name):
         return False
 
 
+def delete_data(account):
+    if (connection_test()):
+        # update the sql data
+        import pymysql
+        player_db = pymysql.connect(**db_settings)
+        cursor = player_db.cursor()
+        try:
+            sql = f'DELETE FROM {table_name} WHERE account = \'{account}\''
+            cursor.execute(sql)
+            player_db.commit()
+
+            return True
+        except:
+            return False
+
+
 #
 data = {"account": "test_new1", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
         "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
@@ -109,4 +125,5 @@ data = {"account": "test_new1", "timestamp": datetime.now().strftime("%Y-%m-%d %
 if __name__ == "__main__":
     print(connection_test())
     print(update_data(data))
+    print(delete_data("test_new1"))
     # print(get_data("hi"))
