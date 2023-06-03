@@ -1116,12 +1116,12 @@ def main(game_state, user, level, use_mouse=True):
                     # print(len(game_design[level]))
                     create_enemy(
                         game_design[level][i]["enemy"], game_design[level][i]["row"])
-                    # print(game_design[level][i]["enemy"])
+                    print(game_design[level][i]["enemy"])
                     rm_enemy_num += 1
 
             for _ in range(rm_enemy_num):
                 game_design[level].pop(0)
-                # print(game_design[level])
+                print(game_design[level])
 
             rm_enemy_num = 0
 
