@@ -1,4 +1,6 @@
+from datetime import datetime
 import json
+table_name = 'users'
 
 # player_data = {"account": "Vincent", "pw":"aaabbc123", "coin":300, "characters":["bee", "bird", "cat", "dog"], "level":2}
 # 資料庫設定
@@ -10,6 +12,7 @@ db_settings = {
     "db": "Egg_Defense",
     "charset": "utf8"
 }
+
 
 def connection_test():
     try:
@@ -30,14 +33,15 @@ def connection_test():
 
 
 def update_data(data):
-    if(connection_test()):
-        #update the sql data
+    if (connection_test()):
+        # update the sql data
         import pymysql
         player_db = pymysql.connect(**db_settings)
         cursor = player_db.cursor()
 
-        sql = "INSERT INTO new_table (account, timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s, %s)"
-        lst = (data["account"], data["timestamp"], data["pw"], data["coin"], data["characters"], data["level"])
+        sql = f"INSERT INTO {table_name} (account, timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s, %s)"
+        lst = (data["account"], data["timestamp"], data["pw"],
+               data["coin"], data["characters"], data["level"])
         cursor.execute(sql, lst)
 
         player_db.commit()
@@ -47,13 +51,14 @@ def update_data(data):
     with open("local_data.json", "w", encoding='utf-8') as f:
         json.dump(data, f, indent=2, sort_keys=True, ensure_ascii=False)
 
+
 def get_data(name):
-    if(connection_test()):
+    if (connection_test()):
         # get from the sql data
         import pymysql
         player_db = pymysql.connect(**db_settings)
         cursor = player_db.cursor()
-        cursor.execute(f"SELECT * FROM new_table WHERE account='{name}'")
+        cursor.execute(f"SELECT * FROM {table_name} WHERE account='{name}'")
 
         column_names = [i[0] for i in cursor.description]
         table_content = cursor.fetchall()
@@ -69,13 +74,14 @@ def get_data(name):
             return json.load(f)
 
 
-from datetime import datetime
 #
-data = {"account": "test_new", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-        "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
+data = {"account": "test_new4", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+        "coin": 52, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
 #
 if __name__ == "__main__":
     print(connection_test())
     update_data(data)
-    print(get_data("test"))
-
+    # try:
+    #     print(get_data("hi"))
+    # except:
+    #     print("error")

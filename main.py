@@ -10,7 +10,7 @@ import copy
 import time
 from character_dict import *
 from level_design import *
-use_mouse = True
+use_mouse = False
 level = 1
 begin_time = time.time()
 game_state = "main"
