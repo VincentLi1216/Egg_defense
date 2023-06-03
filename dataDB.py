@@ -119,11 +119,12 @@ def delete_data(account):
 
 
 #
-data = {"account": "test_new1", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+data = {"account": "test_level1", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
         "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
 #
 if __name__ == "__main__":
     print(connection_test())
-    print(update_data(data))
-    print(delete_data("test_new1"))
+    # print(update_data(data))
+    print(insert_data(data))
+    # print(delete_data("test_new1"))
     # print(get_data("hi"))
