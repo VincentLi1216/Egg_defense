@@ -49,9 +49,6 @@ def update_data(data):
             print("i am here")
             sql = f'UPDATE {table_name} SET timestamp = NOW(), pw = \'{data["pw"]}\', coin = {data["coin"]}, characters = \'{data["characters"]}\', level = {data["level"]} WHERE account = \'{data["account"]}\''
             print(sql)
-            # sql = f"UPDATE {table_name} SET (timestamp, pw, coin, characters, level) VALUES (%s, %s, %s, %s, %s) WHERE account = \'{data['account']}\'"
-            # lst = (data["timestamp"], data["pw"],
-            #        data["coin"], data["characters"], data["level"])
             cursor.execute(sql)
 
             player_db.commit()
@@ -85,7 +82,7 @@ def get_data(name):
 
 
 #
-data = {"account": "test_new4", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
+data = {"account": "test_new1", "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
         "coin": 50, "characters": "cat,bee,rhino,fox,turtle,turkey,dog,frog,mushroom,bird", "level": 2}
 #
 if __name__ == "__main__":
