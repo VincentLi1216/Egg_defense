@@ -688,7 +688,7 @@ def create_enemy(name, row):
     FPSCounter += 1
 
 
-def create_card():
+def create_card(playerCard):
     for animal in playerCard:
         cardSet.append(Card(animal))
 
@@ -880,7 +880,7 @@ def game_is_over():
             return True
     return False
 
-def restart_game():
+def restart_game(user):
     global heroes, heroesFPS, heroesBullet, enemies, enemiesFPS, enemies_attackFPS, enemies_bullet, enemies_bulletFPS, FPSCounter
 
     heroes = pygame.sprite.Group()
@@ -895,19 +895,20 @@ def restart_game():
     FPSCounter = 0
 
     global playerCard, cardSet, disp_card, cardsFPS, game_design
-    playerCard = get_data("test_new")["characters"]
+    playerCard = get_data(user)["characters"]
     cardSet = []
     disp_card = []
     cardsFPS = []
     game_design = copy.deepcopy(level_design)
 
-def main(game_state, level, use_mouse=True):
-    restart_game()
+def main(game_state, user, level, use_mouse=True):
+    restart_game(user)
     global moving
     global hand_closed, cursor_grabbed, mouse_down
     global x4, y4
     moving = False
-    create_card()
+    playerCard = get_data(user)["characters"]
+    create_card(playerCard)
     rm_enemy_num = 0
     begin_time = time.time()
 
