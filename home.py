@@ -1,6 +1,6 @@
 import time
 
-import pygame, sys, cv2
+import pygame, sys
 
 from dataDB import get_data, insert_data
 

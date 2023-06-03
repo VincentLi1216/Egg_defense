@@ -1,13 +1,15 @@
 {
-  "account": "testcreate",
+  "account": "testlevel1",
   "characters": [
     "cat",
     "bee",
     "mushroom",
-    "bird"
+    "bird",
+    "dog",
+    "fox"
   ],
   "coin": 50,
-  "level": 1,
+  "level": 2,
   "pw": "qwerty",
-  "timestamp": "2023-06-03 17:56:05"
+  "timestamp": "2023-06-03 18:00:20"
 }
