@@ -10,6 +10,7 @@ import copy
 import time
 from character_dict import *
 from level_design import *
+from play_sound import *
 
 odd_threshold = 20
 
@@ -1277,6 +1278,7 @@ def main(game_state, user, level, use_mouse=True):
 
                             if not coordinate[x][y]:
                                 create_hero(tmpCard.animal, x, y)
+                                play_sound("sound_effects/pop_sound.mp3")
                                 for index, card in enumerate(disp_card):
                                     if card.animal == tmpCard.animal:
                                         disp_card.pop(index)
