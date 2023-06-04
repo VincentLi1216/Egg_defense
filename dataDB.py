@@ -24,10 +24,12 @@ def connection_test():
             with conn.cursor() as cursor:
                 return True
             # 資料表相關操作
-        except Exception as ex:
+        except Exception as e:
+            print(e)
             return False
 
-    except:
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -51,7 +53,8 @@ def insert_data(data):
                           ensure_ascii=False)
 
             return True  # successed
-        except:
+        except Exception as e:
+            print(e)
             return False  # failed
     else:
         return False
@@ -74,7 +77,32 @@ def update_data(data):
                           ensure_ascii=False)
 
             return True
-        except:
+        except Exception as e:
+            print(e)
+            return False
+    else:
+        return False
+    
+def update_one_data(col, data, account):
+    if (connection_test()):
+        # update the sql data
+        import pymysql
+        player_db = pymysql.connect(**db_settings)
+        cursor = player_db.cursor()
+        try:
+            sql = f"UPDATE {table_name} SET timestamp = NOW(), {col} = '{data}' WHERE account = '{account}'"
+            cursor.execute(sql)
+            player_db.commit()
+            data = get_data(account)
+            data["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            with open("local_data.json", "w", encoding='utf-8') as f:
+                json.dump(data, f, indent=2, sort_keys=True,
+                          ensure_ascii=False)
+
+            return True
+        except Exception as e:
+            print(e)
             return False
     else:
         return False
@@ -104,7 +132,8 @@ def get_data(account):
         else:
             with open('local_data.json') as f:
                 return json.load(f)
-    except:
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -120,7 +149,8 @@ def delete_data(account):
             player_db.commit()
 
             return True
-        except:
+        except Exception as e:
+            print(e)
             return False
     else:
         return False
@@ -144,7 +174,8 @@ def get_infinite_score(account):
                 return server_max_score
             else:
                 return False
-        except:
+        except Exception as e:
+            print(e)
             return False
     
     server_max_score = get_max_data("infinite_score")
@@ -159,9 +190,12 @@ data = {"account": "testlevel3", "timestamp": datetime.now().strftime("%Y-%m-%d 
         "coin": 50, "characters": "cat,bee,mushroom,bird,frog,turkey,fox,rhino,dog,turtle", "level": 3, "infinite_score":3, "last_use_mouse":0}
 #
 if __name__ == "__main__":
-    print(connection_test())
+    # print(connection_test())
+    # print(update_data(data))
+    # # print(delete_data("test_level1"))
+    # print(get_data("testlevel3"))
+    # print(get_infinite_score("vincent"))
+    data = {'account': 'test_level3', 'timestamp': 'NOW()', 'pw': 'qwerty', 'coin': 50, 'characters': 'cat,bee,mushroom,bird,frog,turkey,fox,rhino,dog,turtle', 'level': 3, 'infinite_score': 0, 'last_use_mouse': 0}
     print(update_data(data))
-    # print(delete_data("test_level1"))
-    print(get_data("testlevel3"))
-    print(get_infinite_score("vincent"))
+    print(get_data("test_level3"))
     

@@ -1,7 +1,7 @@
 import cv2
 import math
 import mediapipe as mp
-from dataDB import get_data
+from dataDB import *
 import pygame
 import sys
 import random
@@ -930,10 +930,18 @@ def main(game_state, user, level, use_mouse=True):
     rm_enemy_num = 0
     begin_time = time.time()
 
+    #get last_use_mouse from DB
+    use_mouse = get_data(user)["last_use_mouse"]
+    if use_mouse == "error": #if got any error then use_mouse = True
+        use_mouse = True
+    
+
     enemy_generate_time = 0
-    for enemy in game_design[level]:
-        if enemy["time"] > enemy_generate_time:
-            enemy_generate_time = enemy["time"]
+    if level != "INFIN.":
+        for enemy in game_design[level]:
+            if enemy["time"] > enemy_generate_time:
+                enemy_generate_time = enemy["time"]
+
     def pause_game(begin_time, use_mouse):
         global hand_closed, cursor_grabbed, mouse_down
         global x4, y4
@@ -966,6 +974,7 @@ def main(game_state, user, level, use_mouse=True):
         continue_btn = Continue()
         switch_btn = Switch()
         level_text = Text(f"- level {level} -", (640, 200), 110, (255, 255, 255))
+        
         if use_mouse:
             mode_text = Text("Mouse", (540, 510), 65, (255, 255, 255))
         else:
@@ -1053,9 +1062,13 @@ def main(game_state, user, level, use_mouse=True):
                         switch_btn.state = False
                         use_mouse = not use_mouse
                         if use_mouse:
-                            mode_text = Text(" Mouse ", (540, 510), 65, (255, 255, 255))
+                            mode_text = Text(" Mouse ", (540, 510), 65, (255, 255, 255))                         
+                            update_one_data(col="last_use_mouse", data=1, account=user) #update last_use_mouse to DB
                         else:
                             mode_text = Text("Gesture", (540, 510), 60, (255, 255, 255))
+                            update_one_data(col="last_use_mouse", data=0, account=user) #update last_use_mouse to DB
+
+                        
                     elif exit_btn.state:
                         return (begin_time + (time.time()-pause_time)), use_mouse, "home"
 
@@ -1115,7 +1128,6 @@ def main(game_state, user, level, use_mouse=True):
                 level_text = Text(f"INFIN.", (1125, 50), 50, (80, 80, 80))
                 if int(random.uniform(0, 1000) <= odd_threshold):
                     create_enemy(random.choice(all_enemies), random.randint(0,4))
-                print(odd_threshold)
                 odd_threshold += 0.01
 
             else: #normal mode
