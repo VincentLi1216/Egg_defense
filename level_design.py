@@ -30,5 +30,4 @@ level_design = {1: [{"enemy": "Seashell", "time": 0, "row": 3},
                     {"enemy": "Fierce Tooth", "time": 8, "row": 3},
                     {"enemy": "Seashell", "time": 8.5, "row": 4},
                     {"enemy": "Whale", "time": 9, "row": 0}
-                    ],
-                "INFIN.":[]}
+                    ]}
