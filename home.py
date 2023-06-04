@@ -4,7 +4,7 @@ import pygame, sys, cv2
 from play_sound import *
 
 user = "test_level3"
-level = 1
+level = "INFIN."
 
 
 game_state = "main"
@@ -295,7 +295,6 @@ def home():
                     time.sleep(0.4) #this delay is for playing the sound
                     play.state = False
                     pygame.quit()
-                    print("hi i am here")
                     return "main"
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
@@ -310,8 +309,8 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    # game_state = login()
-    game_state = "main"
+    game_state = login()
+    # game_state = "main"
     while True:
         if game_state == "home":
             pygame.quit()
