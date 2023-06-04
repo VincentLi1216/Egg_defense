@@ -854,12 +854,14 @@ try:
     cap = cv2.VideoCapture(cam_selection.selected_cam)
     print(f'{cap.get(3)}')
     print(f'Cam:{cam_selection.selected_cam}')
-except:
+except Exception as e:
+    print(e)
     try:
         cap = cv2.VideoCapture(0)
         print(f'{cap.get(3)}')
         print(f'Cam:0')
-    except:
+    except Exception as e:
+        print(e)
         cap = cv2.VideoCapture(1)
         print(f'{cap.get(3)}')
         print(f'Cam:0')
