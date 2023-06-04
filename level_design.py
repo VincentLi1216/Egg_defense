@@ -1,9 +1,9 @@
-level_design = {1: [{"enemy": "Seashell", "time": 0, "row": 3},
-                    {"enemy": "Fierce Tooth", "time": 0, "row": 2},
-                    {"enemy": "Crabby", "time": 7, "row": 1},
-                    {"enemy": "Seashell", "time": 9, "row": 2},
-                    {"enemy": "Whale", "time": 10, "row": 0},
-                    {"enemy": "Whale", "time": 10, "row": 4}
+level_design = {1: [{"enemy": "Seashell", "time": 0, "row": 3}
+                    # {"enemy": "Fierce Tooth", "time": 0, "row": 2},
+                    # {"enemy": "Crabby", "time": 7, "row": 1},
+                    # {"enemy": "Seashell", "time": 9, "row": 2},
+                    # {"enemy": "Whale", "time": 10, "row": 0},
+                    # {"enemy": "Whale", "time": 10, "row": 4}
                     ],
                 2: [{"enemy": "Crabby", "time": 0, "row": 0},
                     {"enemy": "Fierce Tooth", "time": 0, "row": 1},

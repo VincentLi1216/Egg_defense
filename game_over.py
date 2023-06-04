@@ -1,7 +1,9 @@
 import pygame
 import sys
 import cv2
+import time
 from main import distance
+from play_sound import *
 
 
 class Bg:
@@ -176,8 +178,11 @@ def lose(use_mouse):
             if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                     not use_mouse and not hand_closed):  # 获取松开鼠标事件
                 if exit_btn.state:
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    time.sleep(0.4) #delay for playing the sound effect
                     return "home"
                 if restart_btn.state:
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
                     return "main"
 
             if use_mouse:
@@ -383,6 +388,8 @@ def win(use_mouse, level, user):
             if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                     not use_mouse and not hand_closed):  # 获取松开鼠标事件
                 if home_btn.state:
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    time.sleep(0.4) #delay for playing the sound effect
                     pygame.quit()
                     return "home"
 

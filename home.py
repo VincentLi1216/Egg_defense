@@ -4,10 +4,10 @@ import pygame, sys, cv2
 from play_sound import *
 
 user = "test_level3"
-level = "INFIN."
+level = 1
 
 
-game_state = "home"
+game_state = "main"
 use_mouse = True
 
 class Water:
