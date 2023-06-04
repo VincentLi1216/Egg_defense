@@ -266,8 +266,11 @@ def win(use_mouse, level, user):
     home_btn = Btn("home", (290, 340))
     begin_time = time.time()
 
-    card1 = Card(new_card[level][0], (850, 600))
-    card2 = Card(new_card[level][1], (1050, 600))
+    if level == "INFIN.":
+        pass
+    else:
+        card1 = Card(new_card[level][0], (850, 600))
+        card2 = Card(new_card[level][1], (1050, 600))
 
     with mp_hands.Hands(
             model_complexity=0,
@@ -342,11 +345,14 @@ def win(use_mouse, level, user):
             screen.blit(chick.image, chick.rect)
             screen.blit(home_btn.image, home_btn.rect)
 
-            if time.time() - begin_time >= 2.5:
-                screen.blit(card1.image, card1.rect)
-                screen.blit(card2.image, card2.rect)
-            if time.time() - begin_time >= 2:
-                screen.blit(card1.image, card1.rect)
+            if level == "INFIN.":
+                pass
+            else:
+                if time.time() - begin_time >= 2.5:
+                    screen.blit(card1.image, card1.rect)
+                    screen.blit(card2.image, card2.rect)
+                if time.time() - begin_time >= 2:
+                    screen.blit(card1.image, card1.rect)
 
             if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
                     not use_mouse and hand_closed):

@@ -2,10 +2,10 @@ import time
 from dataDB import *
 import pygame, sys, cv2
 
-user = "test_level1"
-level = 3
+user = "test_level3"
+level = "INFIN."
 
-game_state = "main"
+game_state = "home"
 use_mouse = True
 
 class Water:
@@ -109,7 +109,7 @@ def login():
                     if info:
                         print(name, pw)
                         if info["pw"] == pw:
-                            print("ok")
+                            print(f"{name} logged in successfully")
                             global user
                             user = name
                             return "home"
@@ -303,7 +303,8 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    game_state = login()
+    # game_state = login()
+    game_state = "main"
     while True:
         if game_state == "home":
             pygame.quit()

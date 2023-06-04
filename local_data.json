@@ -1,5 +1,5 @@
 {
-  "account": "testcreate",
+  "account": "vincet",
   "characters": [
     "cat",
     "bee",
@@ -8,6 +8,6 @@
   ],
   "coin": 50,
   "level": 1,
-  "pw": "qwerty",
-  "timestamp": "2023-06-03 17:56:05"
+  "pw": "1234",
+  "timestamp": "2023-06-03 18:42:10"
 }

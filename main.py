@@ -11,6 +11,8 @@ import time
 from character_dict import *
 from level_design import *
 
+odd_threshold = 20
+
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
     y = int((pos[0] - 136.9868) / 148.5726)
@@ -919,6 +921,7 @@ def restart_game(user):
 def main(game_state, user, level, use_mouse=True):
     coordinate = restart_game(user)
     global moving
+    global odd_threshold
     global hand_closed, cursor_grabbed, mouse_down
     global x4, y4
     moving = False
@@ -1108,22 +1111,31 @@ def main(game_state, user, level, use_mouse=True):
 
         while True:
 
-            level_text = Text(f"Level {level}", (1125, 50), 50, (80, 80, 80))
+            if level == "INFIN.": #infinite mode
+                level_text = Text(f"INFIN.", (1125, 50), 50, (80, 80, 80))
+                if int(random.randint(0, 1000) <= odd_threshold):
+                    create_enemy(random.choice(all_enemies), random.randint(0,4))
+                print(odd_threshold)
+                odd_threshold += 0.01
 
-            # create enemy from the dict
-            for i in range(len(game_design[level])):
-                if game_design[level][i]["time"] <= time.time() - begin_time:
-                    # print(len(game_design[level]))
-                    create_enemy(
-                        game_design[level][i]["enemy"], game_design[level][i]["row"])
-                    print(game_design[level][i]["enemy"])
-                    rm_enemy_num += 1
+            else: #normal mode
 
-            for _ in range(rm_enemy_num):
-                game_design[level].pop(0)
-                print(game_design[level])
+                level_text = Text(f"Level {level}", (1125, 50), 50, (80, 80, 80))
 
-            rm_enemy_num = 0
+                # create enemy from the dict
+                for i in range(len(game_design[level])):
+                    if game_design[level][i]["time"] <= time.time() - begin_time:
+                        # print(len(game_design[level]))
+                        create_enemy(
+                            game_design[level][i]["enemy"], game_design[level][i]["row"])
+                        print(game_design[level][i]["enemy"])
+                        rm_enemy_num += 1
+
+                for _ in range(rm_enemy_num):
+                    game_design[level].pop(0)
+                    print(game_design[level])
+
+                rm_enemy_num = 0
 
 
             ret, img = cap.read()
@@ -1327,7 +1339,7 @@ def main(game_state, user, level, use_mouse=True):
                 over_alpha = 0
                 over_bg.fill((0, 0, 0, over_alpha))
 
-            if time.time() - begin_time > enemy_generate_time and not enemiesFPS and game_state != "game_over_win":
+            if time.time() - begin_time > enemy_generate_time and not enemiesFPS and game_state != "game_over_win" and level != "INFIN.":
                 game_state = "game_over_win"
                 over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
                 over_alpha = 0
