@@ -5,6 +5,7 @@ import pygame, sys, cv2
 user = "test_level3"
 level = "INFIN."
 
+
 game_state = "home"
 use_mouse = True
 
@@ -120,7 +121,7 @@ def login():
                         name = ""
                         pw = ""
                 if create_btn.state:
-                    if not get_data(name):
+                    if not get_data(name) and name and pw:
                         from datetime import datetime
                         data = {"account": name, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                                 "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1}

@@ -1,13 +1,19 @@
 {
-  "account": "vincet",
+  "account": "testlevel3",
   "characters": [
     "cat",
     "bee",
     "mushroom",
-    "bird"
+    "bird",
+    "frog",
+    "turkey",
+    "fox",
+    "rhino",
+    "dog",
+    "turtle"
   ],
   "coin": 50,
-  "level": 1,
-  "pw": "1234",
-  "timestamp": "2023-06-03 18:42:10"
+  "level": 3,
+  "pw": "qwerty",
+  "timestamp": "2023-06-03 20:42:30"
 }
