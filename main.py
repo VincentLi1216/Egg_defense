@@ -1113,7 +1113,7 @@ def main(game_state, user, level, use_mouse=True):
 
             if level == "INFIN.": #infinite mode
                 level_text = Text(f"INFIN.", (1125, 50), 50, (80, 80, 80))
-                if int(random.randint(0, 1000) <= odd_threshold):
+                if int(random.uniform(0, 1000) <= odd_threshold):
                     create_enemy(random.choice(all_enemies), random.randint(0,4))
                 print(odd_threshold)
                 odd_threshold += 0.01
