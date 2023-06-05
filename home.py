@@ -49,10 +49,10 @@ def auto_login():
                 return "home"
             else:
                 print(f"Wrong password with account: {account}")
-                login()
+                return "login"
         else:
             print(f"Login failed with account: {account}")
-            login()
+            return "login"
 
 def login():
     pygame.init()
@@ -152,6 +152,17 @@ def login():
                         print(name, pw)
                         if info["pw"] == pw:
                             print(f"{name} logged in successfully")
+
+                            #change json account and password to the correct one
+                            with open('local_data.json') as f:
+                                data = json.load(f)
+                                data["pw"] = pw
+                                data["account"] = user
+
+                                with open("local_data.json", "w", encoding='utf-8') as f:
+                                    json.dump(data, f, indent=2, sort_keys=True,
+                                            ensure_ascii=False)
+
                             global user
                             user = name
                             return "home"
@@ -196,7 +207,7 @@ def login():
                         name = name[:-1]
                     else:
                         name += event.unicode
-                        print(name)
+                        # print(name)
                 if enter_state == "pw" and len(pw) <= 20:
                     if event.key == pygame.K_RETURN:
                         pass
