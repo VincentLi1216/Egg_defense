@@ -197,5 +197,5 @@ if __name__ == "__main__":
     # print(get_infinite_score("vincent"))
     data = {'account': 'test_level3', 'timestamp': 'NOW()', 'pw': 'qwerty', 'coin': 50, 'characters': 'cat,bee,mushroom,bird,frog,turkey,fox,rhino,dog,turtle', 'level': 3, 'infinite_score': 0, 'last_use_mouse': 0}
     print(update_data(data))
-    print(get_data("test_level3"))
+    print(get_data("vincent"))
     
