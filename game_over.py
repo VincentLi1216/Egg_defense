@@ -224,7 +224,7 @@ def win(use_mouse, level, user):
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
 
-    new_card = {1: ["dog", "fox","frog"], 2: ["turkey", "turtle", "rhino"]}
+    new_card = {1: ["dog", "fox", "frog"], 2: ["turkey", "turtle", "rhino"]}
     db_card = {1: "cat,bee,mushroom,bird,dog,fox,frog",
                2: "cat,bee,mushroom,bird,dog,fox,frog,rhino,turkey,turtle"}
     if get_data(user)["level"] == level:
@@ -277,14 +277,6 @@ def win(use_mouse, level, user):
         new_card_img = Btn("card_txt", (360, 600))
     else:
         congratulate_text = Btn("finish", (650, 600))
-
-
-    if level == "INFIN.":
-        pass
-    else:
-        card1 = Card(new_card[level][0], (850, 600))
-        card2 = Card(new_card[level][1], (1050, 600))
-
 
     with mp_hands.Hands(
             model_complexity=0,

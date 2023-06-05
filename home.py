@@ -6,8 +6,7 @@ from play_sound import *
 user = "test_level3"
 level = "INFIN."
 
-
-game_state = "main"
+game_state = "home"
 use_mouse = True
 
 class Water:
@@ -21,7 +20,6 @@ class Water:
     def animation(self):
         self.rect.centerx += self.moving
         self.moving *= (-1)
-
 
 class Text:
     def __init__(self, text, pos, size, color):
