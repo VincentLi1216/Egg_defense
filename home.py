@@ -33,6 +33,27 @@ class Btn:
         self.rect = self.image.get_rect(center=pos)
         self.state = state
 
+def auto_login():
+    with open('local_data.json') as f:
+        data = json.load(f)
+        pw = data["pw"]
+        account = data["account"]
+
+        info = get_data(account)
+        if info:
+            print(f"Auto logining-> Account:{account} Password:{pw}")
+            if info["pw"] == pw:
+                print(f"{account} logged in successfully")
+                global user
+                user = account
+                return "home"
+            else:
+                print(f"Wrong password with account: {account}")
+                login()
+        else:
+            print(f"Login failed with account: {account}")
+            login()
+
 def login():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
@@ -259,7 +280,7 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    game_state = login()
+    game_state = auto_login()
     while True:
         if game_state == "home":
             pygame.quit()
