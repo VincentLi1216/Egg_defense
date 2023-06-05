@@ -168,7 +168,7 @@ def login():
                 screen.blit(cursor_surface[0], cursor_rect)
 
             if event.type == pygame.KEYDOWN:
-                if enter_state == "name":
+                if enter_state == "name" and len(name) <= 20:
                     if event.key == pygame.K_RETURN:
                         enter_state = "pw"
                     elif event.key == pygame.K_BACKSPACE:
@@ -176,9 +176,8 @@ def login():
                     else:
                         name += event.unicode
                         print(name)
-                if enter_state == "pw":
+                if enter_state == "pw" and len(pw) <= 20:
                     if event.key == pygame.K_RETURN:
-                        # enter_state = "pw"
                         pass
                     elif event.key == pygame.K_BACKSPACE:
                         pw = pw[:-2]
@@ -259,14 +258,14 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    game_state = login()
+    # game_state = login()
     while True:
         if game_state == "home":
             pygame.quit()
             game_state = home()
         if game_state == "main":
             from main import main
-            game_state, use_mouse = main(game_state, user, level)
+            play_time, game_state, use_mouse = main(game_state, user, level)
         if game_state == "game_over_lose":
             from game_over import lose
             game_state = lose(use_mouse=use_mouse)
@@ -275,4 +274,4 @@ if __name__ == "__main__":
             game_state = win(use_mouse=use_mouse, level=level, user=user)
         if game_state == "game_over_infin":
             from game_over import infin
-            game_state = infin(use_mouse=use_mouse, level=level, user=user)
+            game_state = infin(use_mouse=use_mouse, user=user, play_time=play_time)
