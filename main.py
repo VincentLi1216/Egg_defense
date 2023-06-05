@@ -984,7 +984,6 @@ def main(game_state, user, level, use_mouse=True):
             mode_text = Text("Gesture", (540, 510), 60, (255, 255, 255))
 
         while True:
-
             ret, img = cap.read()
             img = cv2.flip(img, 1)
             img = cv2.resize(img, (1280, 720))
@@ -1129,9 +1128,9 @@ def main(game_state, user, level, use_mouse=True):
             exit()
 
         while True:
-
             if level == "INFIN.": #infinite mode
-                level_text = Text(f"INFIN.", (1125, 50), 50, (80, 80, 80))
+                play_time = time.time() - begin_time
+                level_text = Text(f"{round(play_time)//60}m {round(play_time, 3)%60}s", (1125, 50), 50, (80, 80, 80))
                 if int(random.uniform(0, 1000) <= odd_threshold):
                     create_enemy(random.choice(all_enemies), random.randint(0,4))
                 odd_threshold += 0.01
@@ -1294,7 +1293,7 @@ def main(game_state, user, level, use_mouse=True):
                         if game_state == "home":
                             restart_game(user)
                             pygame.quit()
-                            return game_state, use_mouse
+                            return time.time() - begin_time, game_state, use_mouse
 
                 for index, ruleFPS in enumerate(enemiesFPS):
                     if event.type == ruleFPS:
@@ -1375,7 +1374,7 @@ def main(game_state, user, level, use_mouse=True):
             if game_state == "game_over_win" or game_state == "game_over_lose" or game_state == "game_over_infin":
                 over_alpha += 5
                 if over_alpha >= 255:
-                    return game_state, use_mouse
+                    return time.time() - begin_time, game_state, use_mouse
                 over_bg.fill((0, 0, 0, over_alpha))
                 screen.blit(over_bg, (0, 0))
 

@@ -189,7 +189,7 @@ def login():
                 screen.blit(cursor_surface[0], cursor_rect)
 
             if event.type == pygame.KEYDOWN:
-                if enter_state == "name":
+                if enter_state == "name" and len(name) <= 20:
                     if event.key == pygame.K_RETURN:
                         enter_state = "pw"
                     elif event.key == pygame.K_BACKSPACE:
@@ -197,9 +197,8 @@ def login():
                     else:
                         name += event.unicode
                         print(name)
-                if enter_state == "pw":
+                if enter_state == "pw" and len(pw) <= 20:
                     if event.key == pygame.K_RETURN:
-                        # enter_state = "pw"
                         pass
                     elif event.key == pygame.K_BACKSPACE:
                         pw = pw[:-2]
@@ -232,11 +231,13 @@ def home():
     water_bg = Water()
     pygame.time.set_timer(pygame.USEREVENT, water_bg.fps)
     play = Btn("play", (1020, 500))
+    exit_btn = Btn("exit", (1185, 52))
 
     while True:
         screen.blit(water_bg.image, water_bg.rect)
         screen.blit(home_bg, (0, 0))
         screen.blit(play.image, play.rect)
+        screen.blit(exit_btn.image, exit_btn.rect)
 
         for event in pygame.event.get():
 
@@ -259,6 +260,8 @@ def home():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play.rect.collidepoint(event.pos):
                     play.state = True
+                if exit_btn.rect.collidepoint(event.pos):
+                    exit_btn.state = True
 
             if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
                 if play.state:
@@ -267,6 +270,8 @@ def home():
                     play.state = False
                     pygame.quit()
                     return "main"
+                elif exit_btn.state:
+                    return "login"
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
             if cursor_grabbed:
@@ -282,12 +287,14 @@ def home():
 if __name__ == "__main__":
     game_state = auto_login()
     while True:
+        if game_state == "login":
+            game_state = login()
         if game_state == "home":
             pygame.quit()
             game_state = home()
         if game_state == "main":
             from main import main
-            game_state, use_mouse = main(game_state, user, level)
+            play_time, game_state, use_mouse = main(game_state, user, level)
         if game_state == "game_over_lose":
             from game_over import lose
             game_state = lose(use_mouse=use_mouse)
@@ -296,4 +303,4 @@ if __name__ == "__main__":
             game_state = win(use_mouse=use_mouse, level=level, user=user)
         if game_state == "game_over_infin":
             from game_over import infin
-            game_state = infin(use_mouse=use_mouse, level=level, user=user)
+            game_state = infin(use_mouse=use_mouse, user=user, play_time=play_time)
