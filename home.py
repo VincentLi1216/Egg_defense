@@ -33,6 +33,27 @@ class Btn:
         self.rect = self.image.get_rect(center=pos)
         self.state = state
 
+def auto_login():
+    with open('local_data.json') as f:
+        data = json.load(f)
+        pw = data["pw"]
+        account = data["account"]
+
+        info = get_data(account)
+        if info:
+            print(f"Auto logining-> Account:{account} Password:{pw}")
+            if info["pw"] == pw:
+                print(f"{account} logged in successfully")
+                global user
+                user = account
+                return "home"
+            else:
+                print(f"Wrong password with account: {account}")
+                return "login"
+        else:
+            print(f"Login failed with account: {account}")
+            return "login"
+
 def login():
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
@@ -131,6 +152,17 @@ def login():
                         print(name, pw)
                         if info["pw"] == pw:
                             print(f"{name} logged in successfully")
+
+                            #change json account and password to the correct one
+                            with open('local_data.json') as f:
+                                data = json.load(f)
+                                data["pw"] = pw
+                                data["account"] = user
+
+                                with open("local_data.json", "w", encoding='utf-8') as f:
+                                    json.dump(data, f, indent=2, sort_keys=True,
+                                            ensure_ascii=False)
+
                             global user
                             user = name
                             return "home"
@@ -175,7 +207,7 @@ def login():
                         name = name[:-1]
                     else:
                         name += event.unicode
-                        print(name)
+                        # print(name)
                 if enter_state == "pw" and len(pw) <= 20:
                     if event.key == pygame.K_RETURN:
                         pass
@@ -264,6 +296,7 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
+    game_state = auto_login()
     while True:
         if game_state == "login":
             game_state = login()
