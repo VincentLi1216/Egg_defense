@@ -153,6 +153,7 @@ def login():
                         if info["pw"] == pw:
                             print(f"{name} logged in successfully")
 
+                            global user
                             #change json account and password to the correct one
                             with open('local_data.json') as f:
                                 data = json.load(f)
@@ -163,7 +164,6 @@ def login():
                                     json.dump(data, f, indent=2, sort_keys=True,
                                             ensure_ascii=False)
 
-                            global user
                             user = name
                             return "home"
                         else:
