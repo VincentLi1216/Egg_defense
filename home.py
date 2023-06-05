@@ -1,6 +1,7 @@
 import time
 from dataDB import *
 import pygame, sys, cv2
+from play_sound import *
 
 user = "test_level3"
 level = "INFIN."
@@ -97,8 +98,10 @@ def login():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if login_btn.rect.collidepoint(event.pos):
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
                     login_btn.state = True
                 if create_btn.rect.collidepoint(event.pos):
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
                     create_btn.state = True
 
             if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
@@ -286,6 +289,8 @@ def home():
 
             if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
                 if play.state:
+                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    time.sleep(0.4) #this delay is for playing the sound
                     play.state = False
                     pygame.quit()
                     return "main"
@@ -302,7 +307,8 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    # game_state = login()
+    game_state = login()
+    # game_state = "main"
     while True:
         if game_state == "home":
             pygame.quit()

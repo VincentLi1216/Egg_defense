@@ -1,7 +1,7 @@
 import cv2
 import math
 import mediapipe as mp
-from dataDB import get_data
+from dataDB import *
 import pygame
 import sys
 import random
@@ -10,6 +10,7 @@ import copy
 import time
 from character_dict import *
 from level_design import *
+from play_sound import *
 
 odd_threshold = 20
 
@@ -852,17 +853,19 @@ mp_hands = mp.solutions.hands                    # mediapipe 偵測手掌方法
 try:
     import cam_selection
     cap = cv2.VideoCapture(cam_selection.selected_cam)
-    print(f'{cap.get(3)}')
+    # print(f'{cap.get(3)}')
     print(f'Cam:{cam_selection.selected_cam}')
-except:
+except Exception as e:
+    print(e)
     try:
         cap = cv2.VideoCapture(0)
-        print(f'{cap.get(3)}')
+        # print(f'{cap.get(3)}')
         print(f'Cam:0')
-    except:
+    except Exception as e:
+        print(e)
         cap = cv2.VideoCapture(1)
-        print(f'{cap.get(3)}')
-        print(f'Cam:0')
+        # print(f'{cap.get(3)}')
+        print(f'Cam:1')
 
 
 def distance(x1, y1, x2, y2):
@@ -930,10 +933,18 @@ def main(game_state, user, level, use_mouse=True):
     rm_enemy_num = 0
     begin_time = time.time()
 
+    #get last_use_mouse from DB
+    use_mouse = get_data(user)["last_use_mouse"]
+    if use_mouse == "error": #if got any error then use_mouse = True
+        use_mouse = True
+    
+
     enemy_generate_time = 0
-    for enemy in game_design[level]:
-        if enemy["time"] > enemy_generate_time:
-            enemy_generate_time = enemy["time"]
+    if level != "INFIN.":
+        for enemy in game_design[level]:
+            if enemy["time"] > enemy_generate_time:
+                enemy_generate_time = enemy["time"]
+
     def pause_game(begin_time, use_mouse):
         global hand_closed, cursor_grabbed, mouse_down
         global x4, y4
@@ -966,6 +977,7 @@ def main(game_state, user, level, use_mouse=True):
         continue_btn = Continue()
         switch_btn = Switch()
         level_text = Text(f"- level {level} -", (640, 200), 110, (255, 255, 255))
+        
         if use_mouse:
             mode_text = Text("Mouse", (540, 510), 65, (255, 255, 255))
         else:
@@ -1048,15 +1060,22 @@ def main(game_state, user, level, use_mouse=True):
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
+                        play_sound("sound_effects/click_sound.mp3") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "main"
                     elif switch_btn.state:
+                        play_sound("sound_effects/click_sound.mp3") #click sound effect
                         switch_btn.state = False
                         use_mouse = not use_mouse
                         if use_mouse:
-                            mode_text = Text(" Mouse ", (540, 510), 65, (255, 255, 255))
+                            mode_text = Text(" Mouse ", (540, 510), 65, (255, 255, 255))                         
+                            update_one_data(col="last_use_mouse", data=1, account=user) #update last_use_mouse to DB
                         else:
                             mode_text = Text("Gesture", (540, 510), 60, (255, 255, 255))
+                            update_one_data(col="last_use_mouse", data=0, account=user) #update last_use_mouse to DB
+
+                        
                     elif exit_btn.state:
+                        play_sound("sound_effects/click_sound.mp3") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "home"
 
             screen.blit(bg_surface, (0, 0))
@@ -1115,7 +1134,6 @@ def main(game_state, user, level, use_mouse=True):
                 level_text = Text(f"INFIN.", (1125, 50), 50, (80, 80, 80))
                 if int(random.uniform(0, 1000) <= odd_threshold):
                     create_enemy(random.choice(all_enemies), random.randint(0,4))
-                print(odd_threshold)
                 odd_threshold += 0.01
 
             else: #normal mode
@@ -1128,12 +1146,12 @@ def main(game_state, user, level, use_mouse=True):
                         # print(len(game_design[level]))
                         create_enemy(
                             game_design[level][i]["enemy"], game_design[level][i]["row"])
-                        print(game_design[level][i]["enemy"])
+                        # print(game_design[level][i]["enemy"])
                         rm_enemy_num += 1
 
                 for _ in range(rm_enemy_num):
                     game_design[level].pop(0)
-                    print(game_design[level])
+                    # print(game_design[level])
 
                 rm_enemy_num = 0
 
@@ -1263,6 +1281,7 @@ def main(game_state, user, level, use_mouse=True):
 
                             if not coordinate[x][y]:
                                 create_hero(tmpCard.animal, x, y)
+                                play_sound("sound_effects/pop_sound.mp3") #play pop sound effect
                                 for index, card in enumerate(disp_card):
                                     if card.animal == tmpCard.animal:
                                         disp_card.pop(index)
@@ -1270,6 +1289,7 @@ def main(game_state, user, level, use_mouse=True):
                         moving = False
                     elif pause_btn.state:
                         pause_btn.state = False
+                        play_sound("sound_effects/click_sound.mp3") #click sound effect
                         begin_time, use_mouse, game_state = pause_game(begin_time, use_mouse)
                         if game_state == "home":
                             restart_game(user)
