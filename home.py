@@ -210,11 +210,13 @@ def home():
     water_bg = Water()
     pygame.time.set_timer(pygame.USEREVENT, water_bg.fps)
     play = Btn("play", (1020, 500))
+    exit_btn = Btn("exit", (1185, 52))
 
     while True:
         screen.blit(water_bg.image, water_bg.rect)
         screen.blit(home_bg, (0, 0))
         screen.blit(play.image, play.rect)
+        screen.blit(exit_btn.image, exit_btn.rect)
 
         for event in pygame.event.get():
 
@@ -237,6 +239,8 @@ def home():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if play.rect.collidepoint(event.pos):
                     play.state = True
+                if exit_btn.rect.collidepoint(event.pos):
+                    exit_btn.state = True
 
             if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
                 if play.state:
@@ -245,6 +249,8 @@ def home():
                     play.state = False
                     pygame.quit()
                     return "main"
+                elif exit_btn.state:
+                    return "login"
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
             if cursor_grabbed:
@@ -258,8 +264,9 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    # game_state = login()
     while True:
+        if game_state == "login":
+            game_state = login()
         if game_state == "home":
             pygame.quit()
             game_state = home()
