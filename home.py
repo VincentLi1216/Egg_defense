@@ -5,7 +5,6 @@ import pygame, sys, cv2
 user = "test_level3"
 level = "INFIN."
 
-
 game_state = "home"
 use_mouse = True
 
@@ -20,7 +19,6 @@ class Water:
     def animation(self):
         self.rect.centerx += self.moving
         self.moving *= (-1)
-
 
 class Text:
     def __init__(self, text, pos, size, color):
@@ -305,7 +303,6 @@ def home():
 
 if __name__ == "__main__":
     # game_state = login()
-    game_state = "main"
     while True:
         if game_state == "home":
             pygame.quit()
