@@ -215,7 +215,7 @@ def win(use_mouse, level, user):
     import time
     from datetime import datetime
     from main import cursor_grabbed, x4, y4, cap, mp_hands, mp_drawing, mp_drawing_styles, mouse_down
-    from dataDB import get_data, update_data
+    from dataDB import get_data, update_one_data
 
     pygame.init()
     global screen, clock
@@ -230,9 +230,8 @@ def win(use_mouse, level, user):
     if get_data(user)["level"] == level:
         next_level = level+1 if level < 3 else level
         if level < 3:
-            data = {"account": user, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "pw": "qwerty",
-                    "coin": 50, "characters": db_card[level], "level": next_level}
-            update_data(data)
+            update_one_data("characters", db_card[level], user)
+            update_one_data("level", next_level, user)
 
     class Chick:
         def __init__(self):
@@ -410,3 +409,6 @@ def win(use_mouse, level, user):
 
             pygame.display.update()
             clock.tick(90)
+
+def infin(use_mouse, level, user):
+    pass

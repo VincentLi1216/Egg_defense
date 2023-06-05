@@ -1353,7 +1353,7 @@ def main(game_state, user, level, use_mouse=True):
                     screen.blit(cursor_surface[0], cursor_rect)
                 # print((round(x4), round(y4)))
 
-            if game_is_over() and game_state != "game_over_lose":
+            if game_is_over() and game_state != "game_over_lose" and level != "INFIN.":
                 game_state = "game_over_lose"
                 over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
                 over_alpha = 0
@@ -1365,7 +1365,14 @@ def main(game_state, user, level, use_mouse=True):
                 over_alpha = 0
                 over_bg.fill((0, 0, 0, over_alpha))
 
-            if game_state == "game_over_win" or game_state == "game_over_lose":
+            if game_is_over() and game_state != "game_over_infin" and level == "INFIN.":
+                print(game_state)
+                game_state = "game_over_infin"
+                over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
+                over_alpha = 0
+                over_bg.fill((0, 0, 0, over_alpha))
+
+            if game_state == "game_over_win" or game_state == "game_over_lose" or game_state == "game_over_infin":
                 over_alpha += 5
                 if over_alpha >= 255:
                     return game_state, use_mouse
