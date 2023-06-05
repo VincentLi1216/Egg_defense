@@ -33,7 +33,6 @@ class Btn:
         self.rect = self.image.get_rect(center=pos)
         self.state = False
 
-
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("EGG DEFENSE")
