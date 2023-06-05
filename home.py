@@ -41,7 +41,7 @@ def auto_login():
 
         info = get_data(account)
         if info:
-            print(f"Auto logining-> Account:{account} Password:{pw}")
+            print(f"Auto logining-> Account:{account}")
             if info["pw"] == pw:
                 print(f"{account} logged in successfully")
                 global user
@@ -149,7 +149,6 @@ def login():
                     login_btn.state = False
                     info = get_data(name)
                     if info:
-                        print(name, pw)
                         if info["pw"] == pw:
                             print(f"{name} logged in successfully")
 
@@ -158,7 +157,7 @@ def login():
                             with open('local_data.json') as f:
                                 data = json.load(f)
                                 data["pw"] = pw
-                                data["account"] = user
+                                data["account"] = name
 
                                 with open("local_data.json", "w", encoding='utf-8') as f:
                                     json.dump(data, f, indent=2, sort_keys=True,
@@ -176,9 +175,19 @@ def login():
                     if not get_data(name) and name and pw:
                         from datetime import datetime
                         data = {"account": name, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1}
+                                "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1, "infinite_score":0, "last_use_mouse":1}
                         insert_data(data)
                         user = name
+
+                        #update json file
+                        with open('local_data.json') as f:
+                            data = json.load(f)
+                            data["account"] = name
+                            data["pw"] = pw
+
+                            with open("local_data.json", "w", encoding='utf-8') as f:
+                                        json.dump(data, f, indent=2, sort_keys=True,
+                                                ensure_ascii=False)
                         return "home"
                     else:
                         name = ""
@@ -282,6 +291,17 @@ def home():
                     pygame.quit()
                     return "main"
                 elif exit_btn.state:
+                    # if log out then clear the json file's account and pw
+                    with open('local_data.json') as f:
+                        data = json.load(f)
+                        data["pw"] = "None"
+                        data["account"] = "None"
+
+                        with open("local_data.json", "w", encoding='utf-8') as f:
+                                    json.dump(data, f, indent=2, sort_keys=True,
+                                            ensure_ascii=False)
+
+                        
                     return "login"
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
