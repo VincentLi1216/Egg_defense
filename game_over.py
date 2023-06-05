@@ -181,6 +181,14 @@ def lose(use_mouse):
                     play_sound("sound_effects/click_sound.mp3") #click sound effect
                     time.sleep(0.4) #delay for playing the sound effect
                     return "home"
+
+
+
+
+
+
+
+
                 if restart_btn.state:
                     play_sound("sound_effects/click_sound.mp3") #click sound effect
                     return "main"

@@ -4,7 +4,7 @@ import pygame, sys, cv2
 from play_sound import *
 
 user = "test_level3"
-level = 2
+level = "INFIN."
 
 game_state = "home"
 use_mouse = True
@@ -382,7 +382,7 @@ def home():
             clock.tick(90)
 
 if __name__ == "__main__":
-    game_state = login()
+    # game_state = login()
     while True:
         if game_state == "home":
             pygame.quit()
