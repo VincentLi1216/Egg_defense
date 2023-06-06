@@ -3,10 +3,10 @@ from dataDB import *
 import pygame, sys, cv2
 from play_sound import *
 
-user = "test_level3"
+user = "test_level1"
 level = "INFIN."
 
-game_state = "home"
+game_state = "login"
 use_mouse = True
 
 class Water:
@@ -33,6 +33,12 @@ class Btn:
         self.rect = self.image.get_rect(center=pos)
         self.state = state
 
+class Level_btn(Btn):
+    def __init__(self, file, pos, available, level, state=False):
+        super().__init__(file, pos, state)
+        self.available = available
+        self.level = level
+
 def auto_login():
     with open('local_data.json') as f:
         data = json.load(f)
@@ -41,7 +47,7 @@ def auto_login():
 
         info = get_data(account)
         if info:
-            print(f"Auto logining-> Account:{account} Password:{pw}")
+            print(f"Auto logining-> Account:{account}")
             if info["pw"] == pw:
                 print(f"{account} logged in successfully")
                 global user
@@ -149,7 +155,6 @@ def login():
                     login_btn.state = False
                     info = get_data(name)
                     if info:
-                        print(name, pw)
                         if info["pw"] == pw:
                             print(f"{name} logged in successfully")
 
@@ -158,7 +163,7 @@ def login():
                             with open('local_data.json') as f:
                                 data = json.load(f)
                                 data["pw"] = pw
-                                data["account"] = user
+                                data["account"] = name
 
                                 with open("local_data.json", "w", encoding='utf-8') as f:
                                     json.dump(data, f, indent=2, sort_keys=True,
@@ -176,9 +181,19 @@ def login():
                     if not get_data(name) and name and pw:
                         from datetime import datetime
                         data = {"account": name, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1}
+                                "pw": pw, "coin": 50, "characters": "cat,bee,mushroom,bird", "level": 1, "infinite_score":0, "last_use_mouse":1}
                         insert_data(data)
                         user = name
+
+                        #update json file
+                        with open('local_data.json') as f:
+                            data = json.load(f)
+                            data["account"] = name
+                            data["pw"] = pw
+
+                            with open("local_data.json", "w", encoding='utf-8') as f:
+                                        json.dump(data, f, indent=2, sort_keys=True,
+                                                ensure_ascii=False)
                         return "home"
                     else:
                         name = ""
@@ -255,7 +270,6 @@ def home():
         screen.blit(welcome_text.text, welcome_text.rect)
 
         for event in pygame.event.get():
-
             if event.type == water_bg.fps_counter:
                 water_bg.animation()
 
@@ -284,8 +298,17 @@ def home():
                     time.sleep(0.4) #this delay is for playing the sound
                     play.state = False
                     pygame.quit()
-                    return "main"
+                    return "level_choice"
                 elif exit_btn.state:
+                    # if log out then clear the json file's account and pw
+                    with open('local_data.json') as f:
+                        data = json.load(f)
+                        data["pw"] = "None"
+                        data["account"] = "None"
+
+                        with open("local_data.json", "w", encoding='utf-8') as f:
+                                    json.dump(data, f, indent=2, sort_keys=True,
+                                            ensure_ascii=False)
                     return "login"
 
             cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
@@ -299,6 +322,101 @@ def home():
             pygame.display.update()
             clock.tick(90)
 
+def level_choice():
+    from dataDB import get_data
+    pygame.init()
+    screen = pygame.display.set_mode((1280, 720))
+    pygame.display.set_caption("EGG DEFENSE")
+    pygame.mouse.set_visible(False)
+    clock = pygame.time.Clock()
+
+    cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
+    ), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
+    cursor_surface = [pygame.transform.scale(
+        cursor_surface[0], (70, 70)), pygame.transform.scale(cursor_surface[1], (70, 70))]
+    cursor_rect = cursor_surface[0].get_rect()
+
+    black = (0, 0, 0)
+    mouse_down = False
+    cursor_grabbed = False
+
+    use_mouse = True
+    home_bg = pygame.image.load("image/home_page/home.png").convert_alpha()
+    level_bg = pygame.image.load("image/home_page/level_choice.png").convert_alpha()
+    water_bg = Water()
+    pygame.time.set_timer(pygame.USEREVENT, water_bg.fps)
+    play = Btn("play", (1020, 500))
+    level_btn = []
+    level_text = []
+    level_num = get_data(user)["level"]
+    for i in range(1, 4):
+        if level_num >= i:
+            level_btn.append(Level_btn("level_btn", (410+227*(i-1), 295), True, i))
+            level_text.append(Btn(f"level{i}_text", (412+227*(i-1), 285)))
+        else:
+            level_btn.append(Level_btn("level_btn", (410+227*(i-1), 295), False, i))
+            level_text.append(Btn("lock", (412 + 227 * (i - 1), 285)))
+    infin_btn = Btn("infin_btn", (640, 485))
+
+    while True:
+        screen.blit(water_bg.image, water_bg.rect)
+        screen.blit(home_bg, (0, 0))
+        screen.blit(play.image, play.rect)
+        screen.blit(level_bg, (0, 0))
+        screen.blit(infin_btn.image, infin_btn.rect)
+        for btn in level_btn:
+            screen.blit(btn.image, btn.rect)
+            print(btn.available)
+        for text in level_text:
+            screen.blit(text.image, text.rect)
+
+        for event in pygame.event.get():
+
+            if event.type == water_bg.fps_counter:
+                water_bg.animation()
+
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_down = True
+                cursor_grabbed = True
+
+            else:
+                if use_mouse and mouse_down and event.type == pygame.MOUSEBUTTONUP:
+                    cursor_grabbed = False
+                    mouse_down = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(len(level_btn)):
+                    if level_btn[i].rect.collidepoint(event.pos) and level_btn[i].available:
+                        level_btn[i].state = True
+                if infin_btn.rect.collidepoint(event.pos):
+                    infin_btn.state = True
+
+            if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
+                global level
+                for i in range(len(level_btn)):
+                    if level_btn[i].state:
+                        level_btn[i].state = False
+                        level = i+1
+                        return "main"
+                if infin_btn.state:
+                    level = "INFIN."
+                    return "main"
+
+            cursor_rect.center = pygame.mouse.get_pos()  # update cursor position
+            if cursor_grabbed:
+                # draw the cursor
+                screen.blit(cursor_surface[1], cursor_rect)
+            else:
+                # draw the cursor
+                screen.blit(cursor_surface[0], cursor_rect)
+
+            pygame.display.update()
+            clock.tick(200)
+
 if __name__ == "__main__":
     game_state = auto_login()
     while True:
@@ -307,6 +425,8 @@ if __name__ == "__main__":
         if game_state == "home":
             pygame.quit()
             game_state = home()
+        if game_state == "level_choice":
+            game_state = level_choice()
         if game_state == "main":
             from main import main
             play_time, game_state, use_mouse = main(game_state, user, level)

@@ -4,14 +4,12 @@
     "cat",
     "bee",
     "mushroom",
-    "bird",
-    "dog",
-    "fox"
+    "bird"
   ],
   "coin": 50,
   "infinite_score": 0,
   "last_use_mouse": 1,
-  "level": 2,
+  "level": 1,
   "pw": "qwerty",
-  "timestamp": "2023-06-05 15:46:44"
+  "timestamp": "2023-06-05 21:26:08"
 }
