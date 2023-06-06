@@ -200,7 +200,7 @@ def login():
                 screen.blit(cursor_surface[0], cursor_rect)
 
             if event.type == pygame.KEYDOWN:
-                if enter_state == "name" and len(name) <= 20:
+                if enter_state == "name" and len(name) <= 12:
                     if event.key == pygame.K_RETURN:
                         enter_state = "pw"
                     elif event.key == pygame.K_BACKSPACE:
@@ -243,12 +243,16 @@ def home():
     pygame.time.set_timer(pygame.USEREVENT, water_bg.fps)
     play = Btn("play", (1020, 500))
     exit_btn = Btn("exit", (1185, 52))
+    welcome = Btn("welcome", (195, 50))
+    welcome_text = Text(f"Hi, {user}!", (195, 48), 40, (80, 80, 80))
 
     while True:
         screen.blit(water_bg.image, water_bg.rect)
         screen.blit(home_bg, (0, 0))
         screen.blit(play.image, play.rect)
         screen.blit(exit_btn.image, exit_btn.rect)
+        screen.blit(welcome.image, welcome.rect)
+        screen.blit(welcome_text.text, welcome_text.rect)
 
         for event in pygame.event.get():
 
