@@ -930,6 +930,7 @@ def restart_game(user):
     return [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
 
 def main(game_state, user, level):
+    play_sound("bgm", loop=True)
     # global coordinate
     coordinate = restart_game(user)
     global moving
@@ -947,7 +948,11 @@ def main(game_state, user, level):
     if use_mouse == "error": #if got any error then use_mouse = True
         use_mouse = True
     
-
+    #play bgm
+    if level == "INFIN.":
+        play_sound("INFIN_bgm", loop=True)
+    else:
+        play_sound("game_bgm", loop=True)
     enemy_generate_time = 0
     if level != "INFIN.":
         for enemy in game_design[level]:
@@ -1068,10 +1073,10 @@ def main(game_state, user, level):
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
-                        play_sound("sound_effects/click_sound.mp3") #click sound effect
+                        play_sound("click_sound") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "main"
                     elif switch_btn.state:
-                        play_sound("sound_effects/click_sound.mp3") #click sound effect
+                        play_sound("click_sound") #click sound effect
                         switch_btn.state = False
                         use_mouse = not use_mouse
                         if use_mouse:
@@ -1083,7 +1088,7 @@ def main(game_state, user, level):
 
                         
                     elif exit_btn.state:
-                        play_sound("sound_effects/click_sound.mp3") #click sound effect
+                        play_sound("click_sound") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "home"
 
             screen.blit(bg_surface, (0, 0))
@@ -1293,7 +1298,7 @@ def main(game_state, user, level):
 
                             if coordinate[x][y] != 1:
                                 coordinate = create_hero(tmpCard.animal, x, y, coordinate)
-                                play_sound("sound_effects/pop_sound.mp3") #play pop sound effect
+                                play_sound("pop_sound") #play pop sound effect
                                 for index, card in enumerate(disp_card):
                                     if card.animal == tmpCard.animal:
                                         disp_card.pop(index)
@@ -1301,7 +1306,7 @@ def main(game_state, user, level):
                         moving = False
                     elif pause_btn.state:
                         pause_btn.state = False
-                        play_sound("sound_effects/click_sound.mp3") #click sound effect
+                        play_sound("click_sound") #click sound effect
                         begin_time, use_mouse, game_state = pause_game(begin_time, use_mouse)
                         if game_state == "home":
                             restart_game(user)

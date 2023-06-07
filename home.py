@@ -129,11 +129,11 @@ def login():
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if login_btn.rect.collidepoint(event.pos):
-                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    play_sound("click_sound") #click sound effect
                     login_btn.state = True
                     enter_state = "name"
                 if create_btn.rect.collidepoint(event.pos):
-                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    play_sound("click_sound") #click sound effect
                     create_btn.state = True
                     enter_state = "name"
                 if account_entry_btn.rect.collidepoint(event.pos):
@@ -239,6 +239,8 @@ def home():
     pygame.display.set_caption("EGG DEFENSE")
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
+
+    play_sound("home_bgm", loop=True) #play bgm
     # over_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
     # over_bg.fill((255, 255, 255, 255))
 
@@ -294,7 +296,7 @@ def home():
 
             if event.type == pygame.MOUSEBUTTONUP:  # 获取松开鼠标事件
                 if play.state:
-                    play_sound("sound_effects/click_sound.mp3") #click sound effect
+                    play_sound("click_sound") #click sound effect
                     time.sleep(0.4) #this delay is for playing the sound
                     play.state = False
                     pygame.quit()
@@ -329,6 +331,8 @@ def level_choice():
     pygame.display.set_caption("EGG DEFENSE")
     pygame.mouse.set_visible(False)
     clock = pygame.time.Clock()
+
+    play_sound("level_bgm", loop=True) #play the bgm
 
     cursor_surface = [pygame.image.load("image/cursor/cursor.png").convert_alpha(
     ), pygame.image.load("image/cursor/grab_cursor.png").convert_alpha()]
@@ -420,6 +424,7 @@ def level_choice():
 if __name__ == "__main__":
     game_state = auto_login()
     while True:
+        
         if game_state == "login":
             game_state = login()
         if game_state == "home":
