@@ -1139,7 +1139,11 @@ def main(game_state, user, level):
         while True:
             if level == "INFIN.": #infinite mode
                 play_time = time.time() - begin_time
-                level_text = Text(f"{round(play_time)//60}m {round(play_time, 3)%60}s", (1125, 50), 50, (80, 80, 80))
+                play_time_min = int(play_time/60)
+                play_time_sec = round(play_time%60, 5)
+
+                play_time_sec = "{:.3f}".format(play_time_sec)
+                level_text = Text(f"{play_time_min}m {play_time_sec}s", (1125, 50), 50, (80, 80, 80))
                 if int(random.uniform(0, 1000) <= odd_threshold):
                     create_enemy(random.choice(all_enemies), random.randint(0,4))
                 odd_threshold += 0.01

@@ -366,7 +366,7 @@ def level_choice():
         screen.blit(infin_btn.image, infin_btn.rect)
         for btn in level_btn:
             screen.blit(btn.image, btn.rect)
-            print(btn.available)
+            # print(btn.available)
         for text in level_text:
             screen.blit(text.image, text.rect)
 
