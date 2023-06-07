@@ -444,7 +444,10 @@ def infin(use_mouse, user, play_time):
     all_time_high = round(all_time_high)
     your_highest = round(your_highest)
     play_time = round(play_time)
-    history_text = Text(f"All Time High: {all_time_high//60}m {all_time_high%60}s", (810, 320), 50, black) 
+    if int(all_time_high) != 0:
+        history_text = Text(f"All Time High: {all_time_high//60}m {all_time_high%60}s", (810, 320), 50, black)
+    else:
+        history_text = Text(f"All Time High: --m --s", (810, 320), 50, black)
     indiv_text = Text(f"Your Highest: {your_highest//60}m {your_highest%60}s", (810, 255), 50, black)
     this_time_text = Text(f"Play Time: {play_time//60}m {play_time%60}s", (810, 190), 50, black)  
     pygame.time.set_timer(pygame.USEREVENT, egg.fps)
