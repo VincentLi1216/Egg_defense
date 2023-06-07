@@ -13,6 +13,11 @@ from level_design import *
 from play_sound import *
 
 odd_threshold = 20
+coordinate = [[0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0],
+              [0, 0, 0, 0, 0, 0]]
 
 def pos2coord(pos):
     x = int((pos[1] - 97.6584) / 124.7363)
@@ -594,7 +599,7 @@ class Text:
 #                 screen.blit(self.image, self.rect)
 
 
-def create_hero(animal, x, y):
+def create_hero(animal, x, y, coordinate):
     if animal == 'dog':
         heroes.add(Dog((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 1
@@ -604,6 +609,7 @@ def create_hero(animal, x, y):
     elif animal == 'bird':
         heroes.add(Bird((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
         coordinate[x][y] = 1
+        print(coordinate)
     elif animal == 'mushroom':
         heroes.add(
             Mushroom((211.2731 + 148.5726 * y, 222.3947 + 124.7363 * x - 3)))
@@ -632,6 +638,8 @@ def create_hero(animal, x, y):
     pygame.time.set_timer(pygame.USEREVENT + FPSCounter,
                           heroes.sprites()[-1].fps)
     FPSCounter += 1
+
+    return coordinate
 
 
 def bullet_update():
@@ -921,7 +929,8 @@ def restart_game(user):
     game_design = copy.deepcopy(level_design)
     return [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
 
-def main(game_state, user, level, use_mouse=True):
+def main(game_state, user, level):
+    # global coordinate
     coordinate = restart_game(user)
     global moving
     global odd_threshold
@@ -1278,8 +1287,8 @@ def main(game_state, user, level, use_mouse=True):
                             else:
                                 x, y = pos2coord((round(x4), round(y4)))
 
-                            if not coordinate[x][y]:
-                                create_hero(tmpCard.animal, x, y)
+                            if coordinate[x][y] != 1:
+                                coordinate = create_hero(tmpCard.animal, x, y, coordinate)
                                 play_sound("sound_effects/pop_sound.mp3") #play pop sound effect
                                 for index, card in enumerate(disp_card):
                                     if card.animal == tmpCard.animal:
