@@ -881,6 +881,7 @@ def distance(x1, y1, x2, y2):
 
 
 hand_closed = False
+last_hand_closed = False
 cursor_grabbed = False
 mouse_down = False
 x4 = 0
@@ -934,7 +935,7 @@ def main(game_state, user, level):
     coordinate = restart_game(user)
     global moving
     global odd_threshold
-    global hand_closed, cursor_grabbed, mouse_down
+    global hand_closed, cursor_grabbed, mouse_down, last_hand_closed
     global x4, y4
     moving = False
     playerCard = get_data(user)["characters"]
@@ -959,7 +960,7 @@ def main(game_state, user, level):
                 enemy_generate_time = enemy["time"]
 
     def pause_game(begin_time, use_mouse):
-        global hand_closed, cursor_grabbed, mouse_down
+        global hand_closed, cursor_grabbed, mouse_down, last_hand_closed
         global x4, y4
         pause_bg = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         pause_bg.fill((0, 0, 0, 128))
@@ -1031,6 +1032,7 @@ def main(game_state, user, level):
                             cursor_grabbed = True
                     else:
                         hand_closed = False
+                        last_hand_closed = False
                         if not use_mouse:
                             cursor_grabbed = False
 
@@ -1053,6 +1055,12 @@ def main(game_state, user, level):
 
                 if (use_mouse and event.type == pygame.MOUSEBUTTONDOWN) or (
                         not use_mouse and hand_closed):
+                    if not use_mouse and hand_closed and not last_hand_closed:
+                        play_sound("click_sound") #click sound effect
+                        last_hand_closed = True
+                    elif use_mouse:
+                        play_sound("click_sound") #click sound effect
+
                     if use_mouse:
                         if continue_btn.rect.collidepoint(event.pos):
                             continue_btn.state = True
@@ -1072,10 +1080,8 @@ def main(game_state, user, level):
                 if (event.type == pygame.MOUSEBUTTONUP and use_mouse) or (
                         not use_mouse and not hand_closed):  # 获取松开鼠标事件
                     if continue_btn.state:
-                        play_sound("click_sound") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "main"
                     elif switch_btn.state:
-                        play_sound("click_sound") #click sound effect
                         switch_btn.state = False
                         use_mouse = not use_mouse
                         if use_mouse:
@@ -1087,7 +1093,6 @@ def main(game_state, user, level):
 
                         
                     elif exit_btn.state:
-                        play_sound("click_sound") #click sound effect
                         return (begin_time + (time.time()-pause_time)), use_mouse, "home"
 
             screen.blit(bg_surface, (0, 0))

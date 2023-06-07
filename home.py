@@ -128,12 +128,11 @@ def login():
                     mouse_down = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                play_sound("click_sound") #click sound effect
                 if login_btn.rect.collidepoint(event.pos):
-                    play_sound("click_sound") #click sound effect
                     login_btn.state = True
                     enter_state = "name"
                 if create_btn.rect.collidepoint(event.pos):
-                    play_sound("click_sound") #click sound effect
                     create_btn.state = True
                     enter_state = "name"
                 if account_entry_btn.rect.collidepoint(event.pos):
@@ -302,6 +301,8 @@ def home():
                     pygame.quit()
                     return "level_choice"
                 elif exit_btn.state:
+                    play_sound("click_sound") #click sound effect
+                    time.sleep(0.4) #this delay is for playing the sound
                     # if log out then clear the json file's account and pw
                     with open('local_data.json') as f:
                         data = json.load(f)
@@ -393,6 +394,7 @@ def level_choice():
                     mouse_down = False
 
             if event.type == pygame.MOUSEBUTTONDOWN:
+                play_sound("click_sound")
                 for i in range(len(level_btn)):
                     if level_btn[i].rect.collidepoint(event.pos) and level_btn[i].available:
                         level_btn[i].state = True

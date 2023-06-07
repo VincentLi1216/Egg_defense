@@ -17,7 +17,17 @@ pop_channel = mixer.Channel(1)
 home_bgm_channel = mixer.Channel(2)  
 level_bgm_channel = mixer.Channel(3)  
 game_bgm_channel = mixer.Channel(4)  
-INFIN_bgm_channel = mixer.Channel(5)  
+INFIN_bgm_channel = mixer.Channel(5) 
+
+#set the volume
+click_channel.set_volume(0.8)  
+pop_channel.set_volume(0.8) 
+home_bgm_channel.set_volume(1) 
+level_bgm_channel.set_volume(0.7) 
+game_bgm_channel.set_volume(0.7) 
+INFIN_bgm_channel.set_volume(0.8) 
+
+
 
 def play_sound(music, loop=False):
 
@@ -29,13 +39,6 @@ def play_sound(music, loop=False):
 	# 	# #Load audio file
 	# 	mixer.music.load("sound_effects/click_sound.mp3")
 	# 	mixer.music.play()
-
-
-	volume_dict = {"click_sound":0.8, "pop_sound":0.8, "home_bgm":1, "level_bgm":0.7, "game_bgm":0.6, "INFIN_bgm":0.8}
-
-
-	# #Set preferred volume
-	mixer.music.set_volume(volume_dict[music])
 
 
 	if music == "click_sound":
