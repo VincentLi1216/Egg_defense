@@ -930,7 +930,6 @@ def restart_game(user):
     return [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0]]
 
 def main(game_state, user, level):
-    play_sound("bgm", loop=True)
     # global coordinate
     coordinate = restart_game(user)
     global moving
