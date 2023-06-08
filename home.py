@@ -177,6 +177,7 @@ def login():
                         name = ""
                         pw = ""
                 if create_btn.state:
+                    create_btn.state = False
                     if not get_data(name) and name and pw:
                         from datetime import datetime
                         data = {"account": name, "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
