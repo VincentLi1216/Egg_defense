@@ -55,7 +55,7 @@ with mp_hands.Hands(
                 if distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5) <= 0.3:
                     print(f'tapped{x8}')
                 # print(distance(x8, y8, x4, y4)/distance(x0, y0, x5, y5))
-
+        img = cv2.flip(img, 1)
         cv2.imshow('oxxostudio', img)
         if cv2.waitKey(5) == ord('q'):
             break    # 按下 q 鍵停止

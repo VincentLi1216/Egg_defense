@@ -1,5 +1,5 @@
 {
-  "account": "123",
+  "account": "vincent",
   "characters": [
     "cat",
     "bee",
@@ -7,12 +7,15 @@
     "bird",
     "dog",
     "fox",
-    "frog"
+    "frog",
+    "rhino",
+    "turkey",
+    "turtle"
   ],
   "coin": 50,
-  "infinite_score": 98,
+  "infinite_score": 105,
   "last_use_mouse": 1,
-  "level": 2,
+  "level": 3,
   "pw": "123",
-  "timestamp": "2023-06-08 00:49:03"
+  "timestamp": "2023-06-08 13:54:38"
 }

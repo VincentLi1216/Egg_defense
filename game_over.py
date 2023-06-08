@@ -442,7 +442,7 @@ def infin(use_mouse, user, play_time):
     from dataDB import get_infinite_score, update_one_data
     if play_time > get_infinite_score(user)[1]:
         update_one_data("infinite_score", play_time, user)
-    all_time_high, your_highest = get_infinite_score(user)
+    your_highest, all_time_high = get_infinite_score(user)
     all_time_high = round(all_time_high)
     your_highest = round(your_highest)
     play_time = round(play_time)
