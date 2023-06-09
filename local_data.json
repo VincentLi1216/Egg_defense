@@ -1,15 +1,21 @@
 {
-  "account": "123456",
+  "account": "None",
   "characters": [
     "cat",
     "bee",
     "mushroom",
-    "bird"
+    "bird",
+    "dog",
+    "fox",
+    "frog",
+    "rhino",
+    "turkey",
+    "turtle"
   ],
   "coin": 50,
   "infinite_score": 0,
   "last_use_mouse": 1,
-  "level": 1,
-  "pw": "qwerty",
-  "timestamp": "2023-06-08 15:57:40"
+  "level": 3,
+  "pw": "None",
+  "timestamp": "2023-06-08 18:17:49"
 }

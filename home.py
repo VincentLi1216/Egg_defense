@@ -39,6 +39,14 @@ class Level_btn(Btn):
         self.available = available
         self.level = level
 
+class Line:
+    def __init__(self, pos=(0, 0), state=True):
+        self.image = pygame.image.load(f"image/home_page/type_line.png").convert_alpha()
+        self.rect = self.image.get_rect(midleft=pos)
+        self.state = state
+        self.fps = 400
+        self.fps_counter = pygame.USEREVENT + 1
+
 def auto_login():
     with open('local_data.json') as f:
         data = json.load(f)
@@ -94,6 +102,8 @@ def login():
 
     account_entry_btn = Btn("entry_off", (740, 280))
     pw_entry_btn = Btn("entry_off", (740, 360))
+    line = Line()
+    pygame.time.set_timer(pygame.USEREVENT + 1, line.fps)
 
     while True:
         name_text = Text(name, (750, 282), 40, black)
@@ -109,10 +119,16 @@ def login():
         screen.blit(name_text.text, name_text.rect)
         screen.blit(pw_text.text, pw_text.rect)
 
+        if line.state:
+            screen.blit(line.image, line.rect)
+
         for event in pygame.event.get():
 
             if event.type == water_bg.fps_counter:
                 water_bg.animation()
+
+            if event.type == line.fps_counter:
+                line.state = not line.state
 
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -230,6 +246,11 @@ def login():
                         pw = pw[:-2]
                     else:
                         pw += event.unicode
+
+            if enter_state == "name":
+                line.rect.midleft = name_text.rect.midright[0]+5, name_text.rect.midright[1]
+            else:
+                line.rect.midleft = pw_text.rect.midright[0], pw_text.rect.midright[1]-3
 
             pygame.display.update()
             clock.tick(200)
