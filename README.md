@@ -1,8 +1,8 @@
 # TABLE OF CONTENT
-### [INTRODUCTION](#introduction)
-### [INSTALLATION](#installation)
-### [CONFIGURATION](#configuration)
-### [REFERENCE](#reference)
+### [INTRODUCTION](#INTRODUCTION)
+### [INSTALLATION](#INSTALLATION)
+### [CONFIGURATION](#CONFIGURATION)
+### [REFERENCE](#REFERENCE)
 
 # INTRODUCTION
 **Egg Defense** is a single player python game with levels and different game modes to play with. Take a look what does it look like, you might like it!
