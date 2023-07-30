@@ -1,8 +1,8 @@
 # TABLE OF CONTENT
-### [INTRODUCTION](#introduction)
-### [INSTALLATION](#installation)
-### [CONFIGURATION](#configuration)
-### [REFERENCE](#reference)
+[INTRODUCTION](#introduction)
+[INSTALLATION](#installation)
+[CONFIGURATION](#configuration)
+**[REFERENCE](#reference)**
 
 
 # INTRODUCTION
