@@ -1,9 +1,9 @@
 # TABLE OF CONTENT
-[INTRODUCTION](#introduction)
+**[INTRODUCTION](#introduction)**
 
-[INSTALLATION](#installation)
+**[INSTALLATION](#installation)**
 
-[CONFIGURATION](#configuration)
+**[CONFIGURATION](#configuration)**
 
 **[REFERENCE](#reference)**
 
