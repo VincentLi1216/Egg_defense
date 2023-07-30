@@ -1,8 +1,9 @@
 # TABLE OF CONTENT
-### [INTRODUCTION](#INTRODUCTION)
-### [INSTALLATION](#INSTALLATION)
-### [CONFIGURATION](#CONFIGURATION)
-### [REFERENCE](#REFERENCE)
+### [INTRODUCTION](#introduction)
+### [INSTALLATION](#installation)
+### [CONFIGURATION](#configuration)
+### [REFERENCE](#reference)
+
 
 # INTRODUCTION
 **Egg Defense** is a single player python game with levels and different game modes to play with. Take a look what does it look like, you might like it!
@@ -33,6 +34,6 @@ Having fun playing the game? Gesture Control makes it even more playable, you ca
 >In **cam_selection.py** you can define variable **selected_cam** to 0-2 to your need.
 
 
-#REFERENCE
+# REFERENCE
 
 
