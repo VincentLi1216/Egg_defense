@@ -1,11 +1,11 @@
 # TABLE OF CONTENT
-**[INTRODUCTION](#introduction)**
+1. **[INTRODUCTION](#introduction)**
 
-**[INSTALLATION](#installation)**
+2. **[INSTALLATION](#installation)**
 
-**[CONFIGURATION](#configuration)**
+3. **[CONFIGURATION](#configuration)**
 
-**[REFERENCE](#reference)**
+4. **[REFERENCE](#reference)**
 
 
 # INTRODUCTION
