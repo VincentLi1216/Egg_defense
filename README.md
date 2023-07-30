@@ -33,6 +33,6 @@ Having fun playing the game? Gesture Control makes it even more playable, you ca
 >In **cam_selection.py** you can define variable **selected_cam** to 0-2 to your need.
 
 
-# REFERENCE
+#REFERENCE
 
 
