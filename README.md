@@ -9,7 +9,7 @@
 
 ### Egg Defense
 Place your heroes to withstand the invasion of monsters. You win when the none of the monsters cross the fence.
-![image](attachments/螢幕錄影 2023-07-30 下午4.23.54.gif)
+![image](attachments/game_demo_gif.gif)
 
 ### Main page
 Where you navigate the game.
@@ -20,11 +20,11 @@ Having fun playing the game? Gesture Control makes it even more playable, you ca
 
 > tips: Switch between gesture control and mouse control in the setting page, it'll remember the setting of last time you playing it.
 
-![image](attachments/Egg_Defense (1).png)
+![image](attachments/gesture_control_demo.png)
 
 ### Data Base
 **Egg Defense** will remember your previous progress and preferred settings, all thanks to the game's Database.
-![image](attachments/Pasted image 20230730165408.png)
+![image](attachments/login_demo.png)
 ^c40919
 
 # INSTALLATION
