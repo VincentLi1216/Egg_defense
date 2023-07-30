@@ -3,5 +3,5 @@
 /.idea/
 .DS_Store
 .DS_Store?
-cam_selection.py
+#cam_selection.py
 /__pycache__/
