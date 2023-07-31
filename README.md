@@ -31,7 +31,10 @@ Having fun playing the game? Gesture Control makes it even more playable, you ca
 ![image](attachments/login_demo.png)
 
 # INSTALLATION
-//what packages users have to download
+To get started with this project, please install the required dependencies using following code:
+```
+pip install -r requirements.txt
+```
 
 # CONFIGURATION 
 >In **["cam_selection.py"](cam_selection.py)** you can define variable **"selected_cam"** to 0-2 to your need.
