@@ -60,7 +60,7 @@ pip install -r requirements.txt
    - [Hero - dog](<https://bdragon1727.itch.io/cat-adventure>)
    - [Hero - frog](<https://pixelfrog-assets.itch.io/pixel-adventure-1>)
    - [Hero - fox](<https://elthen.itch.io/2d-pixel-art-fox-sprites>)
-   - [Hero - bee / bird / turkey / rhino / turtle](<ttps://pixelfrog-assets.itch.io/pixel-adventure-2>)
+   - [Hero - bee / bird / turkey / rhino / turtle](<https://pixelfrog-assets.itch.io/pixel-adventure-2>)
    - [Enemies](<https://pixelfrog-assets.itch.io/treasure-hunters>)
 6. Other images
    - [Bullet](<https://bdragon1727.itch.io/fire-pixel-bullet-16x16>)
