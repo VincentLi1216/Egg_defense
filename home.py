@@ -3,10 +3,10 @@ from dataDB import *
 import pygame, sys, cv2
 from play_sound import *
 
-user = "test_level1"
+user = "user"
 level = "INFIN."
 
-game_state = "login"
+game_state = "home"
 use_mouse = True
 
 class Water:

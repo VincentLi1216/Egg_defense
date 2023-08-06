@@ -1,1 +1,1 @@
-selected_cam = 1
+selected_cam = 0
